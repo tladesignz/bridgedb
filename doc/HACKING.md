@@ -13,7 +13,7 @@ with password ```writecode```.
 
 Developers wishing to test BridgeDB will need to generate mock bridge
 descriptors. This is accomplished through the [leekspin
-script](https://gitweb.torproject.org/user/isis/leekspin.git). To generate 20
+script](https://gitweb.torproject.org/user/phw/leekspin.git). To generate 20
 bridge descriptors, change to the bridgedb running directory and do:
 
     $ leekspin -n 20

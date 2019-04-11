@@ -1,3 +1,11 @@
+Changes in version 0.6.X - YYYY-MM-DD
+
+        * FIXES #28655 https://bugs.torproject.org/28655
+        When a bridge supports an active probing-resistant transport, it should
+        not give out flavors that are vulnerable to active probing.  For
+        example, if a bridge supports obfs4 and obfs3, it should only give out
+        obfs4.
+
 Changes in version 0.6.3 - 2018-01-23
 
         * FIXES #24432 https://bugs.torproject.org/24432

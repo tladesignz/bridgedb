@@ -19,6 +19,7 @@ import random
 
 from twisted.trial import unittest
 
+from bridgedb.bridges import PluggableTransport
 from bridgedb.Bridges import BridgeRing
 from bridgedb.Bridges import BridgeRingParameters
 from bridgedb.filters import byIPv4
@@ -43,6 +44,7 @@ class HTTPSDistributorTests(unittest.TestCase):
     def setUp(self):
         self.key = 'aQpeOFIj8q20s98awfoiq23rpOIjFaqpEWFoij1X'
         self.bridges = BRIDGES
+        PluggableTransport.probing_resistant_transports = ['scramblesuit', 'obfs4']
 
     def tearDown(self):
         """Reset all bridge blocks in between test method runs."""
@@ -180,6 +182,35 @@ class HTTPSDistributorTests(unittest.TestCase):
             clientRequest2 = self.randomClientRequestForNotBlockedIn('ir')
             b = dist.getBridges(clientRequest2, 1)
             self.assertEqual(len(b), 3)
+
+    def test_HTTPSDistributor_getBridges_probing_vulnerable(self):
+        dist = distributor.HTTPSDistributor(1, self.key)
+        bridges = self.bridges[:]
+        [dist.insert(bridge) for bridge in bridges]
+
+        def requestTransports(bridges, transport, vulnerable):
+            for _ in range(len(bridges)):
+                request = HTTPSBridgeRequest(addClientCountryCode=False)
+                request.client = randomValidIPv4String()
+                request.isValid(True)
+                if transport is not None:
+                    request.transports.append(transport)
+                request.generateFilters()
+
+                obtained_bridges = dist.getBridges(request, 1)
+                for bridge in obtained_bridges:
+                    if vulnerable:
+                        self.assertFalse(bridge.hasProbingResistantPT())
+                        for t in bridge.transports:
+                            self.assertTrue(t.methodname != 'obfs4' and
+                                            t.methodname != 'scramblesuit')
+                    else:
+                        self.assertTrue(bridge.hasProbingResistantPT())
+
+        requestTransports(bridges, None, True)
+        requestTransports(bridges, 'obfs2', True)
+        requestTransports(bridges, 'obfs3', True)
+        requestTransports(bridges, 'obfs4', False)
 
     def test_HTTPSDistributor_getBridges_with_some_blocked_bridges(self):
         dist = distributor.HTTPSDistributor(1, self.key)

@@ -127,6 +127,40 @@ def byIPv(ipVersion=None):
 byIPv4 = byIPv(4)
 byIPv6 = byIPv(6)
 
+def byProbingResistance(methodname=None, ipVersion=None):
+    """Return ``True`` if the bridge can be given out safely without
+    jeopardizing a probing-resistant transport that runs on the same bridge.
+
+    :param str methodname: A Pluggable Transport
+        :data:`~bridgedb.bridges.PluggableTransport.methodname`.
+    :param int ipVersion: Either ``4`` or ``6``. The IP version that the
+        ``Bridge``'s ``PluggableTransport``
+        :attr:`address <bridgedb.bridges.PluggableTransport.address>` should
+        have.
+    :rtype: callable
+    :returns: A filter function for :class:`Bridges <bridgedb.bridges.Bridge>`.
+    """
+
+    if ipVersion not in (4, 6):
+        ipVersion = 4
+
+    methodname = "vanilla" if methodname is None else methodname.lower()
+    name = "by-probing-resistance-%s ipv%d" % (methodname, ipVersion)
+
+    try:
+        return _cache[name]
+    except KeyError:
+        def _byProbingResistance(bridge):
+            if bridge.hasProbingResistantPT():
+                return methodname in ('scramblesuit', 'obfs4')
+            return True
+
+        setattr(_byProbingResistance, "description", "probing_resistance")
+        _byProbingResistance.__name__ = "byProbingResistance(%s,%s)" % (methodname, ipVersion)
+        _byProbingResistance.name = name
+        _cache[name] = _byProbingResistance
+        return _byProbingResistance
+
 def byTransport(methodname=None, ipVersion=None):
     """Returns a filter function for a :class:`~bridgedb.bridges.Bridge`.
 

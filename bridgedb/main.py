@@ -331,6 +331,14 @@ def run(options, reactor=reactor):
             pidfile.write("%s\n" % os.getpid())
             pidfile.flush()
 
+    # Let our pluggable transport class know what transports are resistant to
+    # active probing.  We need to know because we shouldn't hand out a
+    # probing-vulnerable transport on a bridge that supports a
+    # probing-resistant transport.  See
+    # <https://bugs.torproject.org/28655> for details.
+    from bridgedb.bridges import PluggableTransport
+    PluggableTransport.probing_resistant_transports = config.PROBING_RESISTANT_TRANSPORTS
+
     from bridgedb import persistent
 
     state = persistent.State(config=config)

@@ -37,6 +37,8 @@ class FiltersTests(unittest.TestCase):
 
         self.hmac = getHMACFunc('plasma')
 
+        PluggableTransport.probing_resistant_transports = ['scramblesuit', 'obfs4']
+
     def addIPv4VoltronPT(self):
         pt = PluggableTransport('a' * 40, 'voltron', '1.1.1.1', 1111, {})
         self.bridge.transports.append(pt)
@@ -300,6 +302,39 @@ class FiltersTests(unittest.TestCase):
         self.addIPv4VoltronPT()
         filtre = filters.byNotBlockedIn('cn', methodname='obfs3')
         self.assertFalse(filtre(self.bridge))
+
+    def test_byProbingResistance(self):
+        """A bridge with probing-resistant transports must not hand out its
+        non-probing-resistant transports.
+        """
+
+        scramblesuitArgs = {'password': 'NEQGQYLUMUQGK5TFOJ4XI2DJNZTS4LRO'}
+        obfs4Args = {'cert': 'UXj/cWm0qolGrROYpkl0UyD/7PEhzkoZkZXrOpjRKwImvkpQZwmF0nSzBXfyfbT9afBZEw',
+                     'iat-mode': '1'}
+
+        obfs2 = PluggableTransport('a' * 40, 'obfs2', '1.1.1.1', 1111, {})
+        scramblesuit = PluggableTransport('a' * 40, 'scramblesuit', '1.1.1.1',
+                                          1111, scramblesuitArgs)
+        obfs4 = PluggableTransport('a' * 40, 'obfs4', '1.1.1.1', 111,
+                                   obfs4Args)
+        self.bridge.transports.append(obfs2)
+        self.bridge.transports.append(scramblesuit)
+        self.bridge.transports.append(obfs4)
+
+        filtre = filters.byProbingResistance(methodname='obfs2', ipVersion=4)
+        self.assertFalse(filtre(self.bridge))
+
+        filtre = filters.byProbingResistance(methodname="vanilla", ipVersion=4)
+        self.assertFalse(filtre(self.bridge))
+
+        filtre = filters.byProbingResistance(ipVersion=4)
+        self.assertFalse(filtre(self.bridge))
+
+        filtre = filters.byProbingResistance(methodname='scramblesuit', ipVersion=4)
+        self.assertTrue(filtre(self.bridge))
+
+        filtre = filters.byProbingResistance(methodname='obfs4', ipVersion=4)
+        self.assertTrue(filtre(self.bridge))
 
     def test_byNotBlockedIn_ipv5(self):
         """Calling byNotBlockedIn([…], ipVersion=5) should default to IPv4."""

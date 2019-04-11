@@ -196,11 +196,26 @@ def generateFakeBridges(n=500):
         addrs = [(randomValidIPv6(), randomHighPort(), 6)]
         fpr = "".join(random.choice('abcdef0123456789') for _ in xrange(40))
 
-        # We only support the ones without PT args, because they're easier to fake.
         supported = ["obfs2", "obfs3", "fte"]
         transports = []
         for j, method in zip(range(1, len(supported) + 1), supported):
             pt = PluggableTransport(fpr, method, addr, port - j, {})
+            transports.append(pt)
+
+        # Every tenth bridge supports obfs4.
+        if i % 10 == 0:
+            obfs4Args = {'iat-mode': '1',
+                         'node-id': '2a79f14120945873482b7823caabe2fcde848722',
+                         'public-key': '0a5b046d07f6f971b7776de682f57c5b9cdc8fa060db7ef59de82e721c8098f4'}
+            pt = PluggableTransport(fpr, "obfs4", addr, port - j,
+                                    obfs4Args)
+            transports.append(pt)
+
+        # Every fifteenth bridge supports scramblesuit.
+        if i % 15 == 0:
+            scramblesuitArgs = {'password': 'NEQGQYLUMUQGK5TFOJ4XI2DJNZTS4LRO'}
+            pt = PluggableTransport(fpr, "scramblesuit", addr, port - j,
+                                    scramblesuitArgs)
             transports.append(pt)
 
         bridge = Bridge(nick, addr, port, fpr)

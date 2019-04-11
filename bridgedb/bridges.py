@@ -365,6 +365,9 @@ class PluggableTransport(BridgeAddressBase):
             {'password': 'NEQGQYLUMUQGK5TFOJ4XI2DJNZTS4LRO'}
     """
 
+    # A list of PT names that are resistant to active probing attacks.
+    probing_resistant_transports = []
+
     def __init__(self, fingerprint=None, methodname=None,
                  address=None, port=None, arguments=None):
         """Create a ``PluggableTransport`` describing a PT running on a bridge.
@@ -528,6 +531,17 @@ class PluggableTransport(BridgeAddressBase):
                 self._methodname = value.lower()
             except (AttributeError, TypeError):
                 raise TypeError("methodname must be a str or unicode")
+
+    def isProbingResistant(self):
+        """Reveal if this pluggable transport is active probing-resistant.
+
+        :rtype: bool
+        :returns: ``True`` if this pluggable transport is resistant to active
+            probing attacks, ``False`` otherwise.
+        """
+
+        return self.methodname in PluggableTransport.probing_resistant_transports
+
 
     def getTransportLine(self, includeFingerprint=True, bridgePrefix=False):
         """Get a Bridge Line for this :class:`PluggableTransport`.
@@ -1030,6 +1044,13 @@ class Bridge(BridgeBackwardsCompatibility):
             fingerprint = '0' * 40
 
         return prefix + fingerprint + separator + nickname
+
+    def hasProbingResistantPT(self):
+        # We want to know if this bridge runs any active probing-resistant PTs
+        # because if so, we should *only* hand out its active probing-resistant
+        # PTs.  Otherwise, a non-resistant PT would get this bridge scanned and
+        # blocked: <https://bugs.torproject.org/28655>
+        return any([t.isProbingResistant() for t in self.transports])
 
     def _checkServerDescriptor(self, descriptor):
         # If we're parsing the server-descriptor, require a networkstatus

@@ -90,7 +90,7 @@ def generateDescriptors(count=None, rundir=None):
         descriptors, used to calculate the OR fingerprints, and sign the
         descriptors, among other things.
 
-    .. _Leekspin: https://gitweb.torproject.org/user/isis/leekspin.git
+    .. _Leekspin: https://gitweb.torproject.org/user/phw/leekspin.git
 
     :param integer count: Number of mocked bridges to generate descriptor
         for. (default: 3)
