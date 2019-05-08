@@ -178,8 +178,8 @@ def load(state, hashring, clear=False):
         blacklist = parseBridgeBlacklistFile(state.NO_DISTRIBUTION_FILE)
 
         inserted = 0
-        logging.info("Inserting %d bridges into hashring, %d of which have the "
-                     "'Running' flag..." % (len(bridges),
+        logging.info("Trying to insert %d bridges into hashring, %d of which "
+                     "have the 'Running' flag..." % (len(bridges),
                      len(filter(lambda b: b.flags.running, bridges.values()))))
 
         for fingerprint, bridge in bridges.items():
@@ -198,7 +198,8 @@ def load(state, hashring, clear=False):
                 # insertion process.
                 hashring.insert(bridge)
                 inserted += 1
-        logging.info("Done inserting %d bridges into hashring." % inserted)
+        logging.info("Tried to insert %d bridges into hashring.  Resulting "
+                     "hashring is of length %d." % (inserted, len(hashring)))
 
         if state.COLLECT_TIMESTAMPS:
             reactor.callInThread(updateBridgeHistory, bridges, timestamps)
