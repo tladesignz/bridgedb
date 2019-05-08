@@ -178,7 +178,10 @@ def load(state, hashring, clear=False):
         blacklist = parseBridgeBlacklistFile(state.NO_DISTRIBUTION_FILE)
 
         inserted = 0
-        logging.info("Inserting %d bridges into hashring..." % len(bridges))
+        logging.info("Inserting %d bridges into hashring, %d of which have the "
+                     "'Running' flag..." % (len(bridges),
+                     len(filter(lambda b: b.flags.running, bridges.values()))))
+
         for fingerprint, bridge in bridges.items():
             # Skip insertion of bridges which are geolocated to be in one of the
             # NO_DISTRIBUTION_COUNTRIES, a.k.a. the countries we don't distribute
