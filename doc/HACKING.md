@@ -70,4 +70,4 @@ tagged release at that point, i.e.:
 References
 ----------
 [trac]: https://trac.torproject.org/projects/tor/query?status=!closed&component=Circumvention%2FBridgeDB
-[workflow]: http://nvie.com/posts/a-successful-git-branching-model/
+[workflow]: https://nvie.com/posts/a-successful-git-branching-model/
