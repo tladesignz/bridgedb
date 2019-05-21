@@ -234,7 +234,7 @@ class HowtoResourceTests(unittest.TestCase):
         request.method = b'GET'
         request.addArg('lang', 'ru')
         page = self.howtoResource.render_GET(request)
-        self.assertSubstring("следуйте инструкциям установщика", page)
+        self.assertSubstring("следовать инструкциям установщика", page)
 
 
 class CaptchaProtectedResourceTests(unittest.TestCase):
