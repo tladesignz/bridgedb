@@ -1,0 +1,381 @@
+# Translations template for BridgeDB.
+# Copyright (C) 2015 'The Tor Project, Inc.'
+# This file is distributed under the same license as the BridgeDB project.
+# 
+# Translators:
+# Kevin Scannell <kscanne@gmail.com>, 2017
+msgid ""
+msgstr ""
+"Project-Id-Version: Tor Project\n"
+"Report-Msgid-Bugs-To: 'https://trac.torproject.org/projects/tor/newticket?component=BridgeDB&keywords=bridgedb-reported,msgid&cc=isis,sysrqb&owner=isis'\n"
+"POT-Creation-Date: 2015-07-25 03:40+0000\n"
+"PO-Revision-Date: 2017-10-07 19:53+0000\n"
+"Last-Translator: Kevin Scannell <kscanne@gmail.com>\n"
+"Language-Team: Irish (http://www.transifex.com/otf/torproject/language/ga/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.3\n"
+"Language: ga\n"
+"Plural-Forms: nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);\n"
+
+#. TRANSLATORS: Please DO NOT translate the following words and/or phrases in
+#. any string (regardless of capitalization and/or punctuation):
+#. "BridgeDB"
+#. "pluggable transport"
+#. "pluggable transports"
+#. "obfs2"
+#. "obfs3"
+#. "scramblesuit"
+#. "fteproxy"
+#. "Tor"
+#. "Tor Browser"
+#: bridgedb/https/server.py:167
+msgid "Sorry! Something went wrong with your request."
+msgstr "Ár leithscéal! Bhí fadhb leis an iarratas a rinne tú."
+
+#: bridgedb/https/templates/base.html:79
+msgid "Report a Bug"
+msgstr "Tuairiscigh Fabht"
+
+#: bridgedb/https/templates/base.html:82
+msgid "Source Code"
+msgstr "Cód Foinseach"
+
+#: bridgedb/https/templates/base.html:85
+msgid "Changelog"
+msgstr "Logchomhad athruithe"
+
+#: bridgedb/https/templates/base.html:88
+msgid "Contact"
+msgstr "Teagmháil"
+
+#: bridgedb/https/templates/bridges.html:35
+msgid "Select All"
+msgstr "Roghnaigh Uile"
+
+#: bridgedb/https/templates/bridges.html:40
+msgid "Show QRCode"
+msgstr "Taispeáin Cód QR"
+
+#: bridgedb/https/templates/bridges.html:52
+msgid "QRCode for your bridge lines"
+msgstr "Do chuid línte droichid mar chód QR"
+
+#. TRANSLATORS: Please translate this into some silly way to say
+#. "There was a problem!" in your language. For example,
+#. for Italian, you might translate this into "Mama mia!",
+#. or for French: "Sacrebleu!". :)
+#: bridgedb/https/templates/bridges.html:67
+#: bridgedb/https/templates/bridges.html:125
+msgid "Uh oh, spaghettios!"
+msgstr "Ochón ó!"
+
+#: bridgedb/https/templates/bridges.html:68
+msgid "It seems there was an error getting your QRCode."
+msgstr "Dealraíonn sé gur tharla earráid agus do chód QR á fháil."
+
+#: bridgedb/https/templates/bridges.html:73
+msgid ""
+"This QRCode contains your bridge lines. Scan it with a QRCode reader to copy"
+" your bridge lines onto mobile and other devices."
+msgstr "Tá do chuid línte droichid laistigh den chód QR seo. Is féidir é a scanadh le léitheoir QR chun na línte droichid a chóipeáil go dtí fón póca nó gléasanna soghluaiste eile."
+
+#: bridgedb/https/templates/bridges.html:131
+msgid "There currently aren't any bridges available..."
+msgstr "Níl aon droichead ar fáil faoi láthair..."
+
+#: bridgedb/https/templates/bridges.html:132
+#, python-format
+msgid ""
+" Perhaps you should try %s going back %s and choosing a different bridge "
+"type!"
+msgstr "B'fhéidir gur chóir duit %s dul siar %s agus cineál difriúil droichid a roghnú!"
+
+#: bridgedb/https/templates/index.html:11
+#, python-format
+msgid "Step %s1%s"
+msgstr "Céim %s1%s"
+
+#: bridgedb/https/templates/index.html:13
+#, python-format
+msgid "Download %s Tor Browser %s"
+msgstr "Íoslódáil %s Brabhsálaí Tor %s"
+
+#: bridgedb/https/templates/index.html:25
+#, python-format
+msgid "Step %s2%s"
+msgstr "Céim %s2%s"
+
+#: bridgedb/https/templates/index.html:27
+#, python-format
+msgid "Get %s bridges %s"
+msgstr "Faigh %s droichid %s"
+
+#: bridgedb/https/templates/index.html:36
+#, python-format
+msgid "Step %s3%s"
+msgstr "Céim %s3%s"
+
+#: bridgedb/https/templates/index.html:38
+#, python-format
+msgid "Now %s add the bridges to Tor Browser %s"
+msgstr "Anois %s cuir na droichid le Brabhsálaí Tor %s"
+
+#. TRANSLATORS: Please make sure the '%s' surrounding single letters at the
+#. beginning of words are present in your final translation. Thanks!
+#. (These are used to insert HTML5 underlining tags, to mark accesskeys
+#. for disabled users.)
+#: bridgedb/https/templates/options.html:38
+#, python-format
+msgid "%sJ%sust give me bridges!"
+msgstr "%sN%sí theastaíonn uaim ach droichid!"
+
+#: bridgedb/https/templates/options.html:51
+msgid "Advanced Options"
+msgstr "Ardroghanna"
+
+#: bridgedb/https/templates/options.html:86
+msgid "No"
+msgstr "Níl"
+
+#: bridgedb/https/templates/options.html:87
+msgid "none"
+msgstr "dada"
+
+#. TRANSLATORS: Please make sure the '%s' surrounding single letters at the
+#. beginning of words are present in your final translation. Thanks!
+#. TRANSLATORS: Translate "Yes!" as in "Yes! I do need IPv6 addresses."
+#: bridgedb/https/templates/options.html:124
+#, python-format
+msgid "%sY%ses!"
+msgstr "%sT%sá!"
+
+#. TRANSLATORS: Please make sure the '%s' surrounding single letters at the
+#. beginning of words are present in your final translation. Thanks!
+#. TRANSLATORS: Please do NOT translate the word "bridge"!
+#: bridgedb/https/templates/options.html:147
+#, python-format
+msgid "%sG%set Bridges"
+msgstr "%sF%saigh Droichid"
+
+#: bridgedb/strings.py:43
+msgid "[This is an automated message; please do not reply.]"
+msgstr "[Is teachtaireacht uathoibríoch é seo; ná tabhair freagra.]"
+
+#: bridgedb/strings.py:45
+msgid "Here are your bridges:"
+msgstr "Seo do chuid droichead:"
+
+#: bridgedb/strings.py:47
+#, python-format
+msgid ""
+"You have exceeded the rate limit. Please slow down! The minimum time between\n"
+"emails is %s hours. All further emails during this time period will be ignored."
+msgstr "Sháraigh tú an teorainn ráta. Tóg go bog é! Is é %s uair an chloig an tréimhse is lú a cheadaítear idir ríomhphoist. Déanfar neamhaird de aon teachtaireacht eile le linn na tréimhse seo."
+
+#: bridgedb/strings.py:50
+msgid ""
+"COMMANDs: (combine COMMANDs to specify multiple options simultaneously)"
+msgstr "ORDUITHE: (úsáid na hORDUITHE seo chun níos mó ná rogha amháin a shocrú san am céanna)"
+
+#. TRANSLATORS: Please DO NOT translate the word "BridgeDB".
+#: bridgedb/strings.py:53
+msgid "Welcome to BridgeDB!"
+msgstr "Fáilte go BridgeDB!"
+
+#. TRANSLATORS: Please DO NOT translate the words "transport" or "TYPE".
+#: bridgedb/strings.py:55
+msgid "Currently supported transport TYPEs:"
+msgstr "CINEÁLACHA iompair a dtacaítear leo faoi láthair:"
+
+#: bridgedb/strings.py:56
+#, python-format
+msgid "Hey, %s!"
+msgstr "Hóra a %s!"
+
+#: bridgedb/strings.py:57
+msgid "Hello, friend!"
+msgstr "Dia dhuit a chara!"
+
+#: bridgedb/strings.py:58 bridgedb/https/templates/base.html:90
+msgid "Public Keys"
+msgstr "Eochracha Poiblí"
+
+#. TRANSLATORS: This string will end up saying something like:
+#. "This email was generated with rainbows, unicorns, and sparkles
+#. for alice@example.com on Friday, 09 May, 2014 at 18:59:39."
+#: bridgedb/strings.py:62
+#, python-format
+msgid ""
+"This email was generated with rainbows, unicorns, and sparkles\n"
+"for %s on %s at %s."
+msgstr "Leipreacháin a scríobh an ríomhphost seo\nle haghaidh %s ar %s ag %s."
+
+#. TRANSLATORS: Please DO NOT translate "BridgeDB".
+#. TRANSLATORS: Please DO NOT translate "Pluggable Transports".
+#. TRANSLATORS: Please DO NOT translate "Tor".
+#. TRANSLATORS: Please DO NOT translate "Tor Network".
+#: bridgedb/strings.py:72
+#, python-format
+msgid ""
+"BridgeDB can provide bridges with several %stypes of Pluggable Transports%s,\n"
+"which can help obfuscate your connections to the Tor Network, making it more\n"
+"difficult for anyone watching your internet traffic to determine that you are\n"
+"using Tor.\n"
+"\n"
+msgstr "Soláthraíonn BridgeDB droichid a úsáideann %scineálacha éagsúla Iompair Ionphlugáilte%s, a cheileann do cheangal le Líonra Tor, sa chaoi go mbeidh sé níos deacra d'éinne atá ag faire ar do thrácht Idirlín déanamh amach go bhfuil tú ag úsáid Tor.\n\n"
+
+#. TRANSLATORS: Please DO NOT translate "Pluggable Transports".
+#: bridgedb/strings.py:79
+msgid ""
+"Some bridges with IPv6 addresses are also available, though some Pluggable\n"
+"Transports aren't IPv6 compatible.\n"
+"\n"
+msgstr "Tá roinnt droichead a úsáideann seoltaí IPv6 ar fáil, cé nach bhfuil Córais Iompair Ionphlugáilte áirithe comhoiriúnach le IPv6.\n\n"
+
+#. TRANSLATORS: Please DO NOT translate "BridgeDB".
+#. TRANSLATORS: The phrase "plain-ol'-vanilla" means "plain, boring,
+#. regular, or unexciting". Like vanilla ice cream. It refers to bridges
+#. which do not have Pluggable Transports, and only speak the regular,
+#. boring Tor protocol. Translate it as you see fit. Have fun with it.
+#: bridgedb/strings.py:88
+#, python-format
+msgid ""
+"Additionally, BridgeDB has plenty of plain-ol'-vanilla bridges %s without any\n"
+"Pluggable Transports %s which maybe doesn't sound as cool, but they can still\n"
+"help to circumvent internet censorship in many cases.\n"
+"\n"
+msgstr "Tá go leor gnáthdhroichead ar fáil mar chuid de BridgeDB freisin, droichid %s nach mbaineann úsáid as córais iompair ionphlugáilte %s. B'fhéidir nach bhfuil siad chomh spéisiúil sin, ach cabhraíonn siad leat cinsireacht Idirlín a sheachaint mar sin féin.\n\n"
+
+#: bridgedb/strings.py:101
+msgid "What are bridges?"
+msgstr "Cad is droichead ann?"
+
+#: bridgedb/strings.py:102
+#, python-format
+msgid "%s Bridges %s are Tor relays that help you circumvent censorship."
+msgstr "Is éard atá i %snDroichead%s ná athsheachadán Tor a chabhraíonn leat cinsireacht a sheachaint."
+
+#: bridgedb/strings.py:107
+msgid "I need an alternative way of getting bridges!"
+msgstr "Teastaíonn uaim bealach malartach le droichid a fháil!"
+
+#: bridgedb/strings.py:108
+#, python-format
+msgid ""
+"Another way to get bridges is to send an email to %s. Please note that you must\n"
+"send the email using an address from one of the following email providers:\n"
+"%s, %s or %s."
+msgstr "Is féidir droichid a fháil freisin trí ríomhphost a sheoladh chuig %s. Caithfidh tú an teachtaireacht a sheoladh ó cheann de na soláthraithe ríomhphoist seo a leanas:\n%s, %s nó %s."
+
+#: bridgedb/strings.py:115
+msgid "My bridges don't work! I need help!"
+msgstr "Níl mo chuid droichead ag obair! Tá cúnamh uaim!"
+
+#. TRANSLATORS: Please DO NOT translate "Tor".
+#: bridgedb/strings.py:117
+#, python-format
+msgid "If your Tor doesn't work, you should email %s."
+msgstr "Mura bhfuil Tor ag obair duit, seol ríomhphost chuig %s."
+
+#. TRANSLATORS: Please DO NOT translate "Pluggable Transports".
+#. TRANSLATORS: Please DO NOT translate "Tor Browser".
+#. TRANSLATORS: Please DO NOT translate "Tor".
+#: bridgedb/strings.py:121
+msgid ""
+"Try including as much info about your case as you can, including the list of\n"
+"bridges and Pluggable Transports you tried to use, your Tor Browser version,\n"
+"and any messages which Tor gave out, etc."
+msgstr "Déan iarracht an méid is mó eolais agus is féidir a sholáthar: na droichid agus na córais iompair ionphlugáilte a d'úsáid tú, an leagan de do bhrabhsálaí Tor, teachtaireachtaí a chuir Tor amach, srl."
+
+#: bridgedb/strings.py:128
+msgid "Here are your bridge lines:"
+msgstr "Seo do chuid línte droichid:"
+
+#: bridgedb/strings.py:129
+msgid "Get Bridges!"
+msgstr "Faigh Droichid!"
+
+#: bridgedb/strings.py:133
+msgid "Please select options for bridge type:"
+msgstr "Roghanna don chineál droichid:"
+
+#: bridgedb/strings.py:134
+msgid "Do you need IPv6 addresses?"
+msgstr "An dteastaíonn seoltaí IPv6 uait?"
+
+#: bridgedb/strings.py:135
+#, python-format
+msgid "Do you need a %s?"
+msgstr "An dteastaíonn %s uait?"
+
+#: bridgedb/strings.py:139
+msgid "Your browser is not displaying images properly."
+msgstr "Níl do bhrabhsálaí ag taispeáint íomhánna mar is ceart."
+
+#: bridgedb/strings.py:140
+msgid "Enter the characters from the image above..."
+msgstr "Cuir isteach na carachtair ón íomhá thuas..."
+
+#: bridgedb/strings.py:144
+msgid "How to start using your bridges"
+msgstr "Conas do chuid droichead a úsáid"
+
+#. TRANSLATORS: Please DO NOT translate "Tor Browser".
+#: bridgedb/strings.py:146
+#, python-format
+msgid ""
+"To enter bridges into Tor Browser, first go to the %s Tor Browser download\n"
+"page %s and then follow the instructions there for downloading and starting\n"
+"Tor Browser."
+msgstr "Chun droichid a chur le Brabhsálaí Tor, ar dtús oscail an %sleathanach íoslódála%s, ansin lean na treoracha atá ann leis an mbrabhsálaí a íoslódáil agus a thosú."
+
+#. TRANSLATORS: Please DO NOT translate "Tor".
+#: bridgedb/strings.py:151
+msgid ""
+"When the 'Tor Network Settings' dialogue pops up, click 'Configure' and follow\n"
+"the wizard until it asks:"
+msgstr "Nuair a osclaíonn an fhuinneog 'Socruithe Líonra Tor', cliceáil 'Cumraigh' agus lean an treoraí go dtí go bhfiafraíonn sé:"
+
+#. TRANSLATORS: Please DO NOT translate "Tor".
+#: bridgedb/strings.py:155
+msgid ""
+"Does your Internet Service Provider (ISP) block or otherwise censor connections\n"
+"to the Tor network?"
+msgstr "An bhfuil do Sholáthraí Seirbhíse Idirlín (ISP) ag cur cosc ar, nó ag déanamh cinsireacht ar cheangail le Líonra Tor?"
+
+#. TRANSLATORS: Please DO NOT translate "Tor".
+#: bridgedb/strings.py:159
+msgid ""
+"Select 'Yes' and then click 'Next'. To configure your new bridges, copy and\n"
+"paste the bridge lines into the text input box. Finally, click 'Connect', and\n"
+"you should be good to go! If you experience trouble, try clicking the 'Help'\n"
+"button in the 'Tor Network Settings' wizard for further assistance."
+msgstr "Roghnaigh 'Tá' ansin cliceáil 'Ar Aghaidh'. Chun na droichid nua a chumrú, cóipeáil agus greamaigh na línte droichid isteach sa mbosca ionchurtha. Ansin, cliceáil 'Ceangail' agus beidh gach uile rud réidh! Má tharlaíonn aon fhadhb, cliceáil an cnaipe 'Cabhair' sa treoraí 'Socruithe Líonra Tor' chun tuilleadh eolais a fháil."
+
+#: bridgedb/strings.py:167
+msgid "Displays this message."
+msgstr "Taispeánann sé an teachtaireacht seo."
+
+#. TRANSLATORS: Please try to make it clear that "vanilla" here refers to the
+#. same non-Pluggable Transport bridges described above as being
+#. "plain-ol'-vanilla" bridges.
+#: bridgedb/strings.py:171
+msgid "Request vanilla bridges."
+msgstr "Iarr gnáthdhroichid."
+
+#: bridgedb/strings.py:172
+msgid "Request IPv6 bridges."
+msgstr "Iarr droichid IPv6."
+
+#. TRANSLATORS: Please DO NOT translate the word the word "TYPE".
+#: bridgedb/strings.py:174
+msgid "Request a Pluggable Transport by TYPE."
+msgstr "Iarr Córas Iompair Ionphlugáilte de réir a CHINEÁL."
+
+#. TRANSLATORS: Please DO NOT translate "BridgeDB".
+#. TRANSLATORS: Please DO NOT translate "GnuPG".
+#: bridgedb/strings.py:177
+msgid "Get a copy of BridgeDB's public GnuPG key."
+msgstr "Faigh cóip den eochair phoiblí GnuPG a úsáideann BridgeDB."
