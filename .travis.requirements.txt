@@ -15,7 +15,7 @@
 #------------------------------------------------------------------------------
 coverage==4.2
 coveralls==1.2.0
-git+https://git.torproject.org/user/isis/leekspin.git@bad0bed11a9018f65555b3c6998b26e2cb06f5b5#egg=leekspin-2.2.0.dev1-py2.7
+git+https://git.torproject.org/user/phw/leekspin.git@d34c804cd0f01af5206833e62c0dedec8565b235#egg=leekspin
 mechanize==0.2.5
 sure==1.2.2
 Babel==0.9.6

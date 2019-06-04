@@ -28,6 +28,7 @@ from bridgedb.crypto import getHMACFunc
 from bridgedb.filters import byIPv
 from bridgedb.filters import byNotBlockedIn
 from bridgedb.filters import byTransport
+from bridgedb.filters import byProbingResistance
 
 
 class IRequestBridges(Interface):
@@ -237,6 +238,12 @@ class BridgeRequestBase(object):
         pt = self.justOnePTType()
         msg = ("Adding a filter to %s for %s for IPv%d"
                % (self.__class__.__name__, self.client, self.ipVersion))
+
+        # If this bridge runs any active probing-resistant PTs, we should
+        # *only* hand out its active probing-resistant PTs.  Otherwise, a
+        # non-resistant PT would get this bridge scanned and blocked:
+        # <https://bugs.torproject.org/28655>
+        self.addFilter(byProbingResistance(pt, self.ipVersion))
 
         if self.notBlockedIn:
             for country in self.notBlockedIn:
