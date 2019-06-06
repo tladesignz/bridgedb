@@ -1,5 +1,14 @@
 Changes in version 0.6.X - YYYY-MM-DD
 
+        * FIXES #28496 https://bugs.torproject.org/28496
+        Remove Yahoo from the list of allowed email domains.  Yahoo allows you
+        to create up to 500 disposable email addresses, which BridgeDB
+        interprets as unique:
+        https://bugs.torproject.org/28496#comment:8
+        We could address this issue in BridgeDB but at this point we seem better
+        off dropping support for Yahoo because the provider likely also fell
+        behind in Sybil protection.
+
         * FIXES #28655 https://bugs.torproject.org/28655
         When a bridge supports an active probing-resistant transport, it should
         not give out flavors that are vulnerable to active probing.  For

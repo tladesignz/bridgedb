@@ -520,7 +520,7 @@ class SMTPAutoresponderTests(unittest.TestCase):
         reported being from an email address at one supported domain and the
         email's 'From:' header reported another domain.
         """
-        smtpFrom = 'not.an.evil.bot@yahoo.com'
+        smtpFrom = 'not.an.evil.bot@riseup.net'
         emailFrom = Address('not.an.evil.bot@gmail.com')
         self._getIncomingLines(str(emailFrom))
         self._setUpResponder()

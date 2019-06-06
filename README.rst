@@ -401,10 +401,9 @@ Accessing the Email User Interface
 ----------------------------------
 
 Any mail sent to the ``EMAIL_PORT`` with a destination username as defined by
-the ``EMAIL_USERNAME`` configuration option (the default is ``'bridge'``,
-e.g. bridges@...) and sent from an ``@riseup.net``, ``@gmail.com``, or
-``@yahoo.com`` address (by default, but configurable with the
-``EMAIL_DOMAINS`` option).
+the ``EMAIL_USERNAME`` configuration option (the default is ``'bridge'``, e.g.
+bridges@...) and sent from an ``@riseup.net`` or ``@gmail.com`` address (by
+default, but configurable with the ``EMAIL_DOMAINS`` option).
 
 You can email our BridgeDB instance `here <mailto:bridges@torproject.org>`__.
 
