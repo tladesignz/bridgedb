@@ -6,6 +6,15 @@ Changes in version 0.6.X - YYYY-MM-DD
         example, if a bridge supports obfs4 and obfs3, it should only give out
         obfs4.
 
+        * FIXES #30706 https://bugs.torproject.org/30706
+        Do some simple BridgeDB housekeeping: Add missing CHANGELOG entries, add
+        Philipp's contact info to the support section, fix a broken Trac URL,
+        and turn HTTP link into HTTPS.
+
+        * FIXES #30157: https://bugs.torproject.org/30157
+        Update BridgeDB translations.  This ticket both adds new translations
+        and updates existing ones.
+
 Changes in version 0.6.9 - 2018-11-20
 
         * FIXES #23894 https://bugs.torproject.org/23894
