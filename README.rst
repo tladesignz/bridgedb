@@ -590,5 +590,6 @@ Contact & Support
 =================
 
 Send your questions, patches, and suggestions to
-`the tor-dev mailing list <mailto:tor-dev@lists.torproject.org>`__
-or `sysrqb <mailto:sysrqb@torproject.org>`__.
+`the tor-dev mailing list <mailto:tor-dev@lists.torproject.org>`__,
+`sysrqb <mailto:sysrqb@torproject.org>`__, or
+`phw <mailto:phw@torproject.org>`__.

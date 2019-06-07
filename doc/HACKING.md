@@ -69,5 +69,5 @@ tagged release at that point, i.e.:
 
 References
 ----------
-[trac]: https://trac.torproject.org/projects/tor/query?status=accepted&status=assigned&status=needs_information&status=needs_review&status=needs_revision&status=new&status=reopened&component=BridgeDB&groupdesc=1&group=priority&col=id&col=summary&col=status&col=type&col=priority&col=changetime&report=34&order=priority
-[workflow]: http://nvie.com/posts/a-successful-git-branching-model/
+[trac]: https://trac.torproject.org/projects/tor/query?status=!closed&component=Circumvention%2FBridgeDB
+[workflow]: https://nvie.com/posts/a-successful-git-branching-model/
