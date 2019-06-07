@@ -6,6 +6,44 @@ Changes in version 0.6.X - YYYY-MM-DD
         example, if a bridge supports obfs4 and obfs3, it should only give out
         obfs4.
 
+Changes in version 0.6.9 - 2018-11-20
+
+        * FIXES #23894 https://bugs.torproject.org/23894
+        Really change the contact address, in the correct place this time.
+
+Changes in version 0.6.8 - 2018-11-19
+
+        * FIXES #28528 https://bugs.torproject.org/28528
+        Change maintainer info.
+
+        * FIXES #23894 https://bugs.torproject.org/23894
+        Change contact email address.
+
+Changes in version 0.6.7 - 2018-05-21
+
+        Print fingerprints in hex thank you very much.
+
+Changes in version 0.6.6 - 2018-05-21
+
+        * FIXES #26150 https://bugs.torproject.org/26150
+        Hotfix for strange bridges missing address fields.
+
+Changes in version 0.6.5 - 2018-05-04
+
+        * FIXES #26023 https://bugs.torproject.org/26023
+        There's few bridges whose ed25519 certificates contain the year 491869,
+        which the datetime module (called from Stem) believes "out of range". So
+        instead we'll parse the descriptors one at a time and catch the errors
+        as we go.
+
+        * FIXES #25246 https://bugs.torproject.org/25246
+        Add script for assigning unallocated bridges to another distributor.
+
+Changes in version 0.6.4 - 2018-02-13
+
+        * FIXES #24432 https://bugs.torproject.org/24432
+        Add config option to skip loopback addresses in X-Forwarded-For parsing.
+
 Changes in version 0.6.3 - 2018-01-23
 
         * FIXES #24432 https://bugs.torproject.org/24432
