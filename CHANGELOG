@@ -1,4 +1,4 @@
-Changes in version 0.7.1 - YYYY-MM-DD
+Changes in version 0.7.1 - 2019-06-07
 
         * FIXES #28496 https://bugs.torproject.org/28496
         Remove Yahoo from the list of allowed email domains.  Yahoo allows you
