@@ -1,0 +1,298 @@
+#!/usr/bin/env python2.7
+#
+# This file is part of BridgeDB, a Tor bridge distribution system.
+
+import os
+import random
+import sys
+import time
+import ipaddr
+import math
+import argparse
+import hashlib
+
+# A bunch of Tor version numbers.
+SERVER_VERSIONS = ["0.2.2.39",
+                   "0.2.3.24-rc",
+                   "0.2.3.25",
+                   "0.2.4.5-alpha",
+                   "0.2.4.6-alpha",
+                   "0.2.4.7-alpha",
+                   "0.2.4.8-alpha",
+                   "0.2.4.9-alpha",
+                   "0.2.4.10-alpha",
+                   "0.2.4.11-alpha",
+                   "0.2.4.12-alpha",
+                   "0.2.4.14-alpha",
+                   "0.2.4.15-rc",
+                   "0.2.4.16-rc",
+                   "0.2.4.17-rc",
+                   "0.2.4.18-rc",
+                   "0.2.4.19",
+                   "0.2.4.20",
+                   "0.2.5.1-alpha",
+                   ]
+
+try:
+    import stem
+    import stem.descriptor
+    from stem.descriptor.server_descriptor import RelayDescriptor
+    from stem.descriptor.extrainfo_descriptor import RelayExtraInfoDescriptor
+    from stem.descriptor.networkstatus import NetworkStatusDocumentV3
+except ImportError:
+    print("Creating descriptors requires stem <https://stem.torproject.org>")
+    sys.exit(1)
+
+if not hasattr(stem.descriptor, "create_signing_key"):
+    print("This requires stem version 1.6 or later but you are running "
+          "version %s" % stem.__version__)
+    sys.exit(1)
+
+
+def make_output_dir():
+    if not os.path.exists(os.getcwd()):
+        os.mkdir(os.getcwd())
+
+
+def write_descriptors(descs, filename):
+    make_output_dir()
+    with open(os.path.join(os.getcwd(), filename), "w") as descriptor_file:
+        for descriptor in descs:
+            descriptor_file.write(str(descriptor))
+
+
+def write_descriptor(desc, filename):
+    make_output_dir()
+    with open(os.path.join(os.getcwd(), filename), "w") as descriptor_file:
+        descriptor_file.write(str(desc))
+
+
+def check_ip_validity(ip):
+    if (ip.is_link_local or
+        ip.is_loopback or
+        ip.is_multicast or
+        ip.is_private or
+        ip.is_unspecified or
+       ((ip.version == 6) and ip.is_site_local) or
+       ((ip.version == 4) and ip.is_reserved)):
+        return False
+    return True
+
+
+def get_transport_line(probing_resistant, addr, port):
+    """
+    If probing_resistant is True, add a transport protocol that's resistant to
+    active probing attacks.
+    """
+
+    transports = []
+    if probing_resistant:
+        transports.append("obfs2 %s:%s" % (addr, port-10))
+        iat_mode = random.randint(0, 1)
+        node_id = hashlib.sha1(bytes(random.getrandbits(8))).hexdigest()
+        public_key = hashlib.sha256(bytes(random.getrandbits(8))).hexdigest()
+        transports.append("obfs4 %s:%s iat-mode=%s,node-id=%s,public-key=%s" %
+                          (addr, port-20, iat_mode, node_id, public_key))
+
+        # Always include obfs4 and occasionally include scramblesuit.
+
+        if random.randint(0, 1) > 0:
+            transports.append("scramblesuit 216.117.3.62:63174 "
+                              "password=ABCDEFGHIJKLMNOPQRSTUVWXYZ234567")
+    else:
+        transports.append("obfs2 %s:%s" % (addr, port-10))
+        transports.append("obfs3 %s:%s" % (addr, port-20))
+
+    return "\ntransport ".join(transports)
+
+
+def get_hex_string(size):
+    hexstr = ""
+    for _ in range(size):
+        hexstr += random.choice("ABCDEF0123456789")
+    return hexstr
+
+
+def get_random_ipv6_addr():
+    valid_addr = None
+    while not valid_addr:
+        maybe = ipaddr.IPv6Address(random.getrandbits(128))
+        valid = check_ip_validity(maybe)
+        if valid:
+            valid_addr = maybe
+            break
+    return str(valid_addr)
+
+
+def get_random_ipv4_addr():
+    return "%i.%i.%i.%i" % (random.randint(0, 255),
+                            random.randint(0, 255),
+                            random.randint(0, 255),
+                            random.randint(0, 255))
+
+
+def get_protocol(tor_version):
+    line = ""
+    if tor_version is not None:
+        line += "opt "
+    line += "protocols Link 1 2 Circuit 1"
+    return line
+
+
+def make_timestamp(now=None, fmt=None, variation=False, period=None):
+    now = int(now) if now is not None else int(time.time())
+    fmt = fmt if fmt else "%Y-%m-%d %H:%M:%S"
+
+    if variation:
+        then = 1
+        if period is not None:
+            secs = int(period) * 3600
+            then = now - secs
+        # Get a random number between one epochseconds number and another
+        diff = random.randint(then, now)
+        # Then rewind the clock
+        now = diff
+
+    return time.strftime(fmt, time.localtime(now))
+
+
+def make_bandwidth(variance=30):
+    observed = random.randint(20 * 2**10, 2 * 2**30)
+    percentage = float(variance) / 100.
+    burst = int(observed + math.ceil(observed * percentage))
+    bandwidths = [burst, observed]
+    nitems = len(bandwidths) if (len(bandwidths) > 0) else float("nan")
+    avg = int(math.ceil(float(sum(bandwidths)) / nitems))
+    return "%s %s %s" % (avg, burst, observed)
+
+
+def make_bridge_distribution_request():
+
+    methods = [
+        "any",
+        "none",
+        "https",
+        "email",
+        "moat",
+    ]
+
+    return random.choice(methods)
+
+
+def create_server_desc(signing_key):
+    """
+    Create and return a server descriptor.
+    """
+
+    nickname = ("Unnamed%i" % random.randint(0, 100000000000000))[:19]
+
+    # We start at port 10 because we subtract from this port to get port
+    # numbers for IPv6 and obfuscation protocols.
+
+    port = random.randint(10, 65535)
+    tor_version = random.choice(SERVER_VERSIONS)
+    timestamp = make_timestamp(variation=True, period=36)
+
+    server_desc = RelayDescriptor.create({
+        "router": "%s %s %s 0 0" % (nickname, get_random_ipv4_addr(), port),
+        "or-address": "[%s]:%s" % (get_random_ipv6_addr(), port-1),
+        "platform": "Tor %s on Linux" % tor_version,
+        get_protocol(tor_version): "",
+        "published": timestamp,
+        "uptime": str(int(random.randint(1800, 63072000))),
+        "bandwidth": make_bandwidth(),
+        "contact": "Somebody <somebody@example.com>",
+        "bridge-distribution-request": make_bridge_distribution_request(),
+        "reject": "*:*",
+    }, signing_key=signing_key)
+
+    return server_desc
+
+
+def create_extrainfo_desc(server_desc, signing_key, probing_resistant):
+    """
+    Create and return an extrainfo descriptor.
+    """
+
+    ts = server_desc.published
+
+    extrainfo_desc = RelayExtraInfoDescriptor.create({
+        "extra-info": "%s %s" % (server_desc.nickname,
+                                 server_desc.fingerprint),
+        "transport": get_transport_line(probing_resistant,
+                                        server_desc.address,
+                                        server_desc.or_port),
+        "write-history": "%s (900 s) 3188736,2226176,2866176" % ts,
+        "read-history": "%s (900 s) 3891200,2483200,2698240" % ts,
+        "dirreq-write-history": "%s (900 s) 1024,0,2048" % ts,
+        "dirreq-read-history": "%s (900 s) 0,0,0" % ts,
+        "geoip-db-digest": "%s" % get_hex_string(40),
+        "geoip6-db-digest": "%s" % get_hex_string(40),
+        "dirreq-stats-end": "%s (86400 s)" % ts,
+        "dirreq-v3-ips": "",
+        "dirreq-v3-reqs": "",
+        "dirreq-v3-resp": "ok=16,not-enough-sigs=0,unavailable=0,"
+                          "not-found=0,not-modified=0,busy=0",
+        "dirreq-v3-direct-dl": "complete=0,timeout=0,running=0",
+        "dirreq-v3-tunneled-dl": "complete=12,timeout=0,running=0",
+        "bridge-stats-end": "%s (86400 s)" % ts,
+        "bridge-ips": "ca=8",
+        "bridge-ip-versions": "v4=8,v6=0",
+        "bridge-ip-transports": "<OR>=8",
+    }, signing_key=signing_key)
+
+    return extrainfo_desc
+
+
+def make_descriptors(count, num_probing_resistant):
+    """
+    Create fake descriptors and write them to the working directory.
+    """
+
+    consensus_entries = []
+    server_descriptors = []
+    extrainfos_old = []
+    extrainfos_new = []
+
+    for i in range(count):
+        signing_key = stem.descriptor.create_signing_key()
+
+        server_desc = create_server_desc(signing_key)
+        server_descriptors.append(server_desc)
+        consensus_entries.append(server_desc.make_router_status_entry())
+
+        extrainfo_desc = create_extrainfo_desc(server_desc,
+                                               signing_key,
+                                               num_probing_resistant > 0)
+        if random.random() > 0.75:
+            extrainfos_new.append(extrainfo_desc)
+        else:
+            extrainfos_old.append(extrainfo_desc)
+
+        if num_probing_resistant > 0:
+            num_probing_resistant -= 1
+
+    consensus = NetworkStatusDocumentV3.create(routers=consensus_entries)
+    write_descriptor(consensus, "networkstatus-bridges")
+    write_descriptors(server_descriptors, "bridge-descriptors")
+    write_descriptors(extrainfos_old, "cached-extrainfo")
+    write_descriptors(extrainfos_new, "cached-extrainfo.new")
+
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description="Create fake descriptors.")
+    parser.add_argument("num_descs",
+                        type=int,
+                        help="The number of descriptors to create.")
+    parser.add_argument("--num-resistant-descs",
+                        dest="num_resistant_descs",
+                        type=int,
+                        default=-1,
+                        help="The number of active probing-resistant "
+                             "descriptors to create")
+    args = parser.parse_args()
+    if args.num_resistant_descs == -1:
+        args.num_resistant_descs = args.num_descs
+
+    make_descriptors(args.num_descs, args.num_resistant_descs)

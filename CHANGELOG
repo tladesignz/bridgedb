@@ -12,6 +12,10 @@ Changes in version 0.8.0 - YYYY-MM-DD
         * FIXES #26542 https://bugs.torproject.org/26542
         Make BridgeDB distribute vanilla IPv6 bridges again.
 
+        * FIXES #22755 https://bugs.torproject.org/22755
+        Use stem instead of leekspin to create test descriptors.  We now don't
+        need to depend on leekspin anymore.
+
 Changes in version 0.7.1 - 2019-06-07
 
         * FIXES #28496 https://bugs.torproject.org/28496
