@@ -344,6 +344,8 @@ class BridgeRing(object):
             bridges = [self.bridges[k] for k in keys]
 
         bridges = bridges[:N]
+        logging.debug("Caller asked for N=%d, filterBySubnet=%s bridges.  "
+                      "Returning %d bridges." % (N, filterBySubnet, len(bridges)))
 
         return bridges
 
