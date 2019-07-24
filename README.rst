@@ -362,16 +362,6 @@ Or just give it a SIGHUP::
       kill -s SIGHUP `cat .../run/bridgedb.pid`
 
 
-----------------------------------
-To extract all bridge assignments:
-----------------------------------
-
-To dump all bridge assignments to files, send BridgeDB a ``SIGUSR1``
-signal by doing::
-
-      kill -s SIGUSR1 `cat .../run/bridgedb.pid`
-
-
 =========================
 Using a BridgeDB Instance
 =========================
