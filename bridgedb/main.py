@@ -359,7 +359,6 @@ def run(options, reactor=reactor):
     moatDistributor = None
 
     # Save our state
-    state.proxies = proxies
     state.key = key
     state.save()
 
@@ -411,13 +410,13 @@ def run(options, reactor=reactor):
         logging.info("Reloading the list of open proxies...")
         for proxyfile in cfg.PROXY_LIST_FILES:
             logging.info("Loading proxies from: %s" % proxyfile)
-            proxy.loadProxiesFromFile(proxyfile, state.proxies, removeStale=True)
+            proxy.loadProxiesFromFile(proxyfile, proxies, removeStale=True)
 
         logging.info("Reparsing bridge descriptors...")
         (hashring,
          emailDistributorTmp,
          ipDistributorTmp,
-         moatDistributorTmp) = createBridgeRings(cfg, state.proxies, key)
+         moatDistributorTmp) = createBridgeRings(cfg, proxies, key)
         logging.info("Bridges loaded: %d" % len(hashring))
 
         # Initialize our DB.
@@ -483,7 +482,7 @@ def run(options, reactor=reactor):
         if config.TASKS['GET_TOR_EXIT_LIST']:
             tasks['GET_TOR_EXIT_LIST'] = task.LoopingCall(
                 proxy.downloadTorExits,
-                state.proxies,
+                proxies,
                 config.SERVER_PUBLIC_EXTERNAL_IP)
 
         if config.TASKS.get('DELETE_UNPARSEABLE_DESCRIPTORS'):

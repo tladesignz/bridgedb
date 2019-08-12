@@ -51,7 +51,7 @@ def downloadTorExits(proxyList, ipaddress, port=443, protocol=None):
     """
     proto = ExitListProtocol() if protocol is None else protocol()
     args = [proto.script, '--stdout', '-a', ipaddress, '-p', str(port)]
-    proto.deferred.addCallback(proxyList.addExitRelays)
+    proto.deferred.addCallback(proxyList.replaceExitRelays)
     proto.deferred.addErrback(logging.exception)
     transport = reactor.spawnProcess(proto, proto.script, args=args, env={})
     return proto.deferred
@@ -76,7 +76,7 @@ def loadProxiesFromFile(filename, proxySet=None, removeStale=False):
     :returns: A list of all the proxies listed in the **files* (regardless of
         whether they were added or removed).
     """
-    logging.info("Reloading proxy lists...")
+    logging.info("Reloading proxy lists from file %s" % filename)
 
     addresses = []
 
@@ -255,6 +255,17 @@ class ProxySet(MutableSet):
     def addExitRelays(self, relays):
         logging.info("Loading exit relays into proxy list...")
         [self.add(x, self._exitTag) for x in relays]
+
+    def replaceExitRelays(self, relays):
+        existingExitRelays = self.getAllWithTag(self._exitTag)
+        logging.debug("Replacing %d existing with %d new exit relays." %
+                      (len(existingExitRelays), len(relays)))
+
+        for relay in existingExitRelays:
+            self.discard(relay)
+
+        self.addExitRelays(relays)
+
 
     def getTag(self, ip):
         """Get the tag for an **ip** in this ``ProxySet``, if available.

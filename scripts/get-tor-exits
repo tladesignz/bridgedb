@@ -36,7 +36,7 @@ from twisted.internet.error import DNSLookupError
 from twisted.internet.error import TimeoutError
 
 
-log.startLogging(sys.stderr)
+log.startLogging(sys.stderr, setStdout=False)
 
 
 def backupFile(filename):
