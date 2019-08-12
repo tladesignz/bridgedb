@@ -25,6 +25,7 @@ from bridgedb import persistent
 from bridgedb import proxy
 from bridgedb import runner
 from bridgedb import util
+from bridgedb import metrics
 from bridgedb.bridges import MalformedBridgeInfo
 from bridgedb.bridges import MissingServerDescriptorDigest
 from bridgedb.bridges import ServerDescriptorDigestMismatch
@@ -71,6 +72,22 @@ def writeAssignments(hashring, filename):
             hashring.dumpAssignments(fh)
     except IOError:
         logging.info("I/O error while writing assignments to: '%s'" % filename)
+
+def writeMetrics(filename, measurementInterval):
+    """Dump usage metrics to disk.
+
+    :param str filename: The filename to write the metrics to.
+    :param int measurementInterval: The number of seconds after which we rotate
+        and dump our metrics.
+    """
+
+    logging.debug("Dumping metrics to file: '%s'" % filename)
+
+    try:
+        with open(filename, 'a') as fh:
+            metrics.export(fh, measurementInterval)
+    except IOError as err:
+        logging.error("Failed to write metrics to '%s': %s" % (filename, err))
 
 def load(state, hashring, clear=False):
     """Read and parse all descriptors, and load into a bridge hashring.
@@ -398,6 +415,7 @@ def run(options, reactor=reactor):
         for proxyfile in cfg.PROXY_LIST_FILES:
             logging.info("Loading proxies from: %s" % proxyfile)
             proxy.loadProxiesFromFile(proxyfile, proxies, removeStale=True)
+        metrics.setProxies(proxies)
 
         logging.info("Reparsing bridge descriptors...")
         (hashring,
@@ -463,6 +481,8 @@ def run(options, reactor=reactor):
         if config.EMAIL_DIST and config.EMAIL_SHARE:
             addSMTPServer(config, emailDistributor)
 
+        metrics.setSupportedTransports(config.SUPPORTED_TRANSPORTS)
+
         tasks = {}
 
         # Setup all our repeating tasks:
@@ -483,14 +503,19 @@ def run(options, reactor=reactor):
             runner.cleanupUnparseableDescriptors,
             os.path.dirname(config.STATUS_FILE), delUnparseableSecs)
 
+        measurementInterval, _ = config.TASKS['EXPORT_METRICS']
+        tasks['EXPORT_METRICS'] = task.LoopingCall(
+            writeMetrics, state.METRICS_FILE, measurementInterval)
+
         # Schedule all configured repeating tasks:
-        for name, seconds in config.TASKS.items():
+        for name, value in config.TASKS.items():
+            seconds, startNow = value
             if seconds:
                 try:
                     # Set now to False to get the servers up and running when
                     # first started, rather than spend a bunch of time in
                     # scheduled tasks.
-                    tasks[name].start(abs(seconds), now=False)
+                    tasks[name].start(abs(seconds), now=startNow)
                 except KeyError:
                     logging.info("Task %s is disabled and will not run." % name)
                 else:

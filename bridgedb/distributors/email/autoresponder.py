@@ -48,6 +48,8 @@ from twisted.internet import reactor
 from twisted.mail import smtp
 from twisted.python import failure
 
+from bridgedb import strings
+from bridgedb import metrics
 from bridgedb import safelog
 from bridgedb.crypto import NEW_BUFFER_INTERFACE
 from bridgedb.distributors.email import dkim
@@ -61,6 +63,10 @@ from bridgedb.parse import addr
 from bridgedb.parse.addr import canonicalizeEmailDomain
 from bridgedb.util import levenshteinDistance
 from bridgedb import translations
+
+# We use our metrics singleton to keep track of BridgeDB metrics such as
+# "number of failed HTTPS bridge requests."
+metrix = metrics.EmailMetrics()
 
 
 def createResponseBody(lines, context, client, lang='en'):
@@ -424,6 +430,16 @@ class SMTPAutoresponder(smtp.SMTPClient):
         body = createResponseBody(self.incoming.lines,
                                   self.incoming.context,
                                   client, lang)
+
+        # The string EMAIL_MISC_TEXT[1] shows up in an email if BridgeDB
+        # responds with bridges.  Everything else we count as an invalid
+        # request.
+        translator = translations.installTranslations(lang)
+        if body is not None and translator.gettext(strings.EMAIL_MISC_TEXT[1]) in body:
+            metrix.recordValidEmailRequest(self)
+        else:
+            metrix.recordInvalidEmailRequest(self)
+
         if not body: return  # The client was already warned.
 
         messageID = self.incoming.message.getheader("Message-ID", None)
