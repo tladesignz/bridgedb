@@ -368,10 +368,9 @@ def run(options, reactor=reactor):
         State should be saved before calling this method, and will be saved
         again at the end of it.
 
-        The internal variables, ``cfg``, ``hashring``, ``proxyList``,
-        ``ipDistributor``, and ``emailDistributor`` are all taken from a
-        :class:`~bridgedb.persistent.State` instance, which has been saved to
-        a statefile with :meth:`bridgedb.persistent.State.save`.
+        The internal variables ``cfg`` and ``hashring`` are taken from a
+        :class:`~bridgedb.persistent.State` instance, which has been saved to a
+        statefile with :meth:`bridgedb.persistent.State.save`.
 
         :type cfg: :class:`Conf`
         :ivar cfg: The current configuration, including any in-memory
@@ -380,18 +379,6 @@ def run(options, reactor=reactor):
         :type hashring: A :class:`~bridgedb.Bridges.BridgeSplitter`
         :ivar hashring: A class which takes an HMAC key and splits bridges
             into their hashring assignments.
-        :type proxyList: :class:`~bridgedb.proxy.ProxySet`
-        :ivar proxyList: The container for the IP addresses of any currently
-            known open proxies.
-        :ivar ipDistributor: A
-            :class:`~bridgedb.distributors.https.distributor.HTTPSDistributor`.
-        :ivar emailDistributor: A
-            :class:`~bridgedb.distributors.email.distributor.EmailDistributor`.
-        :ivar dict tasks: A dictionary of ``{name: task}``, where name is a
-            string to associate with the ``task``, and ``task`` is some
-            scheduled event, repetitive or otherwise, for the :class:`reactor
-            <twisted.internet.epollreactor.EPollReactor>`. See the classes
-            within the :api:`twisted.internet.tasks` module.
         """
         logging.debug("Caught SIGHUP")
         logging.info("Reloading...")
