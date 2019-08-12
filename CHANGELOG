@@ -1,3 +1,8 @@
+Changes in version 0.7.2 - YYYY-MM-DD
+
+        * FIXES #26542 https://bugs.torproject.org/26542
+        Make BridgeDB distribute vanilla IPv6 bridges again.
+
 Changes in version 0.7.1 - 2019-06-07
 
         * FIXES #28496 https://bugs.torproject.org/28496

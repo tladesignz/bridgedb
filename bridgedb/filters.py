@@ -151,6 +151,13 @@ def byProbingResistance(methodname=None, ipVersion=None):
         return _cache[name]
     except KeyError:
         def _byProbingResistance(bridge):
+            # If we're dealing with a vanilla bridge, make sure that the bridge
+            # has the correct IP version.
+            if methodname == "vanilla":
+                validVersion = byIPv(ipVersion)
+                if not validVersion(bridge):
+                    return False
+
             if bridge.hasProbingResistantPT():
                 return methodname in ('scramblesuit', 'obfs4')
             return True
@@ -262,7 +269,8 @@ def byNotBlockedIn(countryCode=None, methodname=None, ipVersion=4):
             if not methodname:
                 return not bridge.isBlockedIn(countryCode)
             elif methodname == "vanilla":
-                if bridge.address.version == ipVersion:
+                validVersion = byIPv(ipVersion)
+                if validVersion(bridge):
                     if not bridge.addressIsBlockedIn(countryCode,
                                                      bridge.address,
                                                      bridge.orPort):
