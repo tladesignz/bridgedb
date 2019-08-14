@@ -41,6 +41,7 @@ from twisted.web.server import Site
 from bridgedb import metrics
 from bridgedb import captcha
 from bridgedb import crypto
+from bridgedb import antibot
 from bridgedb.distributors.common.http import setFQDN
 from bridgedb.distributors.common.http import getFQDN
 from bridgedb.distributors.common.http import getClientIP
@@ -734,6 +735,11 @@ class CaptchaCheckResource(CaptchaResource):
             if len(bridgeLines) < self.nBridgesToGive:
                 logging.warn(("Not enough bridges of the type specified to "
                               "fulfill the following request: %s") % bridgeRequest)
+
+            if antibot.isRequestFromBot(request):
+                ttype = transport or "vanilla"
+                bridgeLines = antibot.getDecoyBridge(ttype,
+                                                     bridgeRequest.ipVersion)
 
             # If we have no bridges at all to give to the client, then
             # return a JSON API 404 error.

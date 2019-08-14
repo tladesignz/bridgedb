@@ -16,6 +16,15 @@ Changes in version 0.8.0 - YYYY-MM-DD
         Use stem instead of leekspin to create test descriptors.  We now don't
         need to depend on leekspin anymore.
 
+        * FIXES #31252 https://bugs.torproject.org/31252
+        Add an anti-bot mechanism that allows us to detect bots by matching
+        HTTP request headers for blacklisted patterns.  For example, bots may
+        have their Accept-Language set to "Klingon".  Blacklisted patterns are
+        configured in BLACKLISTED_REQUEST_HEADERS_FILE.  When BridgeDB detects
+        a bot request, we can answer their request with a decoy bridge that's
+        only handed out to bots.  Decoy bridges are configured in
+        DECOY_BRIDGES_FILE.
+
 Changes in version 0.7.1 - 2019-06-07
 
         * FIXES #28496 https://bugs.torproject.org/28496
