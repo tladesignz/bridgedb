@@ -1,4 +1,13 @@
-Changes in version 0.7.2 - YYYY-MM-DD
+Changes in version 0.8.0 - YYYY-MM-DD
+
+        * FIXES https://bugs.torproject.org/9316
+        Make BridgeDB export usage metrics every 24 hours.  At the end of each
+        24-hour measurement interval, BridgeDB will append usage metrics to the
+        file METRICS_FILE, which is configured in bridgedb.conf.  Our metrics
+        keep track of the number of (un)successful requests per transport type
+        per country code (or email provider) per distribution method.  This way,
+        we get to learn that, say, over the last 24 hours there were 31-40 users
+        in Iran who successfully requested an obfs4 bridge over Moat.
 
         * FIXES #26542 https://bugs.torproject.org/26542
         Make BridgeDB distribute vanilla IPv6 bridges again.
