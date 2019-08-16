@@ -53,6 +53,7 @@ from bridgedb import strings
 from bridgedb import translations
 from bridgedb import txrecaptcha
 from bridgedb import metrics
+from bridgedb import antibot
 from bridgedb.distributors.common.http import setFQDN
 from bridgedb.distributors.common.http import getFQDN
 from bridgedb.distributors.common.http import getClientIP
@@ -915,6 +916,15 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
             bridges = self.distributor.getBridges(bridgeRequest, interval)
             bridgeLines = [replaceControlChars(bridge.getBridgeLine(
                 bridgeRequest, self.includeFingerprints)) for bridge in bridges]
+
+            if antibot.isRequestFromBot(request):
+                transports = bridgeRequest.transports
+                # Return either a decoy bridge or no bridge.
+                if len(transports) > 2:
+                    logging.warning("More than one transport requested")
+                    return self.renderAnswer(request)
+                ttype = "vanilla" if len(transports) == 0 else transports[0]
+                return self.renderAnswer(request, antibot.getDecoyBridge(ttype, bridgeRequest.ipVersion))
 
         return self.renderAnswer(request, bridgeLines)
 

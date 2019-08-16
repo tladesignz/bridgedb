@@ -26,6 +26,7 @@ from bridgedb import proxy
 from bridgedb import runner
 from bridgedb import util
 from bridgedb import metrics
+from bridgedb import antibot
 from bridgedb.bridges import MalformedBridgeInfo
 from bridgedb.bridges import MissingServerDescriptorDigest
 from bridgedb.bridges import ServerDescriptorDigestMismatch
@@ -416,6 +417,11 @@ def run(options, reactor=reactor):
             logging.info("Loading proxies from: %s" % proxyfile)
             proxy.loadProxiesFromFile(proxyfile, proxies, removeStale=True)
         metrics.setProxies(proxies)
+
+        logging.info("Reloading blacklisted request headers...")
+        antibot.loadBlacklistedRequestHeaders(config.BLACKLISTED_REQUEST_HEADERS_FILE)
+        logging.info("Reloading decoy bridges...")
+        antibot.loadDecoyBridges(config.DECOY_BRIDGES_FILE)
 
         logging.info("Reparsing bridge descriptors...")
         (hashring,
