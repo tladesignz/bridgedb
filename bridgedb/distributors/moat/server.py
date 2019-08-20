@@ -38,8 +38,10 @@ from twisted.internet.error import CannotListenError
 from twisted.web import resource
 from twisted.web.server import Site
 
+from bridgedb import metrics
 from bridgedb import captcha
 from bridgedb import crypto
+from bridgedb import antibot
 from bridgedb.distributors.common.http import setFQDN
 from bridgedb.distributors.common.http import getFQDN
 from bridgedb.distributors.common.http import getClientIP
@@ -48,6 +50,10 @@ from bridgedb.qrcodes import generateQR
 from bridgedb.schedule import Unscheduled
 from bridgedb.schedule import ScheduledInterval
 from bridgedb.util import replaceControlChars
+
+# We use our metrics singleton to keep track of BridgeDB metrics such as
+# "number of failed HTTPS bridge requests."
+metrix = metrics.MoatMetrics()
 
 
 #: The current version of the moat JSON API that we speak
@@ -681,6 +687,8 @@ class CaptchaCheckResource(CaptchaResource):
         error = self.checkRequestHeaders(request)
 
         if error:  # pragma: no cover
+            logging.debug("Error while checking moat request headers.")
+            metrix.recordInvalidMoatRequest(request)
             return error.render(request)
 
         data = {
@@ -694,7 +702,11 @@ class CaptchaCheckResource(CaptchaResource):
         }
 
         try:
+            pos = request.content.tell()
             encoded_client_data = request.content.read()
+            # We rewind the stream to its previous position to allow the
+            # metrix module to read the request's content too.
+            request.content.seek(pos)
             client_data = json.loads(encoded_client_data)["data"][0]
             clientIP = self.getClientIP(request)
 
@@ -704,22 +716,30 @@ class CaptchaCheckResource(CaptchaResource):
             valid = self.checkSolution(challenge, solution, clientIP)
         except captcha.CaptchaExpired:
             logging.debug("The challenge had timed out")
+            metrix.recordInvalidMoatRequest(request)
             return self.failureResponse(5, request)
         except Exception as impossible:
             logging.warn("Unhandled exception while processing a POST /fetch request!")
             logging.error(impossible)
+            metrix.recordInvalidMoatRequest(request)
             return self.failureResponse(4, request)
 
         if valid:
             qrcode = None
             bridgeRequest = self.createBridgeRequest(clientIP, client_data)
             bridgeLines = self.getBridgeLines(bridgeRequest)
+            metrix.recordValidMoatRequest(request)
 
             # If we can only return less than the configured
             # MOAT_BRIDGES_PER_ANSWER then log a warning.
             if len(bridgeLines) < self.nBridgesToGive:
                 logging.warn(("Not enough bridges of the type specified to "
                               "fulfill the following request: %s") % bridgeRequest)
+
+            if antibot.isRequestFromBot(request):
+                ttype = transport or "vanilla"
+                bridgeLines = antibot.getDecoyBridge(ttype,
+                                                     bridgeRequest.ipVersion)
 
             # If we have no bridges at all to give to the client, then
             # return a JSON API 404 error.
@@ -736,6 +756,7 @@ class CaptchaCheckResource(CaptchaResource):
 
             return self.formatDataForResponse(data, request)
         else:
+            metrix.recordInvalidMoatRequest(request)
             return self.failureResponse(4, request)
 
 

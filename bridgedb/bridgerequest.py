@@ -249,7 +249,7 @@ class BridgeRequestBase(object):
             for country in self.notBlockedIn:
                 logging.info("%s %s bridges not blocked in %s..." %
                              (msg, pt or "vanilla", country))
-                self.addFilter(byNotBlockedIn(country, pt, self.ipVersion))
+                self.addFilter(byNotBlockedIn(country, pt or "vanilla", self.ipVersion))
         elif pt:
             logging.info("%s %s bridges..." % (msg, pt))
             self.addFilter(byTransport(pt, self.ipVersion))

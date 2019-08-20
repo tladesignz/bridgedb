@@ -315,11 +315,7 @@ To create a bunch of fake bridge descriptors to test BridgeDB, do::
 
       bridgedb mock [-n NUMBER_OF_DESCRIPTORS]
 
-Note that you will need to install
-`leekspin <https://pypi.python.org/pypi/leekspin>`__ in order to run the
-``bridgedb mock`` command. See ``doc/HACKING.md`` for details.
-
-And finally, to run the test suites, do::
+To run the test suites, do::
 
       make coverage
 
@@ -360,16 +356,6 @@ the old files and do::
 Or just give it a SIGHUP::
 
       kill -s SIGHUP `cat .../run/bridgedb.pid`
-
-
-----------------------------------
-To extract all bridge assignments:
-----------------------------------
-
-To dump all bridge assignments to files, send BridgeDB a ``SIGUSR1``
-signal by doing::
-
-      kill -s SIGUSR1 `cat .../run/bridgedb.pid`
 
 
 =========================

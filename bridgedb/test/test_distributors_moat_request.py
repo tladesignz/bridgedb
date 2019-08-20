@@ -30,9 +30,9 @@ class MoatBridgeRequest(unittest.TestCase):
         self.bridgeRequest.withoutBlockInCountry(data)
         self.bridgeRequest.generateFilters()
 
-        self.assertItemsEqual(['byTransportNotBlockedIn(None,us,4)',
-                               'byTransportNotBlockedIn(None,ir,4)',
-                               'byTransportNotBlockedIn(None,sy,4)',
+        self.assertItemsEqual(['byTransportNotBlockedIn(vanilla,us,4)',
+                               'byTransportNotBlockedIn(vanilla,ir,4)',
+                               'byTransportNotBlockedIn(vanilla,sy,4)',
                                'byProbingResistance(vanilla,4)'],
                               [x.__name__ for x in self.bridgeRequest.filters])
 

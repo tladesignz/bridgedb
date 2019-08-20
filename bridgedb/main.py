@@ -25,6 +25,8 @@ from bridgedb import persistent
 from bridgedb import proxy
 from bridgedb import runner
 from bridgedb import util
+from bridgedb import metrics
+from bridgedb import antibot
 from bridgedb.bridges import MalformedBridgeInfo
 from bridgedb.bridges import MissingServerDescriptorDigest
 from bridgedb.bridges import ServerDescriptorDigestMismatch
@@ -71,6 +73,22 @@ def writeAssignments(hashring, filename):
             hashring.dumpAssignments(fh)
     except IOError:
         logging.info("I/O error while writing assignments to: '%s'" % filename)
+
+def writeMetrics(filename, measurementInterval):
+    """Dump usage metrics to disk.
+
+    :param str filename: The filename to write the metrics to.
+    :param int measurementInterval: The number of seconds after which we rotate
+        and dump our metrics.
+    """
+
+    logging.debug("Dumping metrics to file: '%s'" % filename)
+
+    try:
+        with open(filename, 'a') as fh:
+            metrics.export(fh, measurementInterval)
+    except IOError as err:
+        logging.error("Failed to write metrics to '%s': %s" % (filename, err))
 
 def load(state, hashring, clear=False):
     """Read and parse all descriptors, and load into a bridge hashring.
@@ -359,7 +377,6 @@ def run(options, reactor=reactor):
     moatDistributor = None
 
     # Save our state
-    state.proxies = proxies
     state.key = key
     state.save()
 
@@ -369,10 +386,9 @@ def run(options, reactor=reactor):
         State should be saved before calling this method, and will be saved
         again at the end of it.
 
-        The internal variables, ``cfg``, ``hashring``, ``proxyList``,
-        ``ipDistributor``, and ``emailDistributor`` are all taken from a
-        :class:`~bridgedb.persistent.State` instance, which has been saved to
-        a statefile with :meth:`bridgedb.persistent.State.save`.
+        The internal variables ``cfg`` and ``hashring`` are taken from a
+        :class:`~bridgedb.persistent.State` instance, which has been saved to a
+        statefile with :meth:`bridgedb.persistent.State.save`.
 
         :type cfg: :class:`Conf`
         :ivar cfg: The current configuration, including any in-memory
@@ -381,18 +397,6 @@ def run(options, reactor=reactor):
         :type hashring: A :class:`~bridgedb.Bridges.BridgeSplitter`
         :ivar hashring: A class which takes an HMAC key and splits bridges
             into their hashring assignments.
-        :type proxyList: :class:`~bridgedb.proxy.ProxySet`
-        :ivar proxyList: The container for the IP addresses of any currently
-            known open proxies.
-        :ivar ipDistributor: A
-            :class:`~bridgedb.distributors.https.distributor.HTTPSDistributor`.
-        :ivar emailDistributor: A
-            :class:`~bridgedb.distributors.email.distributor.EmailDistributor`.
-        :ivar dict tasks: A dictionary of ``{name: task}``, where name is a
-            string to associate with the ``task``, and ``task`` is some
-            scheduled event, repetitive or otherwise, for the :class:`reactor
-            <twisted.internet.epollreactor.EPollReactor>`. See the classes
-            within the :api:`twisted.internet.tasks` module.
         """
         logging.debug("Caught SIGHUP")
         logging.info("Reloading...")
@@ -411,13 +415,19 @@ def run(options, reactor=reactor):
         logging.info("Reloading the list of open proxies...")
         for proxyfile in cfg.PROXY_LIST_FILES:
             logging.info("Loading proxies from: %s" % proxyfile)
-            proxy.loadProxiesFromFile(proxyfile, state.proxies, removeStale=True)
+            proxy.loadProxiesFromFile(proxyfile, proxies, removeStale=True)
+        metrics.setProxies(proxies)
+
+        logging.info("Reloading blacklisted request headers...")
+        antibot.loadBlacklistedRequestHeaders(config.BLACKLISTED_REQUEST_HEADERS_FILE)
+        logging.info("Reloading decoy bridges...")
+        antibot.loadDecoyBridges(config.DECOY_BRIDGES_FILE)
 
         logging.info("Reparsing bridge descriptors...")
         (hashring,
          emailDistributorTmp,
          ipDistributorTmp,
-         moatDistributorTmp) = createBridgeRings(cfg, state.proxies, key)
+         moatDistributorTmp) = createBridgeRings(cfg, proxies, key)
         logging.info("Bridges loaded: %d" % len(hashring))
 
         # Initialize our DB.
@@ -477,13 +487,15 @@ def run(options, reactor=reactor):
         if config.EMAIL_DIST and config.EMAIL_SHARE:
             addSMTPServer(config, emailDistributor)
 
+        metrics.setSupportedTransports(config.SUPPORTED_TRANSPORTS)
+
         tasks = {}
 
         # Setup all our repeating tasks:
         if config.TASKS['GET_TOR_EXIT_LIST']:
             tasks['GET_TOR_EXIT_LIST'] = task.LoopingCall(
                 proxy.downloadTorExits,
-                state.proxies,
+                proxies,
                 config.SERVER_PUBLIC_EXTERNAL_IP)
 
         if config.TASKS.get('DELETE_UNPARSEABLE_DESCRIPTORS'):
@@ -497,14 +509,19 @@ def run(options, reactor=reactor):
             runner.cleanupUnparseableDescriptors,
             os.path.dirname(config.STATUS_FILE), delUnparseableSecs)
 
+        measurementInterval, _ = config.TASKS['EXPORT_METRICS']
+        tasks['EXPORT_METRICS'] = task.LoopingCall(
+            writeMetrics, state.METRICS_FILE, measurementInterval)
+
         # Schedule all configured repeating tasks:
-        for name, seconds in config.TASKS.items():
+        for name, value in config.TASKS.items():
+            seconds, startNow = value
             if seconds:
                 try:
                     # Set now to False to get the servers up and running when
                     # first started, rather than spend a bunch of time in
                     # scheduled tasks.
-                    tasks[name].start(abs(seconds), now=False)
+                    tasks[name].start(abs(seconds), now=startNow)
                 except KeyError:
                     logging.info("Task %s is disabled and will not run." % name)
                 else:
@@ -540,15 +557,9 @@ def runSubcommand(options, config):
     # mentioned above with the email.server and https.server.
     from bridgedb import runner
 
-    statuscode = 0
-
     if options.subCommand is not None:
         logging.debug("Running BridgeDB command: '%s'" % options.subCommand)
 
         if 'descriptors' in options.subOptions:
-            statuscode = runner.generateDescriptors(
-                options.subOptions['descriptors'], config.RUN_IN_DIR)
-
-        logging.info("Subcommand '%s' finished with status %s."
-                     % (options.subCommand, statuscode))
-        sys.exit(statuscode)
+            runner.generateDescriptors(int(options.subOptions['descriptors']), config.RUN_IN_DIR)
+        sys.exit(0)

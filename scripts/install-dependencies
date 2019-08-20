@@ -6,16 +6,7 @@ SUDO=
 APT_GET=$(which apt-get)
 APT_FLAGS='-q --no-install-suggests --no-install-recommends'
 PIP=$(which pip)
-PIP_FLAGS=
-
-# If this doesn't work, then the version of pip is very old and we need to use --no-use-wheel
-$PIP --no-binaries :all:
-
-if test "$?" -eq 2 ; then
-    PIP_FLAGS=$PIP_FLAGS' --no-use-wheel'
-else
-    PIP_FLAGS=$PIP_FLAGS' --no-binaries :all:'
-fi
+PIP_FLAGS='--no-binary :all'
 
 DEPENDS="build-essential openssl sqlite3 python-dev python-setuptools"
 DEPENDS="${DEPENDS} libgeoip-dev geoip-database libjpeg-dev"
