@@ -1,4 +1,4 @@
-Changes in version 0.8.0 - YYYY-MM-DD
+Changes in version 0.8.0 - 2019-08-20
 
         * FIXES https://bugs.torproject.org/9316
         Make BridgeDB export usage metrics every 24 hours.  At the end of each
