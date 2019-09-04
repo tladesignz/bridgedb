@@ -7,6 +7,11 @@ Changes in version 0.8.1 -
         commands whose email body line starts with a '>' character, which is
         typically used for email quotes.
 
+        * FIXES https://bugs.torproject.org/28533
+        The frontdesk is seeing plenty of empty bogus emails.  This fix removes
+        the email links and instead encourages users to take a look at the Tor
+        Browser Manual and at our Support Portal.
+
 Changes in version 0.8.0 - 2019-08-20
 
         * FIXES https://bugs.torproject.org/9316

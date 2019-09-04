@@ -66,8 +66,8 @@ ${next.body(strings, rtl=rtl, lang=lang, **kwargs)}
             <h4>${_(strings.HELP[0])}</h4>
             <p>
               ${_(strings.HELP[1]) % \
-                 ("""<a href="mailto:frontdesk@torproject.org">frontdesk@torproject.org</a>""")}
-              ${_(strings.HELP[2])}
+                 ("""<a href="https://tb-manual.torproject.org/circumvention/">Tor Browser Manual</a>""",
+                  """<a href="https://support.torproject.org/#censorship">Support Portal</a>""")}
             </p>
           </div>
         </div> <!-- end faq -->
@@ -83,9 +83,6 @@ ${next.body(strings, rtl=rtl, lang=lang, **kwargs)}
     &nbsp; &middot; &nbsp;
     <a href="https://gitweb.torproject.org/bridgedb.git/tree/CHANGELOG">
       <i class="icon icon-large icon-rocket"><span id="footer-changelog">&nbsp;${_("Changelog")}</span></i></a>
-    &nbsp; &middot; &nbsp;
-    <a href="mailto:frontdesk@torproject.org">
-      <i class="icon icon-large icon-envelope"><span id="footer-contact">&nbsp;${_("Contact")}</span></i></a>
     &nbsp; &middot; &nbsp;
     <a href="../keys"><i class="icon icon-large icon-key"><span id="footer-keys">&nbsp;${_("Public Keys")}</span></i></a>
   </p>
