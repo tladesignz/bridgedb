@@ -3,7 +3,7 @@ BeautifulSoup==3.2.1
 Mako==0.8.1
 Twisted==16.1.1
 ipaddr==2.1.11
-pyOpenSSL==16.2.0
+pyOpenSSL==17.5.0
 pygeoip==0.2.7
 PyCryptodome==3.8.2
 gnupg==2.0.1
