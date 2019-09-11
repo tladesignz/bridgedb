@@ -1,4 +1,4 @@
-Changes in version 0.8.1 -
+Changes in version 0.8.1 - 2019-09-11
 
         * FIXES https://bugs.torproject.org/17626
         BridgeDB gets confused when users reply to a "get help" email.  The
