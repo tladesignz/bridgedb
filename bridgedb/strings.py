@@ -114,14 +114,7 @@ send the email using an address from one of the following email providers:
 HELP = {
     0: _("My bridges don't work! I need help!"),
     # TRANSLATORS: Please DO NOT translate "Tor".
-    1: _("""If your Tor doesn't work, you should email %s."""),
-    # TRANSLATORS: Please DO NOT translate "Pluggable Transports".
-    # TRANSLATORS: Please DO NOT translate "Tor Browser".
-    # TRANSLATORS: Please DO NOT translate "Tor".
-    2: _("""\
-Try including as much info about your case as you can, including the list of
-bridges and Pluggable Transports you tried to use, your Tor Browser version,
-and any messages which Tor gave out, etc."""),
+    1: _("""If your Tor cannot connect, please take a look at the %s and our %s."""),
 }
 
 BRIDGES = {
