@@ -58,6 +58,15 @@ TRANSPORT_PATTERN = re.compile(TRANSPORT_REGEXP)
 UNBLOCKED_REGEXP = ".*unblocked ([a-z]{2,4})"
 UNBLOCKED_PATTERN = re.compile(UNBLOCKED_REGEXP)
 
+#: Regular expressions that we use to match for email commands.  Any command is
+#: valid as long as it wasn't quoted, i.e., the line didn't start with a '>'
+#: character.
+HELP_LINE      = re.compile("([^>].*)?h[ae]lp")
+GET_LINE       = re.compile("([^>].*)?get")
+KEY_LINE       = re.compile("([^>].*)?key")
+IPV6_LINE      = re.compile("([^>].*)?ipv6")
+TRANSPORT_LINE = re.compile("([^>].*)?transport")
+UNBLOCKED_LINE = re.compile("([^>].*)?unblocked")
 
 def determineBridgeRequestOptions(lines):
     """Figure out which :mod:`~bridgedb.filters` to apply, or offer help.
@@ -83,20 +92,20 @@ def determineBridgeRequestOptions(lines):
         if not line: skippedHeaders = True
         if not skippedHeaders: continue
 
-        if ("help" in line) or ("halp" in line):
+        if HELP_LINE.match(line) is not None:
             raise EmailRequestedHelp("Client requested help.")
 
-        if "get" in line:
+        if GET_LINE.match(line) is not None:
             request.isValid(True)
             logging.debug("Email request was valid.")
-        if "key" in line:
+        if KEY_LINE.match(line) is not None:
             request.wantsKey(True)
             raise EmailRequestedKey("Email requested a copy of our GnuPG key.")
-        if "ipv6" in line:
+        if IPV6_LINE.match(line) is not None:
             request.withIPv6()
-        if "transport" in line:
+        if TRANSPORT_LINE.match(line) is not None:
             request.withPluggableTransportType(line)
-        if "unblocked" in line:
+        if UNBLOCKED_LINE.match(line) is not None:
             request.withoutBlockInCountry(line)
 
     logging.debug("Generating hashring filters for request.")

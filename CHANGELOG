@@ -1,3 +1,17 @@
+Changes in version 0.8.1 - 2019-09-11
+
+        * FIXES https://bugs.torproject.org/17626
+        BridgeDB gets confused when users reply to a "get help" email.  The
+        issue is that BridgeDB interprets commands anywhere in the email body,
+        even if it's in quoted text.  To fix this issue, we are ignoring
+        commands whose email body line starts with a '>' character, which is
+        typically used for email quotes.
+
+        * FIXES https://bugs.torproject.org/28533
+        The frontdesk is seeing plenty of empty bogus emails.  This fix removes
+        the email links and instead encourages users to take a look at the Tor
+        Browser Manual and at our Support Portal.
+
 Changes in version 0.8.0 - 2019-08-20
 
         * FIXES https://bugs.torproject.org/9316
