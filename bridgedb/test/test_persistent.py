@@ -89,7 +89,7 @@ class StateTest(unittest.TestCase):
         this(self.state).should.have.property('statefile')
 
     def test_persistent_getState(self):
-        persistent.should.have.property('_getState').being(callable)
+        persistent._getState.should.be.callable
         this(persistent._getState()).should.be.a(persistent.State)
 
     def test_getStateFor(self):
@@ -102,10 +102,10 @@ class StateTest(unittest.TestCase):
         the(self.state.statefile).should.be.a(str)
 
     def test_existsSave(self):
-        this(self.state).should.have.property('save').being(callable)
+        self.state.save.should.be.callable
 
     def test_existsLoad(self):
-        persistent.should.have.property('load').being(callable)
+        persistent.load.should.be.callable
 
     def test_persistent_state(self):
         the(persistent._state).should.be.a(persistent.State)
@@ -152,7 +152,7 @@ class StateTest(unittest.TestCase):
         the(thatConfig.LOGFILE).must.equal(42)
 
         the(thatState).should.have.property('useChangedSettings')
-        the(thatState.useChangedSettings).should.be(callable)
+        thatState.useChangedSettings.should.be.callable
         thatState.useChangedSettings(thatConfig)
 
         the(thatState.FOO).should.equal('fuuuuu')
