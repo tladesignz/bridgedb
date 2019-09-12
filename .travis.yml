@@ -11,7 +11,7 @@ notifications:
     on_failure: always
   email:
     recipients:
-      - sysrqb@torproject.org
+      - phw@torproject.org
     on_success: never
     on_failure: change
 
