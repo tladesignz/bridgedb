@@ -1,13 +1,13 @@
 Babel==2.7.0
 BeautifulSoup==3.2.1
 Mako==1.1.0
+PyCryptodome==3.9.0
 Twisted==19.7.0
+gnupg==2.3.1
 ipaddr==2.2.0
+pillow>=6.1.0
 pyOpenSSL==19.0.0
 pygeoip==0.3.2
-PyCryptodome==3.9.0
-gnupg==2.3.1
-pillow>=6.1.0
 qrcode==6.1
 service_identity==18.1.0
 stem==1.7.1
