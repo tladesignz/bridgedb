@@ -16,6 +16,7 @@ from __future__ import print_function
 import socket
 import string
 import types
+import rfc822
 
 from twisted.python import log
 from twisted.internet import defer
@@ -25,7 +26,6 @@ from twisted.mail.smtp import SMTPBadRcpt
 from twisted.mail.smtp import SMTPBadSender
 from twisted.mail.smtp import User
 from twisted.mail.smtp import Address
-from twisted.mail.smtp import rfc822
 from twisted.test import proto_helpers
 from twisted.trial import unittest
 
