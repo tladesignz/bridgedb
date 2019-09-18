@@ -85,7 +85,7 @@ def writeMetrics(filename, measurementInterval):
     logging.debug("Dumping metrics to file: '%s'" % filename)
 
     try:
-        with open(filename, 'a') as fh:
+        with open(filename, 'w') as fh:
             metrics.export(fh, measurementInterval)
     except IOError as err:
         logging.error("Failed to write metrics to '%s': %s" % (filename, err))

@@ -9,7 +9,7 @@
 # :license: see LICENSE for licensing information
 # _____________________________________________________________________________
 
-"""API for keeping track of BridgeDB statistics, e.g., the demand for bridges
+"""API for keeping track of BridgeDB metrics, e.g., the demand for bridges
 over time.
 """
 
@@ -53,9 +53,9 @@ SUBNET_CTR_PREFIX_LEN = 20
 # All of the pluggable transports BridgeDB currently supports.
 SUPPORTED_TRANSPORTS = None
 
-# Major and minor version number for our statistics format.
-METRICS_MAJOR_VERSION = 1
-METRICS_MINOR_VERSION = 0
+# Version number for our metrics format.  We increment the version if our
+# format changes.
+METRICS_VERSION = 1
 
 
 def setProxies(proxies):
@@ -120,11 +120,10 @@ def export(fh, measurementInterval):
         logging.debug("Metrics module knows about %d proxies." % numProxies)
 
     now = datetime.datetime.utcnow()
-    fh.write("bridgedb-stats-end %s (%d s)\n" % (
+    fh.write("bridgedb-metrics-end %s (%d s)\n" % (
              now.strftime("%Y-%m-%d %H:%M:%S"),
              measurementInterval))
-    fh.write("bridgedb-stats-version %d.%d\n" % (METRICS_MAJOR_VERSION,
-                                                 METRICS_MINOR_VERSION))
+    fh.write("bridgedb-metrics-version %d\n" % METRICS_VERSION)
 
     httpsLines = httpsMetrix.getMetrics()
     for line in httpsLines:

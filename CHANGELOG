@@ -1,3 +1,11 @@
+Changes in version A.B.C - YYYY-MM-DD
+
+        * FIXES https://bugs.torproject.org/31780
+        We implemented BridgeDB's metrics in #9316 but haven't specified its
+        format until now.  In addition to adding a specification, this patch
+        also makes our implementation consistent with our (slightly updated)
+        specification.
+
 Changes in version 0.8.2 - 2019-09-20
 
         Updated translations for the following languages:
