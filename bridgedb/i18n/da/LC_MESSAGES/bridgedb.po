@@ -3,11 +3,12 @@
 # This file is distributed under the same license as the BridgeDB project.
 # 
 # Translators:
+# Translators:
 # Christian Villum <villum@autofunk.dk>, 2014-2015
 # David Nielsen <gnomeuser@gmail.com>, 2014
 # Mogelbjerg <jan@mogelbjerg.dk>, 2015
 # Lasse Møller <hal9k@riseup.net>, 2016
-# scootergrisen, 2017-2018
+# scootergrisen, 2017-2019
 # OliverMller <theoliver@live.co.uk>, 2011
 # Thomas Pryds <thomas@pryds.eu>, 2014
 # Tore Bjørnson <tore.bjornson@gmail.com>, 2013
@@ -16,7 +17,7 @@ msgstr ""
 "Project-Id-Version: Tor Project\n"
 "Report-Msgid-Bugs-To: 'https://trac.torproject.org/projects/tor/newticket?component=BridgeDB&keywords=bridgedb-reported,msgid&cc=isis,sysrqb&owner=isis'\n"
 "POT-Creation-Date: 2015-07-25 03:40+0000\n"
-"PO-Revision-Date: 2018-10-17 02:20+0000\n"
+"PO-Revision-Date: 2019-06-21 06:01+0000\n"
 "Last-Translator: scootergrisen\n"
 "Language-Team: Danish (http://www.transifex.com/otf/torproject/language/da/)\n"
 "MIME-Version: 1.0\n"
@@ -306,7 +307,7 @@ msgstr "Find broer!"
 
 #: bridgedb/strings.py:133
 msgid "Please select options for bridge type:"
-msgstr "Vælg venligst brotype muligheder:"
+msgstr "Vælg venligst valgmuligheder for brotypen:"
 
 #: bridgedb/strings.py:134
 msgid "Do you need IPv6 addresses?"

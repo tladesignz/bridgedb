@@ -1,3 +1,8 @@
+Changes in version 0.8.2 - 2019-09-19
+
+        Updated translations for the following languages:
+        bn, da, eo, fa, it, ko, nl, pt_BR, pt_PT, sr, zh_CN.
+
 Changes in version 0.8.1 - 2019-09-11
 
         * FIXES https://bugs.torproject.org/17626
