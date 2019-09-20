@@ -14,13 +14,14 @@
 # Mingye Wang <arthur200126@gmail.com>, 2016
 # khi, 2014-2015
 # YFdyh000 <yfdyh000@gmail.com>, 2014-2015
+# Yikai Yang <ff98sha@gmail.com>, 2019
 msgid ""
 msgstr ""
 "Project-Id-Version: Tor Project\n"
 "Report-Msgid-Bugs-To: 'https://trac.torproject.org/projects/tor/newticket?component=BridgeDB&keywords=bridgedb-reported,msgid&cc=isis,sysrqb&owner=isis'\n"
 "POT-Creation-Date: 2015-07-25 03:40+0000\n"
-"PO-Revision-Date: 2018-06-10 07:15+0000\n"
-"Last-Translator: Colin Childs <colin@torproject.org>\n"
+"PO-Revision-Date: 2019-05-30 00:43+0000\n"
+"Last-Translator: Yikai Yang <ff98sha@gmail.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/otf/torproject/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -46,7 +47,7 @@ msgstr "抱歉，你的邮件请求出现问题。"
 
 #: bridgedb/https/templates/base.html:79
 msgid "Report a Bug"
-msgstr "报告 Bug"
+msgstr "报告漏洞"
 
 #: bridgedb/https/templates/base.html:82
 msgid "Source Code"
@@ -79,7 +80,7 @@ msgstr "网桥二维码"
 #: bridgedb/https/templates/bridges.html:67
 #: bridgedb/https/templates/bridges.html:125
 msgid "Uh oh, spaghettios!"
-msgstr "哎哟哟！"
+msgstr "哎呀！"
 
 #: bridgedb/https/templates/bridges.html:68
 msgid "It seems there was an error getting your QRCode."
@@ -100,7 +101,7 @@ msgstr "现在没有可用的网桥。"
 msgid ""
 " Perhaps you should try %s going back %s and choosing a different bridge "
 "type!"
-msgstr "试试 %s后退%s到前一页面，然后选择其他类型的网桥。"
+msgstr "试试 %s返回%s到前一页面，然后选择其他类型的网桥。"
 
 #: bridgedb/https/templates/index.html:11
 #, python-format
@@ -120,7 +121,7 @@ msgstr "第 %s 2 %s 步"
 #: bridgedb/https/templates/index.html:27
 #, python-format
 msgid "Get %s bridges %s"
-msgstr "获取 %s bridges %s"
+msgstr "获取 %s 网桥 %s"
 
 #: bridgedb/https/templates/index.html:36
 #, python-format
@@ -197,7 +198,7 @@ msgstr "欢迎来到 BridgeDB！"
 #. TRANSLATORS: Please DO NOT translate the words "transport" or "TYPE".
 #: bridgedb/strings.py:55
 msgid "Currently supported transport TYPEs:"
-msgstr "目前可用的 transport 类型："
+msgstr "目前可用的传输类型："
 
 #: bridgedb/strings.py:56
 #, python-format
@@ -242,7 +243,7 @@ msgid ""
 "Some bridges with IPv6 addresses are also available, though some Pluggable\n"
 "Transports aren't IPv6 compatible.\n"
 "\n"
-msgstr "另外提供一些IPv6格式的网桥，不过某些 Pluggable Transports 类型目前还不支持IPv6。\n"
+msgstr "另外提供一些IPv6格式的网桥，不过某些可插拔传输类型目前还不支持IPv6。\n"
 
 #. TRANSLATORS: Please DO NOT translate "BridgeDB".
 #. TRANSLATORS: The phrase "plain-ol'-vanilla" means "plain, boring,
@@ -256,7 +257,7 @@ msgid ""
 "Pluggable Transports %s which maybe doesn't sound as cool, but they can still\n"
 "help to circumvent internet censorship in many cases.\n"
 "\n"
-msgstr "此外，BridgeDB 提供很多 %s  非Pluggable Transports %s 的普通网桥。\n虽然听起来不够酷，但是这些普通网桥依然可以在很多情况下帮助绕过审查。\n"
+msgstr "此外，BridgeDB 提供很多 %s 非可插拔传输 %s 的普通网桥。\n虽然听起来不够酷，但是这些普通网桥依然可以在很多情况下帮助绕过审查。\n"
 
 #: bridgedb/strings.py:101
 msgid "What are bridges?"
@@ -382,7 +383,7 @@ msgstr "请求IPv6网络。"
 #. TRANSLATORS: Please DO NOT translate the word the word "TYPE".
 #: bridgedb/strings.py:174
 msgid "Request a Pluggable Transport by TYPE."
-msgstr "按照类型请求不同的 Pluggable Transport 网桥。"
+msgstr "按照类型请求不同的可插拔传输网桥。"
 
 #. TRANSLATORS: Please DO NOT translate "BridgeDB".
 #. TRANSLATORS: Please DO NOT translate "GnuPG".

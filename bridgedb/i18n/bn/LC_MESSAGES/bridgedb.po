@@ -3,7 +3,9 @@
 # This file is distributed under the same license as the BridgeDB project.
 # 
 # Translators:
+# Translators:
 # code smite <codesmite@gmail.com>, 2018
+# Humayun Rashid <reporterhr@gmail.com>, 2019
 # Mahmud Numan <mahmudnuman@gmail.com>, 2016-2017
 # Sakib Abrar <skbabrar@gmail.com>, 2015
 # S. M. MAINUL KABIR <mainulkabirshibli@gmail.com>, 2015
@@ -13,8 +15,8 @@ msgstr ""
 "Project-Id-Version: Tor Project\n"
 "Report-Msgid-Bugs-To: 'https://trac.torproject.org/projects/tor/newticket?component=BridgeDB&keywords=bridgedb-reported,msgid&cc=isis,sysrqb&owner=isis'\n"
 "POT-Creation-Date: 2015-07-25 03:40+0000\n"
-"PO-Revision-Date: 2019-02-07 11:27+0000\n"
-"Last-Translator: Tabiha Tanha <tabihatanha@yandex.com>\n"
+"PO-Revision-Date: 2019-06-25 11:00+0000\n"
+"Last-Translator: Tasneem Khalil <tasneem.khalil@gmail.com>\n"
 "Language-Team: Bengali (http://www.transifex.com/otf/torproject/language/bn/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -165,7 +167,7 @@ msgstr "%sG%s গেট ব্রিজ"
 
 #: bridgedb/strings.py:43
 msgid "[This is an automated message; please do not reply.]"
-msgstr "[এটি একটি স্বয়ংক্রিয় বার্তা; দয়া করে উত্তর দেবেন না ।]  "
+msgstr "[এটি একটি স্বয়ংক্রিয় বার্তা; দয়া করে প্রত্যুত্তর দেবেন না ।]  "
 
 #: bridgedb/strings.py:45
 msgid "Here are your bridges:"
@@ -200,7 +202,7 @@ msgstr "আরে, %s!"
 
 #: bridgedb/strings.py:57
 msgid "Hello, friend!"
-msgstr "হ্যালো বন্ধু!"
+msgstr "ওহে বন্ধু!"
 
 #: bridgedb/strings.py:58 bridgedb/https/templates/base.html:90
 msgid "Public Keys"
@@ -281,7 +283,7 @@ msgstr "আমার ব্রিজ কাজ করছে না! আমার
 #: bridgedb/strings.py:117
 #, python-format
 msgid "If your Tor doesn't work, you should email %s."
-msgstr "যদি আপনার টর কাজ না করে থাকে, তাহলে আপনাকে ইমেইল করতে হবে %s।"
+msgstr "যদি আপনার Tor কাজ না করে, তবে আপনার ইমেইল করা উচিৎ %s।"
 
 #. TRANSLATORS: Please DO NOT translate "Pluggable Transports".
 #. TRANSLATORS: Please DO NOT translate "Tor Browser".
@@ -360,14 +362,14 @@ msgstr "'হ্যাঁ' নির্বাচন করুন এবং তা
 
 #: bridgedb/strings.py:167
 msgid "Displays this message."
-msgstr "এই বার্তাটি প্রদর্শন করে"
+msgstr "এই বার্তা প্রদর্শিত করে"
 
 #. TRANSLATORS: Please try to make it clear that "vanilla" here refers to the
 #. same non-Pluggable Transport bridges described above as being
 #. "plain-ol'-vanilla" bridges.
 #: bridgedb/strings.py:171
 msgid "Request vanilla bridges."
-msgstr "ভ্যানিলা ব্রিজগুলি অনুরোধ করুন"
+msgstr "ভ্যানিলা ব্রীজসমূহের অনুরোধ করুন"
 
 #: bridgedb/strings.py:172
 msgid "Request IPv6 bridges."
@@ -382,4 +384,4 @@ msgstr "TYPE দ্বারা প্ল্যাগেবল ট্রান�
 #. TRANSLATORS: Please DO NOT translate "GnuPG".
 #: bridgedb/strings.py:177
 msgid "Get a copy of BridgeDB's public GnuPG key."
-msgstr "BridgeDB এর সর্বজনীন GnuPG কীটির একটি অনুলিপি পান।"
+msgstr "BridgeDB এর সার্বজনীন GnuPG কী-্এর একটি অনুলিপি পান।"
