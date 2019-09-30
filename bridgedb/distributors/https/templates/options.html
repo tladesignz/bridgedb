@@ -1,7 +1,7 @@
 ## -*- coding: utf-8 -*-
 
 <%inherit file="base.html"/>
-<%page args="strings, rtl=False, lang='en', **kwargs"/>
+<%page args="strings, langs, rtl=False, lang='en', langOverride=False, **kwargs"/>
 
 <div class="container-fluid container-fluid-outer-96">
   <!--<div class="container-fluid step-semi-transparent">-->
@@ -26,7 +26,11 @@
       <div class="container-fluid container-fluid-outer">
         <div class="container-fluid-inner-5">
           <p class="bs-component">
+          % if langOverride:
+            <a href="./bridges?lang=${lang}">
+          % else:
             <a href="./bridges">
+          % endif
               <button class="btn btn-success btn-lg btn-block"
                       id="just-give-me-bridges-btn"
                       type="button"
@@ -54,6 +58,9 @@
     <!-- BEGIN bridge options selection form -->
     <form class="form-horizontal" id="advancedOptions" action="bridges" method="GET">
       <fieldset>
+        % if langOverride:
+          <input type="hidden" id="lang" name="lang" value="${lang}">
+        % endif
         <div class="container-fluid" id="instructions">
           <legend id="advanced-options-legend">
             <br />

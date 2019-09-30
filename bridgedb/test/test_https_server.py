@@ -27,6 +27,7 @@ from twisted.trial import unittest
 from twisted.web.resource import Resource
 from twisted.web.test import requesthelper
 
+from bridgedb import translations
 from bridgedb.distributors.https import server
 from bridgedb.schedule import ScheduledInterval
 
@@ -42,6 +43,18 @@ logging.disable(50)
 # and then uncomment the following line:
 #server.logging.getLogger().setLevel(10)
 
+
+class GetSortedLangListTests(unittest.TestCase):
+    """Tests for :func:`bridgedb.distributors.https.server.getSortedLangList`."""
+
+    def test_getSortedLangList(self):
+        """getSortedLangList should return a list of tuples containing sorted
+        locales and languages."""
+        origFunc = translations.getSupportedLangs
+        translations.getSupportedLangs = lambda: ["en", "de"]
+        l = server.getSortedLangList(rebuild=True)
+        self.assertEqual(l, [("de", u"Deutsch"), ("en", u"English")])
+        translations.getSupportedLangs = origFunc
 
 class ReplaceErrorPageTests(unittest.TestCase):
     """Tests for :func:`bridgedb.distributors.https.server.replaceErrorPage`."""

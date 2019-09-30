@@ -1,7 +1,7 @@
 ## -*- coding: utf-8 -*-
 
 <%namespace name="base" file="base.html" inheritable="True"/>
-<%page args="strings, rtl=False, lang='en', **kwargs"/>
+<%page args="strings, langs, rtl=False, lang='en', langOverride=False, **kwargs"/>
 
 <!DOCTYPE html>
 <html lang="${lang}">
@@ -37,6 +37,19 @@
               <a  class="navbar-brand" href="../">BridgeDB</a>
             </div>
             <ul class="nav navbar-nav pull-right">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" role="button">
+                  ${_("Language")}<span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  % for tuple in langs:
+                  <li>
+                    <a href="?lang=${tuple[0]}">${tuple[1]} (${tuple[0]})</a>
+                  </li>
+                  % endfor
+                </ul>
+              </li>
+
               <li>
                 <a href="https://www.torproject.org">The Tor Project</a>
               </li>
@@ -44,7 +57,7 @@
           </div>
         </div>
 
-${next.body(strings, rtl=rtl, lang=lang, **kwargs)}
+${next.body(strings, langs, rtl=rtl, lang=lang, langOverride=langOverride, **kwargs)}
 
         <div class="faq">
           <div class="row-fluid marketing">
