@@ -329,7 +329,7 @@ class SSLVerifyingContextFactoryTests(unittest.TestCase,
 
     def setUp(self):
         """Create a fake reactor for these tests."""
-        self.reactor = self.Reactor()
+        self.reactor = self.createReactor()
         self.url = 'https://www.example.com/someresource.html#andatag'
 
     def test_getHostnameFromURL(self):

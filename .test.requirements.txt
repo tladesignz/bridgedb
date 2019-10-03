@@ -5,10 +5,8 @@
 #     $ pip install -r .test.requirements.txt
 #     $ make coverage
 #
-coverage==4.2
-mechanize==0.2.5
-pep8==1.5.7
-# pylint must be pinned until pylint bug #203 is fixed. See
-# https://bitbucket.org/logilab/pylint/issue/203/importing-namespace-packages-crashes#comment-11013783
-pylint==1.1.0
-sure==1.2.2
+coverage==4.5.4
+mechanize==0.4.3
+pep8==1.7.1
+pylint==2.4.2
+sure==1.4.11

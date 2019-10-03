@@ -52,6 +52,7 @@ from __future__ import unicode_literals
 import logging
 import io
 import socket
+import rfc822
 
 from twisted.internet import defer
 from twisted.internet import reactor
@@ -254,7 +255,7 @@ class SMTPMessage(object):
         for line in self.lines:
             rawMessage.writelines(unicode(line.decode('utf8')) + u'\n')
         rawMessage.seek(0)
-        return smtp.rfc822.Message(rawMessage)
+        return rfc822.Message(rawMessage)
 
 
 class SMTPIncomingDelivery(smtp.SMTP):

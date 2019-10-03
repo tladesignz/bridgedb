@@ -12,8 +12,8 @@
 """Unittests for the :mod:`bridgedb.distributors.email.dkim` module."""
 
 import io
+import rfc822
 
-from twisted.mail.smtp import rfc822
 from twisted.trial import unittest
 
 from bridgedb.distributors.email import dkim
