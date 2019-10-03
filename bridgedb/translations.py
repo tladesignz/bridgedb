@@ -17,7 +17,7 @@ from bridgedb import safelog
 from bridgedb.parse import headers
 
 
-TRANSLATIONS_DIR = os.path.join(os.path.dirname(__file__), 'i18n')
+TRANSLATIONS_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'i18n')
 
 
 def getFirstSupportedLang(langs):

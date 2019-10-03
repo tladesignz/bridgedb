@@ -34,6 +34,22 @@ we make are:
 
 ## Making a release
 
+### Updating dependencies
+
+We maintain three requirements.txt files:
+
+* requirements.txt (for BridgeDB)
+* .travis.requirements.txt (for Travis CI)
+* .test.requirements.txt (for unit tests)
+
+Each of these files contains pinned dependencies, which are guaranteed to work
+for a given release.  Before releasing a new version of BridgeDB, we should
+update our dependencies.  The tool [pur][pur] (available through pip) helps us
+with this.  It checks a given requirements.txt file and updates each dependency
+to its latest version:
+
+    pur -r REQUIREMENTS_FILE
+
 ### Bumping the version number
 
 Bumping the version number at release time (which, for BridgeDB really means
@@ -67,3 +83,4 @@ References
 ----------
 [trac]: https://trac.torproject.org/projects/tor/query?status=!closed&component=Circumvention%2FBridgeDB
 [workflow]: https://nvie.com/posts/a-successful-git-branching-model/
+[pur]: https://pypi.org/project/pur/

@@ -3,6 +3,7 @@
 # This file is distributed under the same license as the BridgeDB project.
 # 
 # Translators:
+# Translators:
 # AO <ao@localizationlab.org>, 2018-2019
 # apaddlingduck, 2014
 # Boubou <cece31840@gmail.com>, 2015
@@ -30,7 +31,7 @@ msgstr ""
 "Project-Id-Version: Tor Project\n"
 "Report-Msgid-Bugs-To: 'https://trac.torproject.org/projects/tor/newticket?component=BridgeDB&keywords=bridgedb-reported,msgid&cc=isis,sysrqb&owner=isis'\n"
 "POT-Creation-Date: 2015-07-25 03:40+0000\n"
-"PO-Revision-Date: 2019-05-17 16:23+0000\n"
+"PO-Revision-Date: 2019-09-23 19:14+0000\n"
 "Last-Translator: AO <ao@localizationlab.org>\n"
 "Language-Team: French (http://www.transifex.com/otf/torproject/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -121,7 +122,7 @@ msgstr "Étape %s1%s"
 #: bridgedb/https/templates/index.html:13
 #, python-format
 msgid "Download %s Tor Browser %s"
-msgstr "Télécharger %s le Navigateur Tor %s"
+msgstr "Téléchargez %s le Navigateur Tor %s"
 
 #: bridgedb/https/templates/index.html:25
 #, python-format
@@ -131,7 +132,7 @@ msgstr "Étape %s2%s"
 #: bridgedb/https/templates/index.html:27
 #, python-format
 msgid "Get %s bridges %s"
-msgstr "Obtenir des %s ponts %s"
+msgstr "Obtenez des %s ponts %s"
 
 #: bridgedb/https/templates/index.html:36
 #, python-format
@@ -141,7 +142,7 @@ msgstr "Étape %s3%s"
 #: bridgedb/https/templates/index.html:38
 #, python-format
 msgid "Now %s add the bridges to Tor Browser %s"
-msgstr "Maintenant, %s ajouter les ponts au navigateur Le Navigateur Tor %s"
+msgstr "Maintenant, %s ajoutez les ponts au Navigateur Tor %s"
 
 #. TRANSLATORS: Please make sure the '%s' surrounding single letters at the
 #. beginning of words are present in your final translation. Thanks!

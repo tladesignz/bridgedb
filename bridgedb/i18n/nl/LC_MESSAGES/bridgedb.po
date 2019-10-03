@@ -268,7 +268,7 @@ msgstr ""
 
 #: bridgedb/strings.py:101
 msgid "What are bridges?"
-msgstr ""
+msgstr "Wat zijn bridges?"
 
 #: bridgedb/strings.py:102
 #, python-format

@@ -31,11 +31,10 @@ done
 
 $SUDO $APT_GET install ${APT_FLAGS} ${MISSING}
 
-# When running on Travis, be sure that environment variables are passed from
-# .travis.yml to this script:
+# When running on Travis, we are installing a few extra packages, e.g., to
+# determine code coverage.
 if [ "$TRAVIS" == "true" ] ; then
     $PIP install $PIP_FLAGS -r "$HERE/../.travis.requirements.txt"
-    $PIP install $PIP_FLAGS "Twisted==$TWISTED_VERSION" "pyOpenSSL==$PYOPENSSL_VERSION"
 else
     $PIP install $PIP_FLAGS -r "$HERE/../requirements.txt"
 fi

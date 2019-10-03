@@ -11,7 +11,7 @@ notifications:
     on_failure: always
   email:
     recipients:
-      - sysrqb@torproject.org
+      - phw@torproject.org
     on_success: never
     on_failure: change
 
@@ -32,30 +32,6 @@ env:
     #     https://stackoverflow.com/questions/2192323/what-is-the-python-egg-cache-python-egg-cache
     #     https://github.com/pypa/virtualenv/issues/459
     - PYTHON_EGG_CACHE="${HOME}/.python-eggs-$(echo $RANDOM$PPID$RANDOM | sha256sum | cut -d ' ' -f 1)"
-  matrix:
-    # What we're running on polyanthum
-    - TWISTED_VERSION=16.1.1 PYOPENSSL_VERSION=16.2.0
-    # Debian Stretch
-    - TWISTED_VERSION=16.6.0 PYOPENSSL_VERSION=16.2.0
-    # Debian experimental (all other versions of Debian have the same dependency versions right now)
-    - TWISTED_VERSION=17.1.0 PYOPENSSL_VERSION=16.2.0
-
-matrix:
-  include:
-    - python: "pypy"
-      env: TWISTED_VERSION=16.1.1 PYOPENSSL_VERSION=16.2.0
-    - python: "pypy"
-      env: TWISTED_VERSION=16.6.0 PYOPENSSL_VERSION=16.2.0
-  allow_failures:
-    - python: "2.7"
-      env: TWISTED_VERSION=16.6.0 PYOPENSSL_VERSION=16.2.0
-    - python: "2.7"
-      env: TWISTED_VERSION=17.1.0 PYOPENSSL_VERSION=16.2.0
-    - python: "pypy"
-      env: TWISTED_VERSION=16.1.1 PYOPENSSL_VERSION=16.2.0
-    - python: "pypy"
-      env: TWISTED_VERSION=16.6.0 PYOPENSSL_VERSION=16.2.0
-  fast_finish: true
 
 before_install:
   - sudo apt-get update
@@ -63,7 +39,7 @@ before_install:
   - chmod -R og-w $PYTHON_EGG_CACHE
 
 install:
-  - TWISTED_VERSION=$TWISTED_VERSION PYOPENSSL_VERSION=$PYOPENSSL_VERSION ./scripts/install-dependencies
+  - ./scripts/install-dependencies
   - make install
 
 # Start a BridgeDB instance before running the tests:

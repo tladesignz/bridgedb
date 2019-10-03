@@ -69,7 +69,7 @@ from bridgedb.util import replaceControlChars
 
 #: The path to the HTTPS distributor's web templates.  (Should be the
 #: "templates" directory in the same directory as this file.)
-TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
+TEMPLATE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
 
 # Setting `filesystem_checks` to False is recommended for production servers,
 # due to potential speed increases. This means that the atimes of the Mako

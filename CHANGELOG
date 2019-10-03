@@ -1,3 +1,21 @@
+Changes in version 0.8.3 - 2019-10-03
+
+        * FIXES https://bugs.torproject.org/31903
+        Update existing translations and request new translations.  Thanks to
+        all volunteers who helped translate BridgeDB!
+
+        * FIXES https://bugs.torproject.org/31780
+        We implemented BridgeDB's metrics in #9316 but haven't specified its
+        format until now.  In addition to adding a specification, this patch
+        also makes our implementation consistent with our (slightly updated)
+        specification.
+
+        * FIXES https://bugs.torproject.org/29484
+        Update BridgeDB's requirements to the latest respective versions.  Among
+        others, this patch set updates Twisted to 19.7.0, pyOpenSSL to 19.0.0,
+        and replaces (the abandoned) PyCrypto with PyCryptodome, which fixes
+        security vulnerabilities.
+
 Changes in version 0.8.2 - 2019-09-20
 
         Updated translations for the following languages:
