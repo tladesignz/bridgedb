@@ -110,8 +110,8 @@ class StateTest(unittest.TestCase):
         self.assertTrue(len(pseudo_fh.getvalue()) > 0)
 
         lines = pseudo_fh.getvalue().split("\n")
-        self.assertTrue(lines[0].startswith("bridgedb-stats-end"))
-        self.assertTrue(lines[1].startswith("bridgedb-stats-version"))
+        self.assertTrue(lines[0].startswith("bridgedb-metrics-end"))
+        self.assertTrue(lines[1].startswith("bridgedb-metrics-version"))
         self.assertTrue(lines[2] ==
                         "bridgedb-metric-count https.obfs4.de.success.None 10")
 

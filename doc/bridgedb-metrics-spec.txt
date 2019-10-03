@@ -1,0 +1,74 @@
+                      BridgeDB metrics (version 1)
+
+BridgeDB exports usage metrics once every 24 hours.  These metrics
+encode how many approximate successful/failed requests BridgeDB has seen
+per distribution mechanism, per pluggable transport, per country code or
+email provider.  For example, one of these metrics lines can tell us
+that over the last 24 hours, BridgeDB has seen between 21 and 30
+successful requests for obfs4 over moat from Zimbabwe.
+
+This section specifies the format of BridgeDB's metrics.  Each metrics
+file is formatted as follows:
+
+  "bridgedb-metrics-end" YYYY-MM-DD HH:MM:SS (NSEC s) NL
+      [At start, exactly once.]
+
+      YYYY-MM-DD HH:MM:SS defines the end (in UTC) of the included
+      measurement interval of length NSEC seconds (86400 seconds by
+      default).
+
+      Example:
+        bridgedb-metrics-end 2019-09-18 00:33:44 (86400 s)
+
+  "bridgedb-metrics-version" VERSION NL
+      [Exactly once.]
+
+      VERSION determines the version of the metrics format.  As the
+      format changes over time, we will increment VERSION.  The latest
+      version is 1 -- the first iteration of the metrics format.
+
+      Example:
+        bridgedb-metrics-version 1
+
+  "bridgedb-metric-count" METRIC_KEY COUNT NL
+      [Any number.]
+
+      METRIC_KEY determines a metrics key, which consists of several
+      fields, separated by a period:
+
+      DISTRIBUTION "." TRANSPORT "." CC/EMAIL "." "success" | "fail" "." RESERVED
+
+      DISTRIBUTION is BridgeDB's distribution mechanism, which includes
+      "https", "email", and "moat".  These distribution mechanisms may
+      change in the future.
+
+      TRANSPORT refers to a pluggable transport protocol.  This includes
+      "obfs2", "obfs3", "obfs4", "scramblesuit", and "fte".  These
+      pluggable transports will change in the future.
+
+      CC/EMAIL refers to a two-letter country code of the user's IP
+      address iff DISTRIBUTION is "moat" or "https"; or to an email
+      provider iff DISTRIBUTION is "email".  We use two reserved country
+      codes, "??" and "zz".  "??" denotes that we couldn't map an IP
+      address to its country, e.g., because our geolocation API was
+      unable to.  "zz" denotes a proxy IP address, e.g., Tor exit
+      relays.  The two allowed email providers are "gmail" and "riseup".
+
+      The next field is either "success" or "fail", depending on if the
+      BridgeDB request was successful or not.  A request is successful
+      if BridgeDB attempts to provide the user with bridges, even if
+      BridgeDB currently has no bridges available.  A request has failed
+      if BridgeDB won't provide the user with bridges, for example, if
+      the user could not solve the CAPTCHA.
+
+      The field RESERVED is reserved for an anomaly score.  It is
+      currently set to "none" and should be ignored by implementations.
+
+      COUNT is the approximate number of user requests for the given
+      METRIC_KEY.  We round up the number of requests to the next
+      multiple of 10 to preserve some user privacy.
+
+      Examples:
+        bridgedb-metric-count https.scramblesuit.zz.fail.none 100
+        bridgedb-metric-count moat.obfs4.??.success.none 3550
+        bridgedb-metric-count email.fte.gmail.fail.none 10
