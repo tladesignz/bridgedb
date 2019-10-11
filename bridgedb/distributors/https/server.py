@@ -87,9 +87,6 @@ lookup = TemplateLookup(directories=[TEMPLATE_DIR],
                         collection_size=500)
 logging.debug("Set template root to %s" % TEMPLATE_DIR)
 
-#: Localisations which BridgeDB supports which should be rendered right-to-left.
-rtl_langs = ('ar', 'he', 'fa', 'gu_IN', 'ku')
-
 #: A list of supported language tuples. Use getSortedLangList() to read this variable.
 supported_langs = []
 

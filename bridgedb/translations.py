@@ -12,6 +12,8 @@ import logging
 import os
 import re
 
+import babel.core
+
 from bridgedb import _langs
 from bridgedb import safelog
 from bridgedb.parse import headers
@@ -139,6 +141,10 @@ def usingRTLLang(langs):
         otherwise.
     """
     lang = getFirstSupportedLang(langs)
-    if lang in _langs.RTL_LANGS:
-        return True
-    return False
+
+    rtl = False
+    try:
+        rtl = babel.core.Locale.parse(lang).text_direction == "rtl"
+    except ValueError as err:
+        logging.warning("Couldn't parse locale %s: %s" % (lang, err))
+    return rtl
