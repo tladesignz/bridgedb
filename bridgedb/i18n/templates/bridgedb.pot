@@ -3,7 +3,6 @@
 # This file is distributed under the same license as the bridgedb project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: bridgedb 0.8.0+15.gd9d886f.dirty\n"
