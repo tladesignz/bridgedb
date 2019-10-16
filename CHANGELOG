@@ -1,3 +1,10 @@
+Changes in version 0.9.0 - 2019-10-16
+
+        * FIXES https://bugs.torproject.org/26543
+        Implement a language switcher that allows users to override the locale
+        that BridgeDB automatically selects by inspecting the client's request
+        headers.
+
 Changes in version 0.8.3 - 2019-10-03
 
         * FIXES https://bugs.torproject.org/31903
