@@ -1,4 +1,4 @@
-Changes in version A.B.C - YYYY-MM-DD
+Changes in version 0.9.0 - 2019-10-16
 
         * FIXES https://bugs.torproject.org/26543
         Implement a language switcher that allows users to override the locale
