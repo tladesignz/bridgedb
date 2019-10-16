@@ -1,7 +1,7 @@
 ## -*- coding: utf-8 -*-
 
 <%inherit file="base.html"/>
-<%page args="strings, rtl=False, lang='en', **kwargs"/>
+<%page args="strings, langs, rtl=False, lang='en', langOverride=False, **kwargs"/>
 
 <div class="main-steps">
 <div class="step row" id="step-1">
@@ -24,7 +24,11 @@
       <span class="step-title">
         ${_("Step %s2%s") % ("""<u>""", """</u>""")}</span>
       <span class="step-text">
+      % if langOverride:
+        ${_("Get %s bridges %s") % ("""<a href="/options?lang="""+lang+"""" accesskey="2">""", "</a>")}</span>
+      % else:
         ${_("Get %s bridges %s") % ("""<a href="/options" accesskey="2">""", "</a>")}</span>
+      % endif
     </span>
   </div>
 </div>
@@ -35,9 +39,15 @@
       <span class="step-title">
         ${_("Step %s3%s") % ("""<u>""", """</u>""")}</span>
       <span class="step-text">
+      % if langOverride:
+        ${_("""Now %s add the bridges to Tor Browser %s""") % \
+           ("""<a href="/howto?lang="""+lang+"""" accesskey="3">""",
+            """</a>""")}</span>
+      % else:
         ${_("""Now %s add the bridges to Tor Browser %s""") % \
            ("""<a href="/howto" accesskey="3">""",
             """</a>""")}</span>
+      % endif
     </span>
   </div>
 </div>

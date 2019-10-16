@@ -439,3 +439,9 @@ div.bridge-lines.-webkit-scrollbar-thumb.horizontal{
 }
 @media (min-width: 1px) and (max-width: 480px), handheld {
 }
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+  height: 350px;
+  overflow: auto;
+}

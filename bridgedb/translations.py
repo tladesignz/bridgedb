@@ -12,6 +12,8 @@ import logging
 import os
 import re
 
+import babel.core
+
 from bridgedb import _langs
 from bridgedb import safelog
 from bridgedb.parse import headers
@@ -19,6 +21,28 @@ from bridgedb.parse import headers
 
 TRANSLATIONS_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'i18n')
 
+
+def isLangOverridden(request):
+    """
+    Return True if the `lang' HTTP GET argument is set in the given request.
+
+    :type request: :api:`twisted.web.server.Request`
+    :param request: An incoming request from a client.
+    :rtype: bool
+    :returns: ``True`` if the given request has a `lang` argument and ``False``
+        otherwise.
+    """
+
+    return request.args.get("lang", [None])[0] is not None
+
+def getSupportedLangs():
+    """Return all supported languages.
+
+    :rtype: set
+    :returns: A set of language locales, e.g.: set(['el', 'eo', ..., ]).
+    """
+
+    return _langs.get_langs()
 
 def getFirstSupportedLang(langs):
     """Return the first language in **langs** that we support.
@@ -117,6 +141,10 @@ def usingRTLLang(langs):
         otherwise.
     """
     lang = getFirstSupportedLang(langs)
-    if lang in _langs.RTL_LANGS:
-        return True
-    return False
+
+    rtl = False
+    try:
+        rtl = babel.core.Locale.parse(lang).text_direction == "rtl"
+    except ValueError as err:
+        logging.warning("Couldn't parse locale %s: %s" % (lang, err))
+    return rtl

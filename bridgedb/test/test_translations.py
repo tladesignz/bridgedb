@@ -76,3 +76,8 @@ class TranslationsMiscTests(unittest.TestCase):
         emailAddr = 'bridges+ar@torproject.org'
         replyLocale = translations.getLocaleFromPlusAddr(emailAddr)
         self.assertEqual('ar', replyLocale)
+
+    def test_usingRTLLang(self):
+        self.assertFalse(translations.usingRTLLang(['foo_BAR']))
+        self.assertFalse(translations.usingRTLLang(['en']))
+        self.assertTrue(translations.usingRTLLang(['fa']))

@@ -1,7 +1,7 @@
 ## -*- coding: utf-8 -*-
 
 <%inherit file="base.html"/>
-<%page args="strings, rtl=False, lang='en', answer=0, qrcode=0, **kwargs"/>
+<%page args="strings, langs, rtl=False, lang='en', langOverride=False, answer=0, qrcode=0, **kwargs"/>
 
 </div>
 
@@ -129,9 +129,15 @@ ${_("""Uh oh, spaghettios!""")}
     </p>
     <p>
       ${_("""There currently aren't any bridges available...""")}
-      ${_(""" Perhaps you should try %s going back %s and choosing a""" \
-          """ different bridge type!""") % \
-         ("""<a class="alert-link" href="options">""", """</a>""")}
+      % if langOverride:
+        ${_(""" Perhaps you should try %s going back %s and choosing a""" \
+            """ different bridge type!""") % \
+           ("""<a class="alert-link" href="options?lang="""+lang+""">""", """</a>""")}
+      % else:
+        ${_(""" Perhaps you should try %s going back %s and choosing a""" \
+            """ different bridge type!""") % \
+           ("""<a class="alert-link" href="options">""", """</a>""")}
+      % endif
     </p>
   </div>
 </div>
