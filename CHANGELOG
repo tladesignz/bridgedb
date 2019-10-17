@@ -6,6 +6,9 @@ Changes in version A.B.C - YYYY-MM-DD
         translation request and also updates our instructions on how to request
         new translations.
 
+        * FIXES https://bugs.torproject.org/32105
+        Mention an undocumented OS-level dependency: python3-dkim.
+
 Changes in version 0.9.0 - 2019-10-16
 
         * FIXES https://bugs.torproject.org/26543
