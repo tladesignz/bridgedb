@@ -1,3 +1,11 @@
+Changes in version A.B.C - YYYY-MM-DD
+
+        * FIXES https://bugs.torproject.org/32134
+        While implementing our language switcher (#26543), we added a new
+        string, "Language", that requires translations.  This patch adds a new
+        translation request and also updates our instructions on how to request
+        new translations.
+
 Changes in version 0.9.0 - 2019-10-16
 
         * FIXES https://bugs.torproject.org/26543
