@@ -202,3 +202,14 @@ class StateTest(unittest.TestCase):
         key2 = "moat.obfs4.us.fail.none"
         self.assertTrue(metrix.hotMetrics[key1] == 1)
         self.assertTrue(metrix.hotMetrics[key2] == 1)
+
+    def test_is_bridge_type_supported(self):
+
+        oldTransports = metrics.SUPPORTED_TRANSPORTS
+        metrics.setSupportedTransports({})
+        self.assertFalse(metrics.isBridgeTypeSupported("obfs4"))
+        metrics.setSupportedTransports(oldTransports)
+
+        self.assertTrue(metrics.isBridgeTypeSupported("obfs4"))
+        self.assertTrue(metrics.isBridgeTypeSupported("vanilla"))
+        self.assertFalse(metrics.isBridgeTypeSupported("xxx"))
