@@ -14,7 +14,7 @@
 #
 #------------------------------------------------------------------------------
 Babel==2.7.0
-BeautifulSoup==3.2.1
+BeautifulSoup==3.2.2
 Mako==1.1.0
 pycryptodome==3.9.0
 Twisted==19.7.0
@@ -23,7 +23,7 @@ coveralls==1.8.2
 gnupg==2.3.1
 ipaddr==2.2.0
 mechanize==0.4.3
-Pillow==6.1.0
+Pillow==6.2.1
 pygeoip==0.3.2
 qrcode==6.1
 service_identity==18.1.0
