@@ -80,6 +80,7 @@ BridgeDB requires the following OS-level dependencies:
 
 -  python>=2.7
 -  python-dev
+-  `python3-dkim <https://pypi.org/project/dkimpy/>`__ (it contains the ``dkimverify`` binary)
 -  build-essential
 -  gnupg (preferrably, gnupg2)
 -  OpenSSL>=1.0.1g
