@@ -80,6 +80,7 @@ BridgeDB requires the following OS-level dependencies:
 
 -  python>=2.7
 -  python-dev
+-  `python3-dkim <https://pypi.org/project/dkimpy/>`__ (it contains the ``dkimverify`` binary)
 -  build-essential
 -  gnupg (preferrably, gnupg2)
 -  OpenSSL>=1.0.1g
@@ -162,6 +163,10 @@ Enabling additional features
 Translations
 ------------
 
+For general information on the translation process, take a look at
+`our translation guidelines for developers
+<https://trac.torproject.org/projects/tor/wiki/doc/translation/developers>`__.
+
 **Using New Translations**:
 
 This should be done when newly completed translations are available in
@@ -180,31 +185,20 @@ This should be done whenever any of the strings requiring translation --
 ``_("the ones inside the weird underscore function, like this")`` -- are
 changed, or new ones are added. See ``lib/bridgedb/strings.py``.
 
-Translations for Tor Project repos are kept `in a separate
-repo <https://gitweb.torproject.org/translation.git>`__. You'll need to
-extract the strings from BridgeDB's source code into .pot templates, and
-place these .po files into the ``translation`` repo in the ``bridgedb``
-branch. After than the .po files should be put into Transifex (don't ask
-me how this works…) and translated. After the translations are complete,
-the finished .po files should be placed into the ``bridgedb_completed``
-branch.
-
--  To extract all strings from BridgeDB's source::
+Translations for Tor Project repos are kept `in a separate repo
+<https://gitweb.torproject.org/translation.git>`__. To request new or updated
+translations, you'll need to extract the strings from BridgeDB's source code
+into our ./i18n/templates/bridgedb.pot template, and then commit it to our
+``develop`` branch.  From there, the translation system takes over and
+eventually, new translations will be available.  To extract all strings from
+BridgeDB's source, run::
 
          python setup.py extract_messages
 
-   A .pot file will be created in ./i18n/templates/bridgedb.pot
-
-
--  Initialise catalogs for each desired language::
-
-         python setup.py init_catalog -l LANG
-
-   where ``LANG`` is the 2 or 4 letter country-code, eg. 'es'. If you've
-   already initialised a particular language, do instead::
-
-         python setup.py update_catalog
-
+Transifex uses the resulting file ./i18n/templates/bridgedb.pot (and this file
+only) as input and fetches it from BridgeDB's ``develop`` branch, so we don't
+need to release a new BridgeDB version (which we only do in the ``master``
+branch) to request translations.
 
 -------
 
