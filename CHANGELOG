@@ -1,4 +1,8 @@
-Changes in version A.B.C - YYYY-MM-DD
+Changes in version 0.9.1 - 2019-10-29
+
+        * FIXES https://bugs.torproject.org/32203
+        The metrics code used to weed out vanilla bridges, so they did not show
+        up in our metrics.  This patch fixes this issue.
 
         * FIXES https://bugs.torproject.org/32134
         While implementing our language switcher (#26543), we added a new
