@@ -83,17 +83,20 @@ def setSupportedTransports(supportedTransports):
     SUPPORTED_TRANSPORTS = supportedTransports
 
 
-def isTransportSupported(transport):
-    """Return `True' if the given transport is supported or `False' otherwise.
+def isBridgeTypeSupported(bridgeType):
+    """Return `True' or `False' depending on if the given bridge type is
+    supported.
 
-    :param str transport: The transport protocol.
+    :param str bridgeType: The bridge type, e.g., "vanilla" or "obfs4".
     """
 
     if SUPPORTED_TRANSPORTS is None:
         logging.error("Bug: Variable SUPPORTED_TRANSPORTS is None.")
         return False
 
-    return transport in SUPPORTED_TRANSPORTS
+    # Note that "vanilla" isn't a transport protocol (in fact, it's the absence
+    # of a transport), which is why it isn't in SUPPORTED_TRANSPORTS.
+    return (bridgeType in SUPPORTED_TRANSPORTS) or (bridgeType == "vanilla")
 
 
 def export(fh, measurementInterval):
@@ -334,7 +337,7 @@ class HTTPSMetrics(Metrics):
         # BridgeDB's HTTPS interface exposes transport types as a drop down
         # menu but users can still request anything by manipulating HTTP
         # parameters.
-        if not isTransportSupported(bridgeType):
+        if not isBridgeTypeSupported(bridgeType):
             logging.warning("User requested unsupported transport type %s "
                             "over HTTPS." % bridgeType)
             return
@@ -393,7 +396,7 @@ class EmailMetrics(Metrics):
 
         # Over email, transports are requested by typing them.  Typos happen
         # and users can request anything, really.
-        if not isTransportSupported(bridgeType):
+        if not isBridgeTypeSupported(bridgeType):
             logging.warning("User requested unsupported transport type %s "
                             "over email." % bridgeType)
             return
@@ -439,7 +442,7 @@ class MoatMetrics(Metrics):
             logging.warning("Could not decode request: %s" % err)
             return
 
-        if not isTransportSupported(bridgeType):
+        if not isBridgeTypeSupported(bridgeType):
             logging.warning("User requested unsupported transport type %s "
                             "over moat." % bridgeType)
             return
