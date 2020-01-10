@@ -57,28 +57,8 @@ from Crypto.PublicKey import RSA
 from twisted.internet import ssl
 from twisted.python.procutils import which
 
-
 #: The hash digest to use for HMACs.
 DIGESTMOD = hashlib.sha1
-
-# Test to see if we have the old or new style buffer() interface. Trying
-# to use an old-style buffer on Python2.7 prior to version 2.7.5 will produce:
-#
-#     TypeError: 'buffer' does not have the buffer interface
-#
-#: ``True`` if we have the new-style `buffer`_ interface; ``False`` otherwise.
-#:
-#: .. _buffer: https://docs.python.org/2/c-api/buffer.html
-NEW_BUFFER_INTERFACE = False
-try:
-    io.BytesIO(buffer('test'))
-except TypeError:  # pragma: no cover
-    logging.warn(
-        "This Python version is too old! "\
-        "It doesn't support new-style buffer interfaces: "\
-        "https://mail.python.org/pipermail/python-dev/2010-October/104917.html")
-else:
-    NEW_BUFFER_INTERFACE = True
 
 
 class PKCS1PaddingError(Exception):

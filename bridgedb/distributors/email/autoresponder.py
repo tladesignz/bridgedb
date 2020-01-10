@@ -51,7 +51,6 @@ from twisted.python import failure
 from bridgedb import strings
 from bridgedb import metrics
 from bridgedb import safelog
-from bridgedb.crypto import NEW_BUFFER_INTERFACE
 from bridgedb.distributors.email import dkim
 from bridgedb.distributors.email import request
 from bridgedb.distributors.email import templates
@@ -183,22 +182,12 @@ class EmailResponse(object):
         the email.)
 
 
-    :vartype _buff: :any:`unicode` or :any:`buffer`
-    :var _buff: Used internally to write lines for the response email into the
-        ``_mailfile``. The reason why both of these attributes have two
-        possible types is for the same Python-buggy reasons which require
-        :data:`~bridgedb.crypto.NEW_BUFFER_INTERFACE`.
-    :vartype mailfile: :class:`io.StringIO` or :class:`io.BytesIO`
-    :var mailfile: An in-memory file-like object for storing the formatted
-        headers and body of the response email.
     :var str delimiter: Delimiter between lines written to the
         :data:`mailfile`.
     :var bool closed: ``True`` if :meth:`close` has been called.
     :vartype to: :api:`twisted.mail.smtp.Address`
     :var to: The client's email address, to which this response should be sent.
     """
-    _buff = buffer if NEW_BUFFER_INTERFACE else unicode
-    mailfile = io.BytesIO if NEW_BUFFER_INTERFACE else io.StringIO
 
     def __init__(self, gpgSignFunc=None):
         """Create a response to an email we have recieved.
@@ -212,7 +201,7 @@ class EmailResponse(object):
             obtaining a pre-configured **gpgSignFunc**.
         """
         self.gpgSign = gpgSignFunc
-        self.mailfile = self.mailfile()
+        self.mailfile = io.StringIO()
         self.delimiter = '\n'
         self.closed = False
         self.to = None
@@ -281,7 +270,7 @@ class EmailResponse(object):
             self.writelines(line)
         else:
             line += self.delimiter
-            self.mailfile.write(self._buff(line.encode('utf8')))
+            self.mailfile.write(line.encode('utf8'))
             self.mailfile.flush()
 
     def writelines(self, lines):
