@@ -89,7 +89,7 @@ class RSAKeyGenerationError(Exception):
 
 
 def writeKeyToFile(key, filename):
-    """Write **key** to **filename**, with ``0400`` permissions.
+    """Write **key** to **filename**, with ``400`` octal permissions.
 
     If **filename** doesn't exist, it will be created. If it does exist
     already, and is writable by the owner of the current process, then it will
@@ -102,7 +102,7 @@ def writeKeyToFile(key, filename):
     """
     logging.info("Writing key to file: %r" % filename)
     flags = os.O_WRONLY | os.O_TRUNC | os.O_CREAT | getattr(os, "O_BIN", 0)
-    fd = os.open(filename, flags, 0400)
+    fd = os.open(filename, flags, 0o400)
     os.write(fd, key)
     os.fsync(fd)
     os.close(fd)

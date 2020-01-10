@@ -207,7 +207,7 @@ class GimpCaptchaTests(unittest.TestCase):
         with open(badFile, 'w') as fh:
             fh.write(' ')
             fh.flush()
-        os.chmod(badFile, 0266)
+        os.chmod(badFile, 0o266)
 
         c = captcha.GimpCaptcha(self.publik, self.sekrit, self.hmacKey,
                                 self.badCacheDir)
