@@ -138,7 +138,7 @@ class DummyEmailDistributor(object):
         self.answerParameters = answerParameters
 
     def getBridges(self, bridgeRequest, epoch):
-        return [util.DummyBridge() for _ in xrange(self._bridgesPerResponseMin)]
+        return [util.DummyBridge() for _ in range(self._bridgesPerResponseMin)]
 
     def cleanDatabase(self):
         pass
@@ -167,7 +167,7 @@ class DummyEmailDistributorWithState(DummyEmailDistributor):
         self.alreadySeen[bridgeRequest.client] += 1
 
         if self.alreadySeen[bridgeRequest.client] <= 1:
-            return [util.DummyBridge() for _ in xrange(self._bridgesPerResponseMin)]
+            return [util.DummyBridge() for _ in range(self._bridgesPerResponseMin)]
         elif self.alreadySeen[bridgeRequest.client] == 2:
             raise TooSoonEmail(
                 "Seen client '%s' %d times"

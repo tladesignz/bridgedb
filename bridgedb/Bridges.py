@@ -405,7 +405,7 @@ class FixedBridgeSplitter(object):
             description is ``"IPv6 obfs2 bridges"`` the line would read:
             ``"IPv6 obfs2 bridges ring=3"``.
         """
-        for index, ring in zip(xrange(len(self.rings)), self.rings):
+        for index, ring in zip(range(len(self.rings)), self.rings):
             ring.dumpAssignments(filename, "%s ring=%s" % (description, index))
 
 

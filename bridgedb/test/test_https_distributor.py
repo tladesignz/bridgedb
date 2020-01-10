@@ -261,7 +261,7 @@ class HTTPSDistributorTests(unittest.TestCase):
 
         [dist.insert(bridge) for bridge in bridges]
 
-        for i in xrange(5):
+        for i in range(5):
             bridgeRequest1 = self.randomClientRequestForNotBlockedIn('cn')
             bridgeRequest1.transports.append('obfs2')
             bridgeRequest1.generateFilters()
@@ -335,7 +335,7 @@ class HTTPSDistributorTests(unittest.TestCase):
        [dist.insert(bridge) for bridge in bridges]
        [dist.insert(bridge) for bridge in self.bridges[:250]]
 
-       for _ in xrange(32):
+       for _ in range(32):
            bridgeRequest = self.randomClientRequest()
            answer = dist.getBridges(bridgeRequest, 1)
            count = 0
@@ -399,7 +399,7 @@ class HTTPSDistributorTests(unittest.TestCase):
         dist = distributor.HTTPSDistributor(3, self.key)
         [dist.insert(bridge) for bridge in self.bridges[:250]]
 
-        for i in xrange(500):
+        for i in range(500):
             bridgeRequest = self.randomClientRequest()
             bridgeRequest.withIPv6()
             bridgeRequest.generateFilters()
@@ -421,7 +421,7 @@ class HTTPSDistributorTests(unittest.TestCase):
         dist = distributor.HTTPSDistributor(1, self.key)
         [dist.insert(bridge) for bridge in self.bridges[:250]]
 
-        for i in xrange(500):
+        for i in range(500):
             bridgeRequest = self.randomClientRequest()
             bridgeRequest.generateFilters()
 

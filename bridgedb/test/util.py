@@ -135,7 +135,7 @@ def randomIPv6():
     return ipaddr.IPv6Address(random.getrandbits(128))
 
 def randomIP():
-    if random.choice(xrange(2)):
+    if random.choice(range(2)):
         return randomIPv4()
     return randomIPv6()
 
@@ -146,7 +146,7 @@ def randomIPv6String():
     return bracketIPv6(randomIPv6().compressed)
 
 def randomIPString():
-    if random.choice(xrange(2)):
+    if random.choice(range(2)):
         return randomIPv4String()
     return randomIPv6String()
 
@@ -194,7 +194,7 @@ def generateFakeBridges(n=500):
         # Real tor currently only supports one extra ORAddress, and it can
         # only be IPv6.
         addrs = [(randomValidIPv6(), randomHighPort(), 6)]
-        fpr = "".join(random.choice('abcdef0123456789') for _ in xrange(40))
+        fpr = "".join(random.choice('abcdef0123456789') for _ in range(40))
 
         supported = ["obfs2", "obfs3", "fte"]
         transports = []
@@ -282,7 +282,7 @@ class DummyBridge(object):
         self.address = ipaddr.IPv4Address(ipv4)
         self.orPort = randomPort()
         self.fingerprint = "".join(random.choice('abcdef0123456789')
-                                   for _ in xrange(40))
+                                   for _ in range(40))
         self.orAddresses = [(randomIPv6(), randomPort(), 6)]
 
     def getBridgeLine(self, bridgeRequest, includeFingerprint=True):

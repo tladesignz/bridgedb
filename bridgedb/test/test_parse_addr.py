@@ -669,7 +669,7 @@ class PortListTest(unittest.TestCase):
         ports.
         """
         tooMany = addr.PortList.PORTSPEC_LEN + 1
-        ports = [self.getRandomPort() for x in xrange(tooMany)]
+        ports = [self.getRandomPort() for x in range(tooMany)]
         log.msg("Testing addr.PortList(%s))"
                 % ', '.join([type('')(port) for port in ports]))
         portList = addr.PortList(*ports)
@@ -699,7 +699,7 @@ class PortListTest(unittest.TestCase):
         ports = (443, 9001, 9030)
         portList = addr.PortList(*ports)
         iterator = iter(portList)
-        for x in xrange(len(ports)):
+        for x in range(len(ports)):
             self.assertIn(iterator.next(), portList)
 
     def test_str(self):
