@@ -57,7 +57,7 @@ class ReCaptchaTests(unittest.TestCase):
     def test_get(self):
         """Test get() method."""
 
-        # Force urllib2 to do anything less idiotic than the defaults:
+        # Force urllib.request to do anything less idiotic than the defaults:
         envkey = 'HTTPS_PROXY'
         oldkey = None
         if os.environ.has_key(envkey):
@@ -65,9 +65,9 @@ class ReCaptchaTests(unittest.TestCase):
         os.environ[envkey] = '127.0.0.1:9150'
         # This stupid thing searches the environment for ``<protocol>_PROXY``
         # variables, hence the above 'HTTPS_PROXY' env setting:
-        proxy = captcha.urllib2.ProxyHandler()
-        opener = captcha.urllib2.build_opener(proxy)
-        captcha.urllib2.install_opener(opener)
+        proxy = captcha.urllib.request.ProxyHandler()
+        opener = captcha.urllib.request.build_opener(proxy)
+        captcha.urllib.request.install_opener(opener)
 
         try:
             # There isn't really a reliable way to test this function! :(

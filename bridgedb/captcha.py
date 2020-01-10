@@ -63,7 +63,7 @@ import logging
 import random
 import os
 import time
-import urllib2
+import urllib.request
 
 from BeautifulSoup import BeautifulSoup
 
@@ -185,14 +185,14 @@ class ReCaptcha(Captcha):
         form = "/noscript?k=%s" % self.publicKey
 
         # Extract and store image from recaptcha
-        html = urllib2.urlopen(urlbase + form).read()
+        html = urllib.request.urlopen(urlbase + form).read()
         # FIXME: The remaining lines currently cannot be reliably unit tested:
         soup = BeautifulSoup(html)                           # pragma: no cover
         imgurl = urlbase + "/" +  soup.find('img')['src']    # pragma: no cover
         cField = soup.find(                                  # pragma: no cover
             'input', {'name': 'recaptcha_challenge_field'})  # pragma: no cover
         self.challenge = str(cField['value'])                # pragma: no cover
-        self.image = urllib2.urlopen(imgurl).read()          # pragma: no cover
+        self.image = urllib.request.urlopen(imgurl).read()   # pragma: no cover
 
 
 class GimpCaptcha(Captcha):
