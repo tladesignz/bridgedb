@@ -57,8 +57,7 @@ class StateSaveAndLoadTests(unittest.TestCase):
         self.assertIsInstance(loadedState, persistent.State)
         self.assertNotIdentical(self.state, loadedState)
         self.assertNotEqual(self.state, loadedState)
-        # For some reason, twisted.trial.unittest.TestCase in Python2.6
-        # doesn't have an 'assertItemsEqual' attribute...
+
         self.assertEqual(self.state.__dict__.keys().sort(),
                          loadedState.__dict__.keys().sort())
 

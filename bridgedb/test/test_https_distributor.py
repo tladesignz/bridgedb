@@ -322,7 +322,7 @@ class HTTPSDistributorTests(unittest.TestCase):
         for i in range(5):
             responses[i] = dist.getBridges(bridgeRequest, 1)
         for i in range(4):
-            self.assertItemsEqual(responses[i], responses[i+1])
+            self.assertCountEqual(responses[i], responses[i+1])
 
     def test_HTTPSDistributor_getBridges_with_BridgeRingParameters(self):
        param = BridgeRingParameters(needPorts=[(443, 1)])

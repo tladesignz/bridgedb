@@ -140,7 +140,7 @@ class MiscellaneousTests(unittest.TestCase):
         """
         server.setSupportedTransports(self.config.SUPPORTED_TRANSPORTS)
 
-        self.assertItemsEqual(server.getSupportedTransports(),
+        self.assertCountEqual(server.getSupportedTransports(),
                               ["obfs4", "obfs3", "scramblesuit", "fte", "vanilla"])
 
 
@@ -553,7 +553,7 @@ class CaptchaFetchResourceTests(unittest.TestCase):
     def test_getPreferredTransports_unknown_transport(self):
         preferred = self.resource.getPreferredTransports(['dinosaur'])
 
-        self.assertItemsEqual(preferred,
+        self.assertCountEqual(preferred,
                               ['obfs4', 'obfs3', 'fte', 'scramblesuit', 'vanilla'])
 
     def assert_data_is_ok(self, decoded):

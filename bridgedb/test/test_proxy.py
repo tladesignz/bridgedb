@@ -254,7 +254,7 @@ class ProxySetUnittests(unittest.TestCase):
 
     def test_ProxySet_proxies_getter(self):
         """ProxySet.proxies should list all proxies."""
-        self.assertItemsEqual(self.proxyList.proxies, set(self.proxies))
+        self.assertCountEqual(self.proxyList.proxies, set(self.proxies))
 
     def test_ProxySet_proxies_setter(self):
         """``ProxySet.proxies = ['foo']`` should raise an ``AttributeError``."""
@@ -273,7 +273,7 @@ class ProxySetUnittests(unittest.TestCase):
     def test_ProxySet_exitRelays_getter(self):
         """ProxySet.exitRelays should list all exit relays."""
         self.proxyList.addExitRelays(self.moarProxies)
-        self.assertItemsEqual(self.proxyList.exitRelays, set(self.moarProxies))
+        self.assertCountEqual(self.proxyList.exitRelays, set(self.moarProxies))
 
     def test_ProxySet_exitRelays_setter(self):
         """``ProxySet.exitRelays = ['foo']`` should raise an ``AttributeError``."""
@@ -447,9 +447,9 @@ class ProxySetUnittests(unittest.TestCase):
         """
         proxySetA = self.proxyList
         proxySetB = proxy.ProxySet(self.moarProxies)
-        self.assertItemsEqual(proxySetA.difference(proxySetB),
+        self.assertCountEqual(proxySetA.difference(proxySetB),
                               set(self.proxies))
-        self.assertItemsEqual(proxySetB.difference(proxySetA),
+        self.assertCountEqual(proxySetB.difference(proxySetA),
                               set(self.moarProxies))
 
     def test_ProxySet_firstSeen_returns_timestamp(self):
@@ -493,7 +493,7 @@ class ProxySetUnittests(unittest.TestCase):
         a.extend(self.moarProxies)
         a = set(a)
         b = self.proxyList.intersection(set(self.moarProxies))
-        self.assertItemsEqual(a, b)
+        self.assertCountEqual(a, b)
 
     def test_ProxySet_remove(self):
         """ProxySet.remove() should subtract proxies which were already added
@@ -534,7 +534,7 @@ class ProxySetUnittests(unittest.TestCase):
         proxyListA = proxy.ProxySet(self.proxies)
         proxyListB = proxy.ProxySet(self.proxies)
         self.assertEqual(proxyListA, proxyListB)
-        self.assertItemsEqual(proxyListA, proxyListB)
+        self.assertCountEqual(proxyListA, proxyListB)
         self.assertEqual(hash(proxyListA), hash(proxyListB))
 
 
