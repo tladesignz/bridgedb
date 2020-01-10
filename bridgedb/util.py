@@ -360,7 +360,7 @@ class JustifiedLogFormatter(logging.Formatter):
         return super(JustifiedLogFormatter, self).format(record)
 
 
-class mixin:
+class mixin(metaclass=abc.ABCMeta):
     """Subclasses of me can be used as a mixin class by registering another
     class, ``ClassA``, which should be mixed with the ``mixin`` subclass, in
     order to provide simple, less error-prone, multiple inheritance models::
@@ -407,4 +407,3 @@ class mixin:
     .. info:: This class' name is lowercased because pylint is hardcoded to
         expect mixin classes to end in ``'mixin'``.
     """
-    __metaclass__ = abc.ABCMeta
