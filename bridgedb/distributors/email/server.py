@@ -499,7 +499,7 @@ def addServer(config, distributor):
         reactor.listenTCP(port, factory, interface=addr)
     except CannotListenError as error:  # pragma: no cover
         logging.fatal(error)
-        raise SystemExit(error.message)
+        raise SystemExit(str(error))
 
     # Set up a LoopingCall to run every 30 minutes and forget old email times.
     lc = LoopingCall(distributor.cleanDatabase)

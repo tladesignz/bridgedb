@@ -183,7 +183,7 @@ class State(jelly.Jellyable):
         except (AttributeError, TypeError) as error:
             err += "Failed statefile.open() and statefile.closed:"
             err += "\n\t{0}\nstatefile type = '{1}'".format(
-                error.message, type(statefile))
+                error, type(statefile))
         else:
             try:
                 status = pickle.load(fh)
@@ -218,7 +218,7 @@ class State(jelly.Jellyable):
                 pickle.dump(jelly.jelly(self), fh)
             except AttributeError as error:
                 logging.debug("Tried jellying an unjelliable object: %s"
-                              % error.message)
+                              % error)
 
         if fh is not None:
             fh.flush()

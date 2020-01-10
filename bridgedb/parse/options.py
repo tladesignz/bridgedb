@@ -117,12 +117,12 @@ def parseOptions():
     try:
         options.parseOptions()
     except usage.UsageError as uerr:
-        print(uerr.message)
+        print(str(uerr))
         print(options.getUsage())
         sys.exit(1)
     except Exception as error:  # pragma: no cover
         exc, value, tb = sys.exc_info()
-        print("Unhandled Error: %s" % error.message)
+        print("Unhandled Error: %s" % error)
         print(traceback.format_exc(tb))
 
     return options

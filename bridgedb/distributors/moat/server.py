@@ -602,7 +602,7 @@ class CaptchaCheckResource(CaptchaResource):
             logging.warn(("Error processing client POST request: "
                           "Client JSON API data missing '%s' field.") % err)
         except ValueError as err:
-            logging.warn("Error processing client POST request: %s" % err.message)
+            logging.warn("Error processing client POST request: %s" % err)
         except Exception as impossible:
             logging.error(impossible)
 

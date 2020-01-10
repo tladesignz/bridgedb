@@ -124,7 +124,7 @@ def installTranslations(langs):
                 gettext.translation("bridgedb", localedir=TRANSLATIONS_DIR,
                                     languages=langs, fallback=True))
     except IOError as error:
-        logging.error(error.message)
+        logging.error(str(error))
 
     language.install(unicode=True)
     return language

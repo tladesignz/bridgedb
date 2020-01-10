@@ -295,7 +295,7 @@ class GimpCaptcha(Captcha):
                     now = int(time.time())
                     answer = answerBlob[12:]
                 except Exception as error:
-                    logging.warn(error.message)
+                    logging.warn(str(error))
                 else:
                     # If the beginning of the 'next' interval (the interval
                     # after the one when the CAPTCHA timestamp was created)

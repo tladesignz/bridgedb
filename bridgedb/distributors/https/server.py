@@ -549,9 +549,9 @@ class CaptchaProtectedResource(CustomErrorHandlingResource, CSPResource):
                 metrix.recordValidHTTPSRequest(request)
                 return self.resource.render(request)
         except ValueError as err:
-            logging.debug(err.message)
+            logging.debug(str(err))
         except MaliciousRequest as err:
-            logging.debug(err.message)
+            logging.debug(str(err))
             # Make them wait a bit, then redirect them to a "daring
             # work of art" as pennance for their sins.
             d = task.deferLater(reactor, 1, lambda: request)
@@ -559,7 +559,7 @@ class CaptchaProtectedResource(CustomErrorHandlingResource, CSPResource):
             metrix.recordInvalidHTTPSRequest(request)
             return NOT_DONE_YET
         except Exception as err:
-            logging.debug(err.message)
+            logging.debug(str(err))
             metrix.recordInvalidHTTPSRequest(request)
             return replaceErrorPage(request, err)
 
