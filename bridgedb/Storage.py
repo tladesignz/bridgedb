@@ -374,7 +374,7 @@ class DBGeneratorContextManager(GeneratorContextManager):
             try:
                 self.gen.throw(type, value, traceback)
                 raise RuntimeError("generator didn't stop after throw()")
-            except StopIteration, exc:
+            except StopIteration as exc:
                 # Suppress the exception *unless* it's the same exception that
                 # was passed to throw().  This prevents a StopIteration
                 # raised inside the "with" statement from being suppressed

@@ -28,7 +28,7 @@ try:
     from stem.descriptor.extrainfo_descriptor import RelayExtraInfoDescriptor
     from stem.descriptor.router_status_entry import RouterStatusEntryV3
     from bridgedb.parse import descriptors
-except (ImportError, NameError), error:
+except (ImportError, NameError) as error:
     print("There was an error importing stem: %s" % error)
 else:
     HAS_STEM = True
