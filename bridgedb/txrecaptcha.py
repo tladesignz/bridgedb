@@ -41,7 +41,7 @@ from twisted.web import client
 from twisted.web.http_headers import Headers
 from twisted.web.iweb import IBodyProducer
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from bridgedb.crypto import SSLVerifyingContextFactory
 
@@ -209,9 +209,9 @@ class RecaptchaResponseProtocol(protocol.Protocol):
         self.finished.callback(result)
 
 
+@implementer(IBodyProducer)
 class _BodyProducer(object):
     """I write a string into the HTML body of an open request."""
-    implements(IBodyProducer)
 
     def __init__(self, body):
         self.body = body

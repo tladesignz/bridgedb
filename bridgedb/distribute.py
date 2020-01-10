@@ -108,7 +108,7 @@ import math
 
 from zope import interface
 from zope.interface import Attribute
-from zope.interface import implements
+from zope.interface import implementer
 
 # from bridgedb.hashring import IHashring
 from bridgedb.interfaces import IName
@@ -155,12 +155,12 @@ class IDistribute(IName):
         """Get bridges based on a client's **bridgeRequest**."""
 
 
+@implementer(IDistribute)
 class Distributor(Named):
     """A :class:`Distributor` distributes bridges to clients.
 
     Inherit from me to create a new type of ``Distributor``.
     """
-    implements(IDistribute)
 
     _bridgesPerResponseMin = 1
     _bridgesPerResponseMax = 3

@@ -67,7 +67,7 @@ import urllib.request
 
 from BeautifulSoup import BeautifulSoup
 
-from zope.interface import Interface, Attribute, implements
+from zope.interface import Interface, Attribute, implementer
 
 from bridgedb import crypto
 from bridgedb import schedule
@@ -101,6 +101,7 @@ class ICaptcha(Interface):
         """Retrieve a new CAPTCHA image."""
 
 
+@implementer(ICaptcha)
 class Captcha(object):
     """A generic CAPTCHA base class.
 
@@ -117,7 +118,6 @@ class Captcha(object):
     :ivar secretKey: A private key used for decrypting challenge strings during
         CAPTCHA solution verification.
     """
-    implements(ICaptcha)
 
     def __init__(self, publicKey=None, secretKey=None):
         """Obtain a new CAPTCHA for a client."""

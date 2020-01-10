@@ -62,7 +62,7 @@ from twisted.mail import smtp
 from twisted.mail.smtp import rfc822date
 from twisted.python import failure
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from bridgedb import __version__
 from bridgedb import safelog
@@ -165,6 +165,7 @@ class MailServerContext(object):
         return canon
 
 
+@implementer(smtp.IMessage)
 class SMTPMessage(object):
     """Plugs into the Twisted Mail and receives an incoming message.
 
@@ -186,7 +187,6 @@ class SMTPMessage(object):
         :meth:`~bridgedb.distributors.email.autoresponder.SMTPAutoresponder.reply` email
         and :meth:`~bridgedb.distributors.email.autoresponder.SMTPAutoresponder.send` it.
     """
-    implements(smtp.IMessage)
 
     def __init__(self, context, canonicalFromSMTP=None):
         """Create a new SMTPMessage.
@@ -258,6 +258,7 @@ class SMTPMessage(object):
         return rfc822.Message(rawMessage)
 
 
+@implementer(smtp.IMessageDelivery)
 class SMTPIncomingDelivery(smtp.SMTP):
     """Plugs into :class:`SMTPIncomingServerFactory` and handles SMTP commands
     for incoming connections.
@@ -272,7 +273,6 @@ class SMTPIncomingDelivery(smtp.SMTP):
     :var fromCanonicalSMTP: If set, this is the canonicalized domain name of
        the address we received from incoming connection's ``MAIL FROM:``.
     """
-    implements(smtp.IMessageDelivery)
 
     context = None
     deferred = defer.Deferred()
@@ -395,6 +395,7 @@ class SMTPIncomingDelivery(smtp.SMTP):
         return lambda: SMTPMessage(self.context, self.fromCanonicalSMTP)
 
 
+@implementer(smtp.IMessageDeliveryFactory)
 class SMTPIncomingDeliveryFactory(object):
     """Factory for :class:`SMTPIncomingDelivery` s.
 
@@ -408,7 +409,6 @@ class SMTPIncomingDeliveryFactory(object):
     :var delivery: A :class:`SMTPIncomingDelivery` to deliver incoming
         SMTP messages to.
     """
-    implements(smtp.IMessageDeliveryFactory)
 
     context = None
     delivery = SMTPIncomingDelivery
