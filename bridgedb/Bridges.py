@@ -374,7 +374,7 @@ class FixedBridgeSplitter(object):
     def insert(self, bridge):
         # Grab the first 4 bytes
         digest = self.hmac(bridge.identity)
-        pos = long( digest[:8], 16 )
+        pos = int( digest[:8], 16 )
         which = pos % len(self.rings)
         self.rings[which].insert(bridge)
 

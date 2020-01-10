@@ -164,7 +164,7 @@ class BridgeRequestBase(object):
         # Get an HMAC with the key of the client identifier:
         digest = getHMACFunc(key)(client)
         # Take the lower 8 bytes of the digest and convert to a long:
-        position = long(digest[:8], 16)
+        position = int(digest[:8], 16)
         return position
 
     def isValid(self, valid=None):

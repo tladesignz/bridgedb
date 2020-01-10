@@ -229,7 +229,7 @@ class BridgeStabilityTests(unittest.TestCase):
             for i in range(61):
                 yield (i+1)*60*30 + x # 30 minute intervals
         now = time.time()
-        time_on_address = long(60*30*60) # 30 hours
+        time_on_address = 60*30*60 # 30 hours
         downtime = 60*60*random.randint(0,4) # random hours of downtime
 
         for t in timestampSeries(now):
@@ -258,8 +258,8 @@ class BridgeStabilityTests(unittest.TestCase):
             [ bridgedb.Stability.addOrUpdateBridgeHistory(b, t) for t in ts ]
             b = db.getBridgeHistory(b.fingerprint)
             assert b.tosa == ts[-1] - last_seen
-            assert (long(last_seen*1000) == b.lastSeenWithDifferentAddressAndPort)
-            assert (long(ts[-1]*1000) == b.lastSeenWithThisAddressAndPort)
+            assert (last_seen*1000 == b.lastSeenWithDifferentAddressAndPort)
+            assert (ts[-1]*1000 == b.lastSeenWithThisAddressAndPort)
 
     def testFamiliar(self):
         # create some bridges

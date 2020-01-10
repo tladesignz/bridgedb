@@ -33,7 +33,7 @@ from bridgedb.schedule import toUnixSeconds
 
 # tunables 
 weighting_factor = float(19)/float(20)
-discountIntervalMillis = long(60*60*12*1000)
+discountIntervalMillis = 60*60*12*1000
 
 
 class BridgeHistory(object):
@@ -76,15 +76,15 @@ class BridgeHistory(object):
         self.fingerprint = fingerprint
         self.ip = ip 
         self.port = port
-        self.weightedUptime = long(weightedUptime)
-        self.weightedTime = long(weightedTime)
-        self.weightedRunLength = long(weightedRunLength)
+        self.weightedUptime = int(weightedUptime)
+        self.weightedTime = int(weightedTime)
+        self.weightedRunLength = int(weightedRunLength)
         self.totalRunWeights = float(totalRunWeights)
         self.lastSeenWithDifferentAddressAndPort = \
-                long(lastSeenWithDifferentAddressAndPort)
-        self.lastSeenWithThisAddressAndPort = long(lastSeenWithThisAddressAndPort)
-        self.lastDiscountedHistoryValues = long(lastDiscountedHistoryValues)
-        self.lastUpdatedWeightedTime = long(lastUpdatedWeightedTime)
+                int(lastSeenWithDifferentAddressAndPort)
+        self.lastSeenWithThisAddressAndPort = int(lastSeenWithThisAddressAndPort)
+        self.lastDiscountedHistoryValues = int(lastDiscountedHistoryValues)
+        self.lastUpdatedWeightedTime = int(lastUpdatedWeightedTime)
 
     def discountWeightedFractionalUptimeAndWeightedTime(self, discountUntilMillis):
         """ discount weighted times """
@@ -111,8 +111,8 @@ class BridgeHistory(object):
     @property
     def weightedFractionalUptime(self):
         """Weighted Fractional Uptime"""
-        if self.weightedTime <0.0001: return long(0)
-        return long(10000) * self.weightedUptime / self.weightedTime
+        if self.weightedTime <0.0001: return 0
+        return 10000 * self.weightedUptime / self.weightedTime
 
     @property
     def tosa(self):
@@ -127,7 +127,7 @@ class BridgeHistory(object):
         more recently than it, or if it has been around for a Weighted Time of 8 days.
         """
         # if this bridge has been around longer than 8 days
-        if self.weightedTime >= long(8 * 24 * 60 * 60):
+        if self.weightedTime >= 8 * 24 * 60 * 60:
             return True
 
         # return True if self.weightedTime is greater than the weightedTime
@@ -146,10 +146,10 @@ class BridgeHistory(object):
         """Weighted Mean Time Between Address Change"""
         totalRunLength = self.weightedRunLength + \
                 ((self.lastSeenWithThisAddressAndPort -
-                self.lastSeenWithDifferentAddressAndPort) / long(1000))
+                self.lastSeenWithDifferentAddressAndPort) / 1000)
 
         totalWeights = self.totalRunWeights + 1.0
-        if totalWeights <  0.0001: return long(0)
+        if totalWeights <  0.0001: return 0
         assert(isinstance(long,totalRunLength))
         assert(isinstance(long,totalWeights))
         return totalRunlength / totalWeights
@@ -159,9 +159,9 @@ def addOrUpdateBridgeHistory(bridge, timestamp):
         bhe = db.getBridgeHistory(bridge.fingerprint)
         if not bhe:
             # This is the first status, assume 60 minutes.
-            secondsSinceLastStatusPublication = long(60*60)
-            lastSeenWithDifferentAddressAndPort = timestamp * long(1000)
-            lastSeenWithThisAddressAndPort = timestamp * long(1000)
+            secondsSinceLastStatusPublication = 60*60
+            lastSeenWithDifferentAddressAndPort = timestamp * 1000
+            lastSeenWithThisAddressAndPort = timestamp * 1000
     
             bhe = BridgeHistory(
                     bridge.fingerprint, bridge.address, bridge.orPort,
@@ -179,9 +179,9 @@ def addOrUpdateBridgeHistory(bridge, timestamp):
         # Calculate the seconds since the last parsed status.  If this is
         # the first status or we haven't seen a status for more than 60
         # minutes, assume 60 minutes.
-        statusPublicationMillis = long(timestamp * 1000)
+        statusPublicationMillis = timestamp * 1000
         if (statusPublicationMillis - bhe.lastSeenWithThisAddressAndPort) > 60*60*1000:
-            secondsSinceLastStatusPublication = long(60*60)
+            secondsSinceLastStatusPublication = 60*60
             logging.debug("Capping secondsSinceLastStatusPublication to 1 hour")
         # otherwise, roll with it
         else:
