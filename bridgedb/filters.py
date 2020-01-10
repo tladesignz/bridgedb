@@ -119,7 +119,7 @@ def byIPv(ipVersion=None):
             return False
         setattr(_byIPv, "description", "ip=%d" % ipVersion)
         _byIPv.__name__ = "byIPv%d()" % ipVersion
-        _byIPv.func_doc = _byIPv.func_doc.format(ipVersion)
+        _byIPv.__doc__ = _byIPv.__doc__.format(ipVersion)
         _byIPv.name = name
         _cache[name] = _byIPv
         return _byIPv
