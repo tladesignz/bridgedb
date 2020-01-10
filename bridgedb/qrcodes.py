@@ -13,7 +13,7 @@
 """Utilities for working with QRCodes."""
 
 
-import cStringIO
+import io
 import logging
 
 try:
@@ -60,7 +60,7 @@ def generateQR(bridgelines, imageFormat=u'JPEG', bridgeSchema=False):
         qr = qrcode.QRCode()
         qr.add_data(bridgelines)
 
-        buf = cStringIO.StringIO()
+        buf = io.StringIO()
         img = qr.make_image().resize([350, 350])
         img.save(buf, imageFormat)
         buf.seek(0)

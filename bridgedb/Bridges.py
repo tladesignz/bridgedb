@@ -28,12 +28,6 @@ from bridgedb.parse.fingerprint import isValidFingerprint
 from bridgedb.parse.fingerprint import toHex
 from bridgedb.safelog import logSafely
 
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import StringIO
-
-
 ID_LEN = 20  # XXX Only used in commented out line in Storage.py
 DIGEST_LEN = 20
 PORTSPEC_LEN = 16

@@ -17,10 +17,10 @@ functioning as expected.
 
 from __future__ import print_function
 
+import io
 import os.path
 
 from copy import deepcopy
-from io   import StringIO
 
 from bridgedb import persistent
 from bridgedb.parse.options import MainOptions
@@ -33,7 +33,7 @@ from sure import the
 from sure import expect
 
 
-TEST_CONFIG_FILE = StringIO(unicode("""\
+TEST_CONFIG_FILE = io.StringIO(unicode("""\
 BRIDGE_FILES = ['bridge-descriptors', 'bridge-descriptors.new']
 LOGFILE = 'bridgedb.log'"""))
 

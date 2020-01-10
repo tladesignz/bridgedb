@@ -18,17 +18,17 @@ are all functioning as expected.
 This module should not import :mod:`sure`.
 """
 
+import io
 import os
 
 from copy import deepcopy
-from io    import StringIO
 
 from twisted.trial import unittest
 
 from bridgedb import persistent
 
 
-TEST_CONFIG_FILE = StringIO(unicode("""\
+TEST_CONFIG_FILE = io.StringIO(unicode("""\
 BRIDGE_FILES = ['bridge-descriptors', 'bridge-descriptors.new']
 LOGFILE = 'bridgedb.log'"""))
 
