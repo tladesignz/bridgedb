@@ -8,7 +8,7 @@ import binascii
 import sqlite3
 import time
 import hashlib
-from contextlib import GeneratorContextManager
+from contextlib import _GeneratorContextManager
 from functools import wraps
 from ipaddr import IPAddress
 import sys
@@ -345,7 +345,7 @@ def openDatabase(sqlite_file):
     return conn
 
 
-class DBGeneratorContextManager(GeneratorContextManager):
+class DBGeneratorContextManager(_GeneratorContextManager):
     """Helper for @contextmanager decorator.
 
     Overload __exit__() so we can call the generator many times
