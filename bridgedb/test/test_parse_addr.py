@@ -226,7 +226,7 @@ class ParseAddrIsIPAddressTests(unittest.TestCase):
         log.msg("addr.isIPAddress(%r) => %s" % (testAddress, result))
         self.assertTrue(result is not None,
                         "Got a None for testAddress: %r" % testAddress)
-        self.assertFalse(isinstance(result, basestring),
+        self.assertFalse(isinstance(result, str),
                         "Expected %r result from isIPAddress(%r): %r %r"
                         % (bool, testAddress, result, type(result)))
 
@@ -709,7 +709,7 @@ class PortListTest(unittest.TestCase):
         """
         ports = (443, 9001, 9030)
         portList = addr.PortList(*ports)
-        self.assertTrue(isinstance(str(portList), basestring))
+        self.assertTrue(isinstance(str(portList), str))
         for port in ports:
             self.assertIn(str(port), str(portList))
 

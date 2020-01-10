@@ -220,7 +220,7 @@ class SubmitTests(unittest.TestCase):
             """
             self.assertIsInstance(response, txrecaptcha.RecaptchaResponse)
             self.assertIsInstance(response.is_valid, bool)
-            self.assertIsInstance(response.error_code, basestring)
+            self.assertIsInstance(response.error_code, str)
 
         d = txrecaptcha.submit(self.challenge, self.response, self.key,
                                self.ip)

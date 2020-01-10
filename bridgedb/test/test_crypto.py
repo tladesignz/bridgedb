@@ -63,14 +63,14 @@ class GetKeyTests(unittest.TestCase):
         """Test retrieving the secret_key from an empty file."""
         filename = os.path.join(os.getcwd(), 'sekrit')
         key = crypto.getKey(filename)
-        self.failUnlessIsInstance(key, basestring,
+        self.failUnlessIsInstance(key, str,
                                   "key isn't a string! type=%r" % type(key))
 
     def test_getKey_tmpfile(self):
         """Test retrieving the secret_key from a new tmpfile."""
         filename = self.mktemp()
         key = crypto.getKey(filename)
-        self.failUnlessIsInstance(key, basestring,
+        self.failUnlessIsInstance(key, str,
                                   "key isn't a string! type=%r" % type(key))
 
     def test_getKey_keyexists(self):
@@ -81,7 +81,7 @@ class GetKeyTests(unittest.TestCase):
             fh.flush()
 
         key = crypto.getKey(filename)
-        self.failUnlessIsInstance(key, basestring,
+        self.failUnlessIsInstance(key, str,
                                   "key isn't a string! type=%r" % type(key))
         self.assertEqual(SEKRIT_KEY, key,
                          """The example key and the one read from file differ!

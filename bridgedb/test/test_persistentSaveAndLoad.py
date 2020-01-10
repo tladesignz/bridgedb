@@ -85,12 +85,12 @@ class StateSaveAndLoadTests(unittest.TestCase):
 
     def test_get_statefile(self):
         statefile = self.state._get_statefile()
-        self.assertIsInstance(statefile, basestring)
+        self.assertIsInstance(statefile, str)
 
     def test_set_statefile(self):
         self.state._set_statefile('bar.state')
         statefile = self.state._get_statefile()
-        self.assertIsInstance(statefile, basestring)
+        self.assertIsInstance(statefile, str)
 
     def test_set_statefile_new_dir(self):
         config = self.config

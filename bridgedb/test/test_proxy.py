@@ -393,13 +393,13 @@ class ProxySetUnittests(unittest.TestCase):
 
     def test_ProxySet_addProxies_bad_type(self):
         """``ProxySet.addProxies()`` called with something which is neither an
-        iterable, a basestring, or an int should raise a ValueError.
+        iterable, a str, or an int should raise a ValueError.
         """
         self.assertRaises(ValueError, self.proxyList.addProxies, object)
 
     def test_ProxySet_addProxies_list_of_bad_types(self):
         """``ProxySet.addProxies()`` called with something which is neither an
-        iterable, a basestring, or an int should raise a ValueError.
+        iterable, a str, or an int should raise a ValueError.
         """
         self.assertRaises(ValueError, self.proxyList.addProxies, [object, object, object])
 

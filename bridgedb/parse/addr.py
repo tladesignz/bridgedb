@@ -297,7 +297,7 @@ def extractEmailAddress(emailaddr):
 def isIPAddress(ip, compressed=True):
     """Check if an arbitrary string is an IP address, and that it's valid.
 
-    :type ip: basestring or int
+    :type ip: str or int
     :param ip: The IP address to check.
     :param boolean compressed: If True, return a string representing the
         compressed form of the address. Otherwise, return an
@@ -347,7 +347,7 @@ def isIPv4(ip):
 
     .. attention:: This does *not* check validity. See :func:`isValidIP`.
 
-    :type ip: basestring or int
+    :type ip: str or int
     :param ip: The IP address to check.
     :rtype: boolean
     :returns: True if the address is an IPv4 address.
@@ -359,7 +359,7 @@ def isIPv6(ip):
 
     .. attention:: This does *not* check validity. See :func:`isValidIP`.
 
-    :type ip: basestring or int
+    :type ip: str or int
     :param ip: The IP address to check.
     :rtype: boolean
     :returns: True if the address is an IPv6 address.
@@ -407,7 +407,7 @@ def isValidIP(ip):
     reasons  = []
 
     try:
-        if isinstance(ip, basestring):
+        if isinstance(ip, str):
             ip = ipaddr.IPAddress(ip)
 
         if ip.is_link_local:
@@ -445,7 +445,7 @@ def isLoopback(ip):
         otherwise.
     """
     try:
-        if isinstance(ip, basestring):
+        if isinstance(ip, str):
             ip = ipaddr.IPAddress(ip)
 
         if ip.is_loopback:
@@ -572,7 +572,7 @@ class PortList(object):
         for arg in args:
             portlist = []
             try:
-                if isinstance(arg, basestring):
+                if isinstance(arg, str):
                     ports = set([int(p)
                                  for p in arg.split(',')][:self.PORTSPEC_LEN])
                     portlist.extend([self._sanitycheck(p) for p in ports])

@@ -173,7 +173,7 @@ class State(jelly.Jellyable):
         err = ''
 
         try:
-            if isinstance(statefile, basestring):
+            if isinstance(statefile, str):
                 fh = open(statefile, 'r')
             elif not statefile.closed:
                 fh = statefile

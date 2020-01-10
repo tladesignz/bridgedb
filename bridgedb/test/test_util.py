@@ -169,7 +169,7 @@ class JustifiedLogFormatterTests(unittest.TestCase):
         formatter = util.JustifiedLogFormatter()
         formatted = formatter.format(self.record)
         self.assertIsInstance(formatter, logging.Formatter)
-        self.assertIsInstance(formatted, basestring)
+        self.assertIsInstance(formatted, str)
         self.assertNotEqual(formatted, '')
         self.assertTrue('INFO' in formatted)
         self.assertTrue('This is a message' in formatted)

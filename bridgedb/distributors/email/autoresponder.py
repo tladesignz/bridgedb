@@ -291,10 +291,10 @@ class EmailResponse(object):
         (i.e. ``'\\n'``). See :api:`twisted.mail.smtp.SMTPClient.getMailData`
         for the reason.
 
-        :type lines: :any:`basestring` or :any:`list`
+        :type lines: :any:`str` or :any:`list`
         :param lines: The lines to write to the :attr:`mailfile`.
         """
-        if isinstance(lines, basestring):
+        if isinstance(lines, str):
             lines = lines.replace('\r\n', '\n')
             for ln in lines.split('\n'):
                 self.write(ln)

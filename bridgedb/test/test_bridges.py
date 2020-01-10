@@ -466,7 +466,7 @@ class BridgeAddressBaseTests(unittest.TestCase):
 
         cc = self.bab.country
         self.assertIsNotNone(cc)
-        self.assertIsInstance(cc, basestring)
+        self.assertIsInstance(cc, str)
         self.assertEqual(len(cc), 2)
 
 
