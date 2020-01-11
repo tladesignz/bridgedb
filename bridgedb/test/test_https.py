@@ -31,7 +31,7 @@ import ipaddr
 import mechanize
 import os
 
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 from twisted.trial import unittest
 from twisted.trial.reporter import TestResult

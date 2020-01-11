@@ -65,8 +65,7 @@ import os
 import time
 import urllib.request
 
-from BeautifulSoup import BeautifulSoup
-
+from bs4 import BeautifulSoup
 from zope.interface import Interface, Attribute, implementer
 
 from bridgedb import crypto

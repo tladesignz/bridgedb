@@ -19,7 +19,7 @@ import shutil
 
 import ipaddr
 
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 from twisted.internet import reactor
 from twisted.internet import task
