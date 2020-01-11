@@ -46,8 +46,8 @@ get bridges
         }
 
     def _createMessage(self, messageString):
-        """Create an ``rfc822.Message`` from a string."""
-        messageIO = io.StringIO(unicode(messageString))
+        """Create an ``email.message.Message`` from a string."""
+        messageIO = io.StringIO(messageString if isinstance(messageString, str) else messageString.decode('utf-8'))
         return rfc822.Message(messageIO)
 
     def test_checkDKIM_good(self):

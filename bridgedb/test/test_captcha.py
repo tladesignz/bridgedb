@@ -291,7 +291,7 @@ class GimpCaptchaTests(unittest.TestCase):
         c = captcha.GimpCaptcha(self.publik, self.sekrit, self.hmacKey,
                                 self.cacheDir)
         image, challenge = c.get()
-        solution = unicode(c.answer)
+        solution = c.answer if isinstance(c.answer, str) else c.answer.decode('utf-8')
         self.assertEquals(
             c.check(challenge, solution, c.secretKey, c.hmacKey),
             True)

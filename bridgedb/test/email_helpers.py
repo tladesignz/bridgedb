@@ -52,7 +52,7 @@ EMAIL_FROM_ADDR = "bridges@localhost"
 EMAIL_BIND_IP = "127.0.0.1"
 EMAIL_PORT = 5225
 
-TEST_CONFIG_FILE = io.StringIO(unicode("""\
+TEST_CONFIG_FILE = io.StringIO("""\
 EMAIL_DIST = %s
 EMAIL_ROTATION_PERIOD = %s
 EMAIL_INCLUDE_FINGERPRINTS = %s
@@ -96,7 +96,7 @@ EMAIL_PORT = %s
        repr(EMAIL_N_BRIDGES_PER_ANSWER),
        repr(EMAIL_FROM_ADDR),
        repr(EMAIL_BIND_IP),
-       repr(EMAIL_PORT))))
+       repr(EMAIL_PORT)))
 
 
 def _createConfig(configFile=TEST_CONFIG_FILE):

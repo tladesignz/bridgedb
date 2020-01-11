@@ -33,9 +33,9 @@ from sure import the
 from sure import expect
 
 
-TEST_CONFIG_FILE = io.StringIO(unicode("""\
+TEST_CONFIG_FILE = io.StringIO("""\
 BRIDGE_FILES = ['bridge-descriptors', 'bridge-descriptors.new']
-LOGFILE = 'bridgedb.log'"""))
+LOGFILE = 'bridgedb.log'""")
 
 
 class StateTest(unittest.TestCase):

@@ -28,9 +28,9 @@ from twisted.trial import unittest
 from bridgedb import persistent
 
 
-TEST_CONFIG_FILE = io.StringIO(unicode("""\
+TEST_CONFIG_FILE = io.StringIO("""\
 BRIDGE_FILES = ['bridge-descriptors', 'bridge-descriptors.new']
-LOGFILE = 'bridgedb.log'"""))
+LOGFILE = 'bridgedb.log'""")
 
 
 class StateSaveAndLoadTests(unittest.TestCase):

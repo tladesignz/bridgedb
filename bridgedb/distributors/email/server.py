@@ -253,7 +253,7 @@ class SMTPMessage(object):
         """
         rawMessage = io.StringIO()
         for line in self.lines:
-            rawMessage.writelines(unicode(line.decode('utf8')) + u'\n')
+            rawMessage.writelines(line.decode('utf8') + '\n')
         rawMessage.seek(0)
         return rfc822.Message(rawMessage)
 

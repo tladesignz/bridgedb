@@ -48,7 +48,7 @@ MOAT_ROTATION_PERIOD = "3 hours"
 MOAT_GIMP_CAPTCHA_HMAC_KEYFILE = 'moat_captcha_hmac_key'
 MOAT_GIMP_CAPTCHA_RSA_KEYFILE = 'moat_captcha_rsa_key'
 
-TEST_CONFIG_FILE = io.StringIO(unicode("""\
+TEST_CONFIG_FILE = io.StringIO("""\
 GIMP_CAPTCHA_DIR = %r
 SERVER_PUBLIC_FQDN = %r
 SUPPORTED_TRANSPORTS = %r
@@ -88,7 +88,7 @@ MOAT_GIMP_CAPTCHA_RSA_KEYFILE = %r
        MOAT_N_IP_CLUSTERS,
        MOAT_ROTATION_PERIOD,
        MOAT_GIMP_CAPTCHA_HMAC_KEYFILE,
-       MOAT_GIMP_CAPTCHA_RSA_KEYFILE)))
+       MOAT_GIMP_CAPTCHA_RSA_KEYFILE))
 
 def _createConfig(configFile=TEST_CONFIG_FILE):
     configuration = {}

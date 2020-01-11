@@ -270,7 +270,7 @@ class MiscTests(unittest.TestCase):
         """:func:`txrecapcha._encodeIfNecessary` should convert unicode objects
         into strings.
         """
-        origString = unicode('abc')
+        origString = 'abc'
         self.assertIsInstance(origString, unicode)
         newString = txrecaptcha._encodeIfNecessary(origString)
         self.assertIsInstance(newString, str)
