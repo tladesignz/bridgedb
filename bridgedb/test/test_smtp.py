@@ -5,7 +5,7 @@ from __future__ import print_function
 import smtplib
 import asyncore
 import threading
-import Queue
+import queue
 import random
 import os
 
@@ -58,7 +58,7 @@ class EmailServer(SMTPServer):
         self.close()
 
     def start(self):
-        self.message_queue = Queue.Queue()
+        self.message_queue = queue.Queue()
         self._stop = threading.Event()
         self._thread = threading.Thread(target=self.thread_proc)
         # Ensures that if any tests do fail, then threads will exit when the
@@ -93,7 +93,7 @@ class EmailServer(SMTPServer):
         # failures:
         #
         # https://travis-ci.org/isislovecruft/bridgedb/jobs/58996136#L3281
-        except Queue.Empty:
+        except queue.Empty:
             pass
         else:
             assert message.find(text) != -1, ("Message did not contain text '%s'."
@@ -103,7 +103,7 @@ class EmailServer(SMTPServer):
     def checkNoMessageReceived(self, timeoutInSecs=2.0):
         try:
             self.message_queue.get(block=True, timeout=timeoutInSecs)
-        except Queue.Empty:
+        except queue.Empty:
             return True
         assert False, "Found a message in the queue, but expected none"
 
