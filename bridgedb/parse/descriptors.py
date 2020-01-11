@@ -122,10 +122,10 @@ def parseNetworkStatusFile(filename, validate=True, skipAnnotations=True,
     routers = []
 
     logging.info("Parsing networkstatus file: %s" % filename)
-    with open(filename) as fh:
+    with open(filename, 'rb') as fh:
         position = fh.tell()
         if skipAnnotations:
-            while not fh.readline().startswith('r '):
+            while not fh.readline().startswith(b'r '):
                 position = fh.tell()
         logging.debug("Skipping %d bytes of networkstatus file." % position)
         fh.seek(position)
@@ -161,20 +161,8 @@ def parseServerDescriptorsFile(filename, validate=True):
     logging.info("Parsing server descriptors with Stem: %s" % filename)
     descriptorType = 'server-descriptor 1.0'
     document = parse_file(filename, descriptorType, validate=validate)
-    routers = list()
+    return list(document)
 
-    # Work around https://bugs.torproject.org/26023 by parsing each descriptor
-    # at a time and catching any errors not handled in stem:
-    while True:
-        try:
-            routers.append(document.next())
-        except StopIteration:
-            break
-        except Exception as error:
-            logging.debug("Error while parsing a bridge server descriptor: %s"
-                          % error)
-
-    return routers
 
 def __cmp_published__(x, y):
     """A custom ``cmp()`` which sorts descriptors by published date.
