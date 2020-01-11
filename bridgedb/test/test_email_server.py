@@ -13,10 +13,10 @@
 
 from __future__ import print_function
 
+import email.message
 import socket
 import string
 import types
-import rfc822
 
 from twisted.python import log
 from twisted.internet import defer
@@ -95,10 +95,10 @@ class SMTPMessageTests(unittest.TestCase):
                               defer.Deferred)
 
     def test_SMTPMessage_getIncomingMessage(self):
-        """``getIncomingMessage`` should return a ``rfc822.Message``."""
+        """``getIncomingMessage`` should return a ``email.message.Message``."""
         self.message.lineReceived(self.line)
         self.assertIsInstance(self.message.getIncomingMessage(),
-                              rfc822.Message)
+                              email.message.Message)
 
 
 class SMTPIncomingDeliveryTests(unittest.TestCase):

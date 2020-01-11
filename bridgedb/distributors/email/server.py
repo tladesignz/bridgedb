@@ -49,10 +49,10 @@ Servers which interface with clients and distribute bridges over SMTP.
 
 from __future__ import unicode_literals
 
+import email.message
 import logging
 import io
 import socket
-import rfc822
 
 from twisted.internet import defer
 from twisted.internet import reactor
@@ -222,7 +222,7 @@ class SMTPMessage(object):
         if self.nBytes > self.context.maximumSize:
             self.ignoring = True
         else:
-            self.lines.append(line)
+            self.lines.append(line.decode('utf-8') if isinstance(line, bytes) else line)
         if not safelog.safe_logging:
             try:
                 ln = line.rstrip("\r\n").encode('utf-8', 'replace')
@@ -251,12 +251,8 @@ class SMTPMessage(object):
         :rtype: :api:`twisted.mail.smtp.rfc822.Message`
         :returns: A ``Message`` comprised of all lines received thus far.
         """
-        rawMessage = io.StringIO()
-        for line in self.lines:
-            line = line.decode('utf-8') if isinstance(line, bytes) else line
-            rawMessage.writelines(line + '\n')
-        rawMessage.seek(0)
-        return rfc822.Message(rawMessage)
+
+        return email.message_from_string('\n'.join(self.lines))
 
 
 @implementer(smtp.IMessageDelivery)

@@ -39,6 +39,7 @@ Functionality for autoresponding to incoming emails.
 from __future__ import unicode_literals
 from __future__ import print_function
 
+import email
 import io
 import logging
 import time
@@ -439,8 +440,8 @@ class SMTPAutoresponder(smtp.SMTPClient):
 
         if not body: return  # The client was already warned.
 
-        messageID = self.incoming.message.getheader("Message-ID", None)
-        subject = self.incoming.message.getheader("Subject", None)
+        messageID = self.incoming.message.get("Message-ID", None)
+        subject = self.incoming.message.get("Subject", None)
         response = generateResponse(recipient, client,
                                     body, subject, messageID,
                                     self.incoming.context.gpgSignFunc)
@@ -461,13 +462,13 @@ class SMTPAutoresponder(smtp.SMTPClient):
         """
         clients = []
         addrHeader = None
-        try: fromAddr = self.incoming.message.getaddr("From")[1]
+        try: fromAddr = email.utils.parseaddr(self.incoming.message.get("From"))[1]
         except (IndexError, TypeError, AttributeError): pass
         else: addrHeader = fromAddr
 
         if not addrHeader:
             logging.warn("No From header on incoming mail.")
-            try: senderHeader = self.incoming.message.getaddr("Sender")[1]
+            try: senderHeader = email.utils.parseaddr(self.incoming.message.get("Sender"))[1]
             except (IndexError, TypeError, AttributeError): pass
             else: addrHeader = senderHeader
         if not addrHeader:
@@ -509,10 +510,10 @@ class SMTPAutoresponder(smtp.SMTPClient):
 
         try:
             ourAddress = smtp.Address(self.incoming.context.fromAddr)
-            allRecipients = self.incoming.message.getaddrlist("To")
+            allRecipients = self.incoming.message.get_all("To")
 
-            for _, addr in allRecipients:
-                recipient = smtp.Address(addr)
+            for address in allRecipients:
+                recipient = smtp.Address(address)
                 if not ourAddress.domain in recipient.domain:
                     logging.debug(("Not our domain (%s) or subdomain, skipping"
                                    " email address: %s")
@@ -525,11 +526,11 @@ class SMTPAutoresponder(smtp.SMTPClient):
                                    " email address: %s") % str(recipient))
                     continue
                 # Only check the username before the first '+':
-                beforePlus = recipient.local.split('+', 1)[0]
+                beforePlus = recipient.local.split(b'+', 1)[0]
                 if beforePlus == ourAddress.local:
                     ours = str(recipient)
             if not ours:
-                raise addr.BadEmail(allRecipients)
+                raise addr.BadEmail('No email address accepted, please see log', allRecipients)
 
         except Exception as error:
             logging.error(("Couldn't find our email address in incoming email "
