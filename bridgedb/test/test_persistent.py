@@ -47,7 +47,7 @@ class StateTest(unittest.TestCase):
         configuration = {}
         TEST_CONFIG_FILE.seek(0)
         compiled = compile(TEST_CONFIG_FILE.read(), '<string>', 'exec')
-        exec compiled in configuration
+        exec(compiled, configuration)
         config = persistent.Conf(**configuration)
 
         fakeArgs = ['-c', os.path.join(os.getcwdu(), '..', 'bridgedb.conf')]

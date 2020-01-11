@@ -103,7 +103,7 @@ def _createConfig(configFile=TEST_CONFIG_FILE):
     configuration = {}
     TEST_CONFIG_FILE.seek(0)
     compiled = compile(configFile.read(), '<string>', 'exec')
-    exec compiled in configuration
+    exec(compiled, configuration)
     config = Conf(**configuration)
     return config
 
