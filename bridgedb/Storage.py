@@ -362,7 +362,7 @@ class DBGeneratorContextManager(_GeneratorContextManager):
         """
         if type is None:
             try:
-                self.gen.next()
+                next(self.gen)
             except StopIteration:
                 return
             return

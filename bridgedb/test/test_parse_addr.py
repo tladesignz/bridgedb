@@ -700,7 +700,7 @@ class PortListTest(unittest.TestCase):
         portList = addr.PortList(*ports)
         iterator = iter(portList)
         for x in range(len(ports)):
-            self.assertIn(iterator.next(), portList)
+            self.assertIn(next(iterator), portList)
 
     def test_str(self):
         """Test creating a :class:`addr.PortList` with valid ports.
