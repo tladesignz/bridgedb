@@ -10,7 +10,7 @@
 
 from twisted.trial import unittest
 
-from bridgedb import translations
+from bridgedb import _langs, translations
 from bridgedb.test.https_helpers import DummyRequest
 
 
@@ -45,10 +45,11 @@ class TranslationsMiscTests(unittest.TestCase):
         })
 
         parsed = translations.getLocaleFromHTTPRequest(request)
+
+        self.assertEqual(len(parsed), 3)
         self.assertEqual(parsed[0], 'ar')
         self.assertEqual(parsed[1], 'en')
         self.assertEqual(parsed[2], 'en_US')
-        self.assertEqual(len(parsed), 3)
 
     def test_getLocaleFromHTTPRequest_withLangParam_AcceptLanguage(self):
         """This request uses a '?lang=ar' param, with an 'Accept-Language'
@@ -61,11 +62,12 @@ class TranslationsMiscTests(unittest.TestCase):
         request.args.update({b'lang': [b'fa']})
 
         parsed = translations.getLocaleFromHTTPRequest(request)
+
+        self.assertEqual(len(parsed), 3)
         self.assertEqual(parsed[0], 'fa')
         self.assertEqual(parsed[1], 'en')
         self.assertEqual(parsed[2], 'en_US')
         #self.assertEqual(parsed[3], 'en-gb')
-        self.assertEqual(len(parsed), 3)
 
     def test_getLocaleFromPlusAddr(self):
         emailAddr = 'bridges@torproject.org'
@@ -80,4 +82,6 @@ class TranslationsMiscTests(unittest.TestCase):
     def test_usingRTLLang(self):
         self.assertFalse(translations.usingRTLLang(['foo_BAR']))
         self.assertFalse(translations.usingRTLLang(['en']))
-        self.assertTrue(translations.usingRTLLang(['fa']))
+
+        if 'fa' in _langs.get_langs():
+          self.assertTrue(translations.usingRTLLang(['fa']))

@@ -58,7 +58,10 @@ def getFirstSupportedLang(langs):
         if l in supported:
             lang = l
             break
-    return lang
+
+    # crop locales (like 'en-US') to just the language
+
+    return lang.split('-')[0]
 
 def getLocaleFromHTTPRequest(request):
     """Retrieve the languages from an HTTP ``Accept-Language:`` header.
@@ -77,15 +80,19 @@ def getLocaleFromHTTPRequest(request):
         logging.debug("Client sent no 'Accept-Language' header. Using fallback.")
         header = 'en,en-US'
 
-    langs = headers.parseAcceptLanguage(header)
+    langs = list(headers.parseAcceptLanguage(header))
     if not safelog.safe_logging:  # pragma: no cover
         logging.debug("Client Accept-Language (top 5): %s" % langs[:5])
 
     # Check if we got a ?lang=foo argument, and if we did, insert it first
-    chosenLang = request.args.get("lang", [None,])[0]
+    chosenLang = request.args.get(b"lang", [None,])[0]
     if chosenLang:
         logging.debug("Client requested language: %r" % chosenLang)
         langs.insert(0, chosenLang)
+
+    # normalize languages to be unicode
+
+    langs = list(map(lambda l: l if isinstance(l, str) else l.decode('utf-8'), langs))
 
     installTranslations(langs)
     return langs
@@ -140,11 +147,11 @@ def usingRTLLang(langs):
     :returns: ``True`` if the preferred language is right-to-left; ``False``
         otherwise.
     """
+
     lang = getFirstSupportedLang(langs)
 
-    rtl = False
     try:
-        rtl = babel.core.Locale.parse(lang).text_direction == "rtl"
+        return babel.core.Locale.parse(lang).text_direction == "rtl"
     except ValueError as err:
         logging.warning("Couldn't parse locale %s: %s" % (lang, err))
-    return rtl
+        return False
