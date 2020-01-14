@@ -46,8 +46,8 @@ from zope.interface import implementer
 from bridgedb.crypto import SSLVerifyingContextFactory
 
 #: This was taken from :data:`recaptcha.client.captcha.API_SSL_SERVER`.
-API_SSL_SERVER = API_SERVER = "https://www.google.com/recaptcha/api"
-API_SSL_VERIFY_URL = "%s/verify" % API_SSL_SERVER
+API_SSL_SERVER = API_SERVER = b"https://www.google.com/recaptcha/api"
+API_SSL_VERIFY_URL = b"%s/verify" % API_SSL_SERVER
 
 #: (:class:`OpenSSL.crypto.X509`) Only trust certificate for the reCAPTCHA
 #: :data:`API_SSL_SERVER` which were signed by the Google Internet Authority CA.
@@ -253,12 +253,6 @@ def _ebRequest(fail):
     error = fail.getErrorMessage() or "possible problem in _ebRequest()"
     return RecaptchaResponse(is_valid=False, error_code=error)
 
-def _encodeIfNecessary(string):
-    """Encode unicode objects in utf-8 if necessary."""
-    if isinstance(string, unicode):
-        return string.encode('utf-8')
-    return string
-
 def submit(recaptcha_challenge_field, recaptcha_response_field,
            private_key, remoteip, agent=_agent):
     """Submits a reCaptcha request for verification. This function is a patched
@@ -292,13 +286,14 @@ def submit(recaptcha_challenge_field, recaptcha_response_field,
         return d
 
     params = urllib.parse.urlencode({
-        'privatekey': _encodeIfNecessary(private_key),
-        'remoteip':   _encodeIfNecessary(remoteip),
-        'challenge':  _encodeIfNecessary(recaptcha_challenge_field),
-        'response':   _encodeIfNecessary(recaptcha_response_field)})
+        'privatekey': private_key,
+        'remoteip':   remoteip,
+        'challenge':  recaptcha_challenge_field,
+        'response':   recaptcha_response_field,
+    }).encode('utf-8')
     body = _BodyProducer(params)
     headers = Headers({"Content-type": ["application/x-www-form-urlencoded"],
                        "User-agent": ["reCAPTCHA Python"]})
-    d = agent.request('POST', API_SSL_VERIFY_URL, headers, body)
+    d = agent.request(b'POST', API_SSL_VERIFY_URL, headers, body)
     d.addCallbacks(_cbRequest, _ebRequest)
     return d

@@ -142,7 +142,7 @@ class BodyProducerTests(unittest.TestCase):
 
     def setUp(self):
         """Setup the tests."""
-        self.content = 'Line 1\r\nLine 2\r\n'
+        self.content = b'Line 1\r\nLine 2\r\n'
         self.producer = txrecaptcha._BodyProducer(self.content)
 
     def test_interface(self):
@@ -265,12 +265,3 @@ class MiscTests(unittest.TestCase):
         result = txrecaptcha._ebRequest(fail)
         self.assertIsInstance(result, txrecaptcha.RecaptchaResponse)
         self.assertRegexpMatches(result.error_code, msg)
-
-    def test_encodeIfNecessary(self):
-        """:func:`txrecapcha._encodeIfNecessary` should convert unicode objects
-        into strings.
-        """
-        origString = 'abc'
-        self.assertIsInstance(origString, unicode)
-        newString = txrecaptcha._encodeIfNecessary(origString)
-        self.assertIsInstance(newString, str)
