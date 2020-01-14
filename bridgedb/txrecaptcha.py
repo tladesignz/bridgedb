@@ -291,7 +291,7 @@ def submit(recaptcha_challenge_field, recaptcha_response_field,
         d.errback(failure.Failure(ValueError('incorrect-captcha-sol')))
         return d
 
-    params = urllib.urlencode({
+    params = urllib.parse.urlencode({
         'privatekey': _encodeIfNecessary(private_key),
         'remoteip':   _encodeIfNecessary(remoteip),
         'challenge':  _encodeIfNecessary(recaptcha_challenge_field),
