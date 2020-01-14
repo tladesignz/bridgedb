@@ -164,28 +164,6 @@ def parseServerDescriptorsFile(filename, validate=True):
     return list(document)
 
 
-def __cmp_published__(x, y):
-    """A custom ``cmp()`` which sorts descriptors by published date.
-
-    :rtype: int
-    :returns: Return negative if x<y, zero if x==y, positive if x>y.
-    """
-    if x.published < y.published:
-        return -1
-    elif x.published == y.published:
-        # This *shouldn't* happen. It would mean that two descriptors for
-        # the same router had the same timestamps, probably meaning there
-        # is a severely-messed up OR implementation out there. Let's log
-        # its fingerprint (no matter what!) so that we can look up its
-        # ``platform`` line in its server-descriptor and tell whoever
-        # wrote that code that they're probably (D)DOSing the Tor network.
-        logging.warn(("Duplicate descriptor with identical timestamp (%s) "
-                      "for bridge %s with fingerprint %s !") %
-                     (x.published, x.nickname, x.fingerprint))
-        return 0
-    elif x.published > y.published:
-        return 1
-
 def deduplicate(descriptors, statistics=False):
     """Deduplicate some descriptors, returning only the newest for each router.
 
@@ -215,7 +193,7 @@ def deduplicate(descriptors, statistics=False):
             duplicates[fingerprint] = [descriptor,]
 
     for fingerprint, dupes in duplicates.items():
-        dupes.sort(cmp=__cmp_published__)
+        dupes.sort(key=lambda x: x.published)
         first = dupes.pop()
         newest[fingerprint] = first
         duplicates[fingerprint] = dupes

@@ -36,7 +36,7 @@ else:
 from bridgedb.test.util import Benchmarker
 
 
-BRIDGE_NETWORKSTATUS_0 = '''\
+BRIDGE_NETWORKSTATUS_0 = b'''\
 r MiserLandfalls 4IsyTSCtChPhFPAnq5rD8yymlqA /GMC4lz8RXT/62v6kZNdmzSmopk 2014-11-04 06:23:22 2.215.61.223 4056 0
 a [c5fd:4467:98a7:90be:c76a:b449:8e6f:f0a7]:4055
 s Fast Guard Running Stable Valid
@@ -44,7 +44,7 @@ w Bandwidth=1678904
 p reject 1-65535
 '''
 
-BRIDGE_NETWORKSTATUS_1 = '''\
+BRIDGE_NETWORKSTATUS_1 = b'''\
 r Unmentionable BgOrX0ViP5hNsK5ZvixAuPZ6EY0 NTg9NoE5ls9KjF96Dp/UdrabZ9Y 2014-11-04 12:23:37 80.44.173.87 51691 0
 a [da14:7d1e:ba8e:60d0:b078:3f88:382b:5c70]:51690
 s Fast Guard Running Stable Valid
@@ -52,7 +52,7 @@ w Bandwidth=24361
 p reject 1-65535
 '''
 
-BRIDGE_SERVER_DESCRIPTOR = '''\
+BRIDGE_SERVER_DESCRIPTOR = b'''\
 @purpose bridge
 router MiserLandfalls 2.215.61.223 4056 0 0
 or-address [c5fd:4467:98a7:90be:c76a:b449:8e6f:f0a7]:4055
@@ -86,7 +86,7 @@ P2aB/+XQfzFBA5TaWF83coDng4OGodhwHaOx10Kn7Bg=
 -----END SIGNATURE-----
 '''
 
-BRIDGE_EXTRA_INFO_DESCRIPTOR = '''\
+BRIDGE_EXTRA_INFO_DESCRIPTOR = b'''\
 extra-info MiserLandfalls E08B324D20AD0A13E114F027AB9AC3F32CA696A0
 published 2014-11-04 06:23:22
 write-history 2014-11-04 06:23:22 (900 s) 3188736,2226176,2866176
@@ -117,7 +117,7 @@ U36EY4UoN5ABPowhNZFeyr5A3vKiDr6j0hCOqYOhxPY=
 -----END SIGNATURE-----
 '''
 
-BRIDGE_EXTRA_INFO_DESCRIPTOR_NEWER_DUPLICATE = '''\
+BRIDGE_EXTRA_INFO_DESCRIPTOR_NEWER_DUPLICATE = b'''\
 extra-info MiserLandfalls E08B324D20AD0A13E114F027AB9AC3F32CA696A0
 published 2014-11-04 08:10:25
 write-history 2014-11-04 08:10:25 (900 s) 3188736,2226176,2866176,2226176
@@ -148,7 +148,7 @@ U36EY4UoN5ABPowhNZFeyr5A3vKiDr6j0hCOqYOhxPY=
 -----END SIGNATURE-----
 '''
 
-BRIDGE_EXTRA_INFO_DESCRIPTOR_NEWEST_DUPLICATE = '''\
+BRIDGE_EXTRA_INFO_DESCRIPTOR_NEWEST_DUPLICATE = b'''\
 extra-info MiserLandfalls E08B324D20AD0A13E114F027AB9AC3F32CA696A0
 published 2014-12-04 03:10:25
 write-history 2014-12-04 03:10:25 (900 s) 3188736,2226176,2866176,2226176
@@ -179,7 +179,7 @@ U36EY4UoN5ABPowhNZFeyr5A3vKiDr6j0hCOqYOhxPY=
 -----END SIGNATURE-----
 '''
 
-BRIDGE_SERVER_DESCRIPTOR_ED25519 = '''\
+BRIDGE_SERVER_DESCRIPTOR_ED25519 = b'''\
 @purpose bridge
 router piratepartei 80.92.79.70 80 0 0
 identity-ed25519
@@ -233,7 +233,7 @@ VC4FdHgFlAkXbiqkpWtD0ojJJjLlEeXbmGILjC1Ls2I=
 -----END SIGNATURE-----
 '''
 
-BRIDGE_EXTRA_INFO_DESCRIPTOR_ED25519 = '''\
+BRIDGE_EXTRA_INFO_DESCRIPTOR_ED25519 = b'''\
 extra-info piratepartei 312D64274C29156005843EECB19C6865FA3CC10C
 identity-ed25519
 -----BEGIN ED25519 CERT-----
@@ -307,7 +307,7 @@ class ParseDescriptorsTests(unittest.TestCase):
         :returns: The full path to the file which was written to.
         """
         descFilename = os.path.join(os.getcwd(), filename)
-        with open(descFilename, 'w') as fh:
+        with open(descFilename, 'wb') as fh:
             for desc in descriptors:
                 fh.write(desc)
                 fh.flush()
@@ -381,8 +381,8 @@ class ParseDescriptorsTests(unittest.TestCase):
         raise InvalidRouterNickname.
         """
         unparseable = BRIDGE_NETWORKSTATUS_0.replace(
-            'MiserLandfalls',
-            'MiserLandfallsWaterfallsSnowfallsAvalanche')
+            b'MiserLandfalls',
+            b'MiserLandfallsWaterfallsSnowfallsAvalanche')
         # Write the descriptor to a file for testing. This is necessary
         # because the function opens the networkstatus file to read it.
         descFile = self.writeTestDescriptorsToFile('networkstatus-bridges',
@@ -399,8 +399,8 @@ class ParseDescriptorsTests(unittest.TestCase):
         See also: :trac:`16616`
         """
         unparseable = BRIDGE_NETWORKSTATUS_0.replace(
-            's Fast Guard Running Stable Valid',
-            's Fast Guard Running Stable Valid HSDir')
+            b's Fast Guard Running Stable Valid',
+            b's Fast Guard Running Stable Valid HSDir')
         # Write the descriptor to a file for testing. This is necessary
         # because the function opens the networkstatus file to read it.
         descFile = self.writeTestDescriptorsToFile('networkstatus-bridges',
@@ -420,7 +420,7 @@ class ParseDescriptorsTests(unittest.TestCase):
         a ValueError.
         """
         unparseable = BRIDGE_NETWORKSTATUS_0.replace(
-            '2.215.61.223', '[2837:fcd2:387b:e376:34c:1ec7:11ff:1686]')
+            b'2.215.61.223', b'[2837:fcd2:387b:e376:34c:1ec7:11ff:1686]')
         descFile = self.writeTestDescriptorsToFile('networkstatus-bridges',
                                                    unparseable)
         self.assertRaises(ValueError,
@@ -434,9 +434,9 @@ class ParseDescriptorsTests(unittest.TestCase):
         expectedIPs = [self.expectedIPBridge0, self.expectedIPBridge1]
         descFile = 'networkstatus-bridges'
 
-        with open(descFile, 'w') as fh:
-            fh.write('signature and stuff from the BridgeAuth would go here\n')
-            fh.write('some more annotations with parameters and stuff\n')
+        with open(descFile, 'wb') as fh:
+            fh.write(b'signature and stuff from the BridgeAuth would go here\n')
+            fh.write(b'some more annotations with parameters and stuff\n')
             fh.write(BRIDGE_NETWORKSTATUS_0)
             fh.write(BRIDGE_NETWORKSTATUS_1)
             fh.flush()
@@ -454,9 +454,9 @@ class ParseDescriptorsTests(unittest.TestCase):
         expectedIPs = [self.expectedIPBridge0, self.expectedIPBridge1]
         descFile = 'networkstatus-bridges'
 
-        with open(descFile, 'w') as fh:
-            fh.write('signature and stuff from the BridgeAuth would go here\n')
-            fh.write('some more annotations with parameters and stuff\n')
+        with open(descFile, 'wb') as fh:
+            fh.write(b'signature and stuff from the BridgeAuth would go here\n')
+            fh.write(b'some more annotations with parameters and stuff\n')
             fh.write(BRIDGE_NETWORKSTATUS_0)
             fh.write(BRIDGE_NETWORKSTATUS_1)
             fh.flush()
@@ -479,7 +479,7 @@ class ParseDescriptorsTests(unittest.TestCase):
         """
         descFile = io.BytesIO(BRIDGE_EXTRA_INFO_DESCRIPTOR)
         routers = descriptors.parseExtraInfoFiles(descFile)
-        bridge = routers.values()[0]
+        bridge = list(routers.values())[0]
         self.assertIsInstance(bridge, RelayExtraInfoDescriptor)
 
     def test_parse_descriptors_parseExtraInfoFiles_one_file(self):
@@ -488,12 +488,12 @@ class ParseDescriptorsTests(unittest.TestCase):
         """
         descFile = io.BytesIO(BRIDGE_EXTRA_INFO_DESCRIPTOR)
         routers = descriptors.parseExtraInfoFiles(descFile)
-        bridge = routers.values()[0]
+        bridge = list(routers.values())[0]
 
         # The number of transports we parsed should be equal to the number of
         # 'transport' lines in the descriptor:
         self.assertEqual(len(bridge.transport),
-                         BRIDGE_EXTRA_INFO_DESCRIPTOR.count('transport '))
+                         BRIDGE_EXTRA_INFO_DESCRIPTOR.count(b'transport '))
 
         self.assertEqual(bridge.fingerprint, self.expectedFprBridge0)
 
@@ -522,7 +522,7 @@ class ParseDescriptorsTests(unittest.TestCase):
                          "We shouldn't have any duplicate descriptors.")
 
         # We should only have the newest descriptor:
-        bridge = routers.values()[0]
+        bridge = list(routers.values())[0]
         self.assertEqual(
             bridge.published,
             datetime.datetime.strptime("2014-11-04 08:10:25", "%Y-%m-%d %H:%M:%S"),
@@ -541,7 +541,7 @@ class ParseDescriptorsTests(unittest.TestCase):
         self.assertEqual(len(routers), 1,
                          "We shouldn't have any duplicate descriptors.")
 
-        bridge = routers.values()[0]
+        bridge = list(routers.values())[0]
         self.assertEqual(
             bridge.published,
             datetime.datetime.strptime("2014-11-04 08:10:25", "%Y-%m-%d %H:%M:%S"),
@@ -564,7 +564,7 @@ class ParseDescriptorsTests(unittest.TestCase):
                          "We shouldn't have any duplicate descriptors.")
 
         # We should only have the newest descriptor:
-        bridge = routers.values()[0]
+        bridge = list(routers.values())[0]
         self.assertEqual(
             bridge.published,
             datetime.datetime.strptime("2014-12-04 03:10:25", "%Y-%m-%d %H:%M:%S"),
@@ -581,10 +581,10 @@ class ParseDescriptorsTests(unittest.TestCase):
         descFiles = []
 
         # The timestamp and fingerprint from BRIDGE_EXTRA_INFO_DESCRIPTOR:
-        timestamp  = "2014-11-04 06:23:22"
-        Y, M, rest = timestamp.split("-")
-        fpr        = "E08B324D20AD0A13E114F027AB9AC3F32CA696A0"
-        newerFpr   = "E08B324D20AD0A13E114F027AB9AC3F32CA696A0"
+        timestamp  = b"2014-11-04 06:23:22"
+        Y, M, rest = timestamp.split(b"-")
+        fpr        = b"E08B324D20AD0A13E114F027AB9AC3F32CA696A0"
+        newerFpr   = b"E08B324D20AD0A13E114F027AB9AC3F32CA696A0"
 
         total = 0
         needed = b * n
@@ -592,15 +592,15 @@ class ParseDescriptorsTests(unittest.TestCase):
             if total >= needed:
                 break
             # Re-digest the fingerprint to create a "new" bridge
-            newerFpr = hashlib.sha1(newerFpr).hexdigest().upper()
+            newerFpr = hashlib.sha1(newerFpr).hexdigest().upper().encode('utf-8')
             # Generate n extrainfos with different timestamps:
             count = 0
-            for year in range(1, ((n + 1)/ 12) + 2):  # Start from the next year
+            for year in range(1, ((n + 1)// 12) + 2):  # Start from the next year
                 if count >= n:
                     break
                 for month in range(1, 13):
                     if count < n:
-                        newerTimestamp = "-".join([str(int(Y) + year), "%02d" % month, rest])
+                        newerTimestamp = b"-".join([str(int(Y) + year).encode('utf-8'), b"%02d" % month, rest])
                         newerDuplicate = BRIDGE_EXTRA_INFO_DESCRIPTOR[:].replace(
                             fpr, newerFpr).replace(
                                 timestamp, newerTimestamp)
@@ -663,10 +663,10 @@ class ParseDescriptorsTests(unittest.TestCase):
         """
         # Give it a bad geoip-db-digest:
         unparseable = BRIDGE_EXTRA_INFO_DESCRIPTOR.replace(
-            "MiserLandfalls E08B324D20AD0A13E114F027AB9AC3F32CA696A0",
-            "DontParseMe F373CC1D86D82267F1F1F5D39470F0E0A022122E").replace(
-                "geoip-db-digest 09A0E093100B279AD9CFF47A67B13A21C6E1483F",
-                "geoip-db-digest FOOOOOOOOOOOOOOOOOOBAAAAAAAAAAAAAAAAAARR")
+            b"MiserLandfalls E08B324D20AD0A13E114F027AB9AC3F32CA696A0",
+            b"DontParseMe F373CC1D86D82267F1F1F5D39470F0E0A022122E").replace(
+                b"geoip-db-digest 09A0E093100B279AD9CFF47A67B13A21C6E1483F",
+                b"geoip-db-digest FOOOOOOOOOOOOOOOOOOBAAAAAAAAAAAAAAAAAARR")
 
         descFileOne = io.BytesIO(BRIDGE_EXTRA_INFO_DESCRIPTOR_NEWEST_DUPLICATE)
         descFileTwo = io.BytesIO(BRIDGE_EXTRA_INFO_DESCRIPTOR)
@@ -684,7 +684,7 @@ class ParseDescriptorsTests(unittest.TestCase):
             "and one was unparseable, so that should only leave one "
             "descriptor remaining."))
 
-        bridge = routers.values()[0]
+        bridge = list(routers.values())[0]
         self.assertEqual(
             bridge.fingerprint,
             "E08B324D20AD0A13E114F027AB9AC3F32CA696A0",
@@ -703,14 +703,14 @@ class ParseDescriptorsTests(unittest.TestCase):
         """
         # Mess up the bridge-ip-transports line:
         unparseable = BRIDGE_EXTRA_INFO_DESCRIPTOR.replace(
-            "MiserLandfalls E08B324D20AD0A13E114F027AB9AC3F32CA696A0",
-            "DontParseMe F373CC1D86D82267F1F1F5D39470F0E0A022122E").replace(
-                "bridge-ip-transports <OR>=8",
-                "bridge-ip-transports <OR>")
+            b"MiserLandfalls E08B324D20AD0A13E114F027AB9AC3F32CA696A0",
+            b"DontParseMe F373CC1D86D82267F1F1F5D39470F0E0A022122E").replace(
+                b"bridge-ip-transports <OR>=8",
+                b"bridge-ip-transports <OR>")
 
         parseable = BRIDGE_EXTRA_INFO_DESCRIPTOR.replace(
-            "MiserLandfalls E08B324D20AD0A13E114F027AB9AC3F32CA696A0",
-            "ImOkWithBeingParsed 2B5DA67FBA13A6449DE625673B7AE9E3AA7DF75F")
+            b"MiserLandfalls E08B324D20AD0A13E114F027AB9AC3F32CA696A0",
+            b"ImOkWithBeingParsed 2B5DA67FBA13A6449DE625673B7AE9E3AA7DF75F")
 
         descFileOne = io.BytesIO(BRIDGE_EXTRA_INFO_DESCRIPTOR)
         descFileTwo = io.BytesIO(BRIDGE_EXTRA_INFO_DESCRIPTOR_NEWEST_DUPLICATE)
@@ -750,8 +750,8 @@ class ParseDescriptorsTests(unittest.TestCase):
         zero parsed descriptors.
         """
         unparseable = BRIDGE_EXTRA_INFO_DESCRIPTOR.replace(
-            '-----END SIGNATURE-----',
-            '-----END SIGNATURE FOR REALZ-----')
+            b'-----END SIGNATURE-----',
+            b'-----END SIGNATURE FOR REALZ-----')
         # This must be a "real" file or _copyUnparseableDescriptorFile() will
         # raise an AttributeError saying:
         # '_io.BytesIO' object has no attribute 'rpartition'"
@@ -766,7 +766,7 @@ class ParseDescriptorsTests(unittest.TestCase):
         missing the signature should return zero parsed descriptors.
         """
         # Remove the signature
-        BEGIN_SIG = '-----BEGIN SIGNATURE-----'
+        BEGIN_SIG = b'-----BEGIN SIGNATURE-----'
         unparseable, _ = BRIDGE_EXTRA_INFO_DESCRIPTOR.split(BEGIN_SIG)
         # This must be a "real" file or _copyUnparseableDescriptorFile() will
         # raise an AttributeError saying:
@@ -782,7 +782,7 @@ class ParseDescriptorsTests(unittest.TestCase):
         bad signature should raise an InvalidExtraInfoSignature exception.
         """
         # Truncate the signature to 50 bytes
-        BEGIN_SIG = '-----BEGIN SIGNATURE-----'
+        BEGIN_SIG = b'-----BEGIN SIGNATURE-----'
         doc, sig = BRIDGE_EXTRA_INFO_DESCRIPTOR.split(BEGIN_SIG)
         unparseable = BEGIN_SIG.join([doc, sig[:50]])
         # This must be a "real" file or _copyUnparseableDescriptorFile() will
@@ -803,10 +803,10 @@ class ParseDescriptorsTests(unittest.TestCase):
         """
         # Give it a bad geoip-db-digest:
         unparseable = BRIDGE_EXTRA_INFO_DESCRIPTOR.replace(
-            "MiserLandfalls E08B324D20AD0A13E114F027AB9AC3F32CA696A0",
-            "DontParseMe F373CC1D86D82267F1F1F5D39470F0E0A022122E").replace(
-                "geoip-db-digest 09A0E093100B279AD9CFF47A67B13A21C6E1483F",
-                "geoip-db-digest FOOOOOOOOOOOOOOOOOOBAAAAAAAAAAAAAAAAAARR")
+            b"MiserLandfalls E08B324D20AD0A13E114F027AB9AC3F32CA696A0",
+            b"DontParseMe F373CC1D86D82267F1F1F5D39470F0E0A022122E").replace(
+                b"geoip-db-digest 09A0E093100B279AD9CFF47A67B13A21C6E1483F",
+                b"geoip-db-digest FOOOOOOOOOOOOOOOOOOBAAAAAAAAAAAAAAAAAARR")
 
         descFileOne = io.BytesIO(BRIDGE_EXTRA_INFO_DESCRIPTOR)
         descFileTwo = io.BytesIO(BRIDGE_EXTRA_INFO_DESCRIPTOR_NEWEST_DUPLICATE)
@@ -817,7 +817,7 @@ class ParseDescriptorsTests(unittest.TestCase):
 
     def test_parse_descriptors_parseExtraInfoFiles_empty_file(self):
         """Test parsing an empty extrainfo descriptors file."""
-        routers = descriptors.parseExtraInfoFiles(io.BytesIO(''))
+        routers = descriptors.parseExtraInfoFiles(io.BytesIO(b''))
         self.assertIsInstance(routers, dict)
         self.assertEqual(len(routers), 0)
 
@@ -846,7 +846,7 @@ class ParseDescriptorsTests(unittest.TestCase):
         True when the new file is successfully created.
         """
         filename = "bridge-descriptors"
-        with open(filename, 'w') as fh:
+        with open(filename, 'wb') as fh:
             fh.write(BRIDGE_SERVER_DESCRIPTOR)
             fh.flush()
 
@@ -858,7 +858,7 @@ class ParseDescriptorsTests(unittest.TestCase):
         copy of the bad file with a specific filename format.
         """
         filename = "bridge-descriptors"
-        with open(filename, 'w') as fh:
+        with open(filename, 'wb') as fh:
             fh.write(BRIDGE_SERVER_DESCRIPTOR)
             fh.flush()
 
