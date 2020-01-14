@@ -190,6 +190,12 @@ def getKey(filename):
 
 def getHMAC(key, value):
     """Return the HMAC of **value** using the **key**."""
+
+    # normalize inputs to be bytes
+
+    key = key.encode('utf-8') if isinstance(key, str) else key
+    value = value.encode('utf-8') if isinstance(value, str) else value
+
     h = hmac.new(key, value, digestmod=DIGESTMOD)
     return h.digest()
 
@@ -200,14 +206,19 @@ def getHMACFunc(key, hex=True):
     :rtype: callable
     :returns: A function which can be uses to generate HMACs.
     """
+
+    key = key.encode('utf-8') if isinstance(key, str) else key
     h = hmac.new(key, digestmod=DIGESTMOD)
+
     def hmac_fn(value):
+        value = value.encode('utf-8') if isinstance(value, str) else value
         h_tmp = h.copy()
         h_tmp.update(value)
         if hex:
             return h_tmp.hexdigest()
         else:
             return h_tmp.digest()
+
     return hmac_fn
 
 def removePKCS1Padding(message):
