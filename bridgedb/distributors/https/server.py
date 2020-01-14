@@ -373,7 +373,7 @@ class TranslatedTemplateResource(CustomErrorHandlingResource, CSPResource):
         """Create a new :api:`Resource <twisted.web.resource.Resource>` for a
         Mako-templated webpage.
         """
-        gettext.install("bridgedb", unicode=True)
+        gettext.install("bridgedb")
         CSPResource.__init__(self)
         self.template = template
 
@@ -888,7 +888,7 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
         :param bool includeFingerprints: Do we include the bridge's
             fingerprint in the response?
         """
-        gettext.install("bridgedb", unicode=True)
+        gettext.install("bridgedb")
         CSPResource.__init__(self)
         self.distributor = distributor
         self.schedule = schedule
