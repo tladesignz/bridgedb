@@ -206,7 +206,7 @@ class BaseOptions(usage.Options):
             if rundir is not None:
                 gRundir = os.path.abspath(os.path.expanduser(rundir))
             else:
-                gRundir = os.getcwdu()
+                gRundir = os.getcwd()
         setRundir(gRundir)
 
         if not os.path.isdir(gRundir):  # pragma: no cover

@@ -50,7 +50,7 @@ class StateTest(unittest.TestCase):
         exec(compiled, configuration)
         config = persistent.Conf(**configuration)
 
-        fakeArgs = ['-c', os.path.join(os.getcwdu(), '..', 'bridgedb.conf')]
+        fakeArgs = ['-c', os.path.join(os.getcwd(), '..', 'bridgedb.conf')]
         options = MainOptions()
         options.parseOptions(fakeArgs)
 

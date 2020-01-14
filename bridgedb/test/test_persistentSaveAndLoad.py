@@ -58,8 +58,8 @@ class StateSaveAndLoadTests(unittest.TestCase):
         self.assertNotIdentical(self.state, loadedState)
         self.assertNotEqual(self.state, loadedState)
 
-        self.assertEqual(self.state.__dict__.keys().sort(),
-                         loadedState.__dict__.keys().sort())
+        self.assertEqual(list(self.state.__dict__.keys()).sort(),
+                         list(loadedState.__dict__.keys()).sort())
 
     def savedStateAssertions(self, savedStatefile=None):
         self.assertTrue(os.path.isfile(str(self.state.statefile)))
@@ -148,7 +148,7 @@ class StateSaveAndLoadTests(unittest.TestCase):
                           self.state.load, 'quux.state')
 
     def test_load_with_statefile_opened(self):
-        fh = open('quux.state', 'w+')
+        fh = open('quux.state', 'wb+')
         self.assertRaises(persistent.MissingState, self.state.load, fh)
         fh.close()
 
