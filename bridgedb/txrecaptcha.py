@@ -51,7 +51,7 @@ API_SSL_VERIFY_URL = "%s/verify" % API_SSL_SERVER
 
 #: (:class:`OpenSSL.crypto.X509`) Only trust certificate for the reCAPTCHA
 #: :data:`API_SSL_SERVER` which were signed by the Google Internet Authority CA.
-GOOGLE_INTERNET_AUTHORITY_CA_CERT = load_certificate(FILETYPE_PEM, bytes("""\
+GOOGLE_INTERNET_AUTHORITY_CA_CERT = load_certificate(FILETYPE_PEM, b"""\
 -----BEGIN CERTIFICATE-----
 MIICsDCCAhmgAwIBAgIDFXfhMA0GCSqGSIb3DQEBBQUAME4xCzAJBgNVBAYTAlVT
 MRAwDgYDVQQKEwdFcXVpZmF4MS0wKwYDVQQLEyRFcXVpZmF4IFNlY3VyZSBDZXJ0
@@ -68,7 +68,7 @@ Y3Jscy9zZWN1cmVjYS5jcmwwDQYJKoZIhvcNAQEFBQADgYEAvprjecFG+iJsxzEF
 ZUNgujFQodUovxOWZshcnDW7fZ7mTlk3zpeVJrGPZzhaDhvuJjIfKqHweFB7gwB+
 ARlIjNvrPq86fpVg0NOTawALkSqOUMl3MynBQO+spR7EHcRbADQ/JemfTEh2Ycfl
 vZqhEFBfurZkX0eTANq98ZvVfpg=
------END CERTIFICATE-----"""))
+-----END CERTIFICATE-----""")
 
 # `t.w.client.HTTPConnectionPool` isn't available in Twisted-12.0.0
 # (see ticket #11219: https://bugs.torproject.org/11219):
