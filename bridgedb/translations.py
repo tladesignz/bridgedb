@@ -126,7 +126,7 @@ def installTranslations(langs):
     except IOError as error:
         logging.error(str(error))
 
-    language.install(unicode=True)
+    language.install()
     return language
 
 def usingRTLLang(langs):
