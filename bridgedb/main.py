@@ -423,17 +423,17 @@ def run(options, reactor=reactor):
         logging.info("Reloading decoy bridges...")
         antibot.loadDecoyBridges(config.DECOY_BRIDGES_FILE)
 
-        logging.info("Reparsing bridge descriptors...")
         (hashring,
          emailDistributorTmp,
          ipDistributorTmp,
          moatDistributorTmp) = createBridgeRings(cfg, proxies, key)
-        logging.info("Bridges loaded: %d" % len(hashring))
 
         # Initialize our DB.
         bridgedb.Storage.initializeDBLock()
         bridgedb.Storage.setDBFilename(cfg.DB_FILE + ".sqlite")
+        logging.info("Reparsing bridge descriptors...")
         load(state, hashring, clear=False)
+        logging.info("Bridges loaded: %d" % len(hashring))
 
         if emailDistributorTmp is not None:
             emailDistributorTmp.prepopulateRings() # create default rings
