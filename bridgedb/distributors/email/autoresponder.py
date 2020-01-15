@@ -263,6 +263,9 @@ class EmailResponse(object):
 
         :param str line: Something to append into the :data:`mailfile`.
         """
+
+        line = line.decode('utf-8') if isinstance(line, bytes) else line
+
         if line.find('\r\n') != -1:
             # If **line** contains newlines, send it to :meth:`writelines` to
             # break it up so that we can replace them:
@@ -270,7 +273,7 @@ class EmailResponse(object):
             self.writelines(line)
         else:
             line += self.delimiter
-            self.mailfile.write(line.encode('utf8'))
+            self.mailfile.write(line)
             self.mailfile.flush()
 
     def writelines(self, lines):
@@ -283,7 +286,8 @@ class EmailResponse(object):
         :type lines: :any:`str` or :any:`list`
         :param lines: The lines to write to the :attr:`mailfile`.
         """
-        if isinstance(lines, str):
+        if isinstance(lines, (str, bytes)):
+            lines = lines.decode('utf-8') if isinstance(lines, bytes) else lines
             lines = lines.replace('\r\n', '\n')
             for ln in lines.split('\n'):
                 self.write(ln)
@@ -310,20 +314,24 @@ class EmailResponse(object):
         :kwargs: If given, the key will become the name of the header, and the
             value will become the contents of that header.
         """
+
+        fromAddress = fromAddress.decode('utf-8') if isinstance(fromAddress, bytes) else fromAddress
+        toAddress = toAddress.decode('utf-8') if isinstance(toAddress, bytes) else toAddress
+
         self.write("From: %s" % fromAddress)
         self.write("To: %s" % toAddress)
         if includeMessageID:
-            self.write("Message-ID: %s" % smtp.messageid().encode('utf-8'))
+            self.write("Message-ID: %s" % smtp.messageid())
         if inReplyTo:
-            self.write("In-Reply-To: %s" % inReplyTo.encode('utf-8'))
-        self.write("Content-Type: %s" % contentType.encode('utf-8'))
-        self.write("Date: %s" % smtp.rfc822date().encode('utf-8'))
+            self.write("In-Reply-To: %s" % inReplyTo)
+        self.write("Content-Type: %s" % contentType)
+        self.write("Date: %s" % smtp.rfc822date().decode('utf-8'))
 
         if not subject:
             subject = '[no subject]'
         if not subject.lower().startswith('re'):
             subject = "Re: " + subject
-        self.write("Subject: %s" % subject.encode('utf-8'))
+        self.write("Subject: %s" % subject)
 
         if kwargs:
             for headerName, headerValue in kwargs.items():
@@ -331,7 +339,7 @@ class EmailResponse(object):
                 headerName = headerName.replace(' ', '-')
                 headerName = headerName.replace('_', '-')
                 header = "%s: %s" % (headerName, headerValue)
-                self.write(header.encode('utf-8'))
+                self.write(header)
 
         # The first blank line designates that the headers have ended:
         self.write(self.delimiter)

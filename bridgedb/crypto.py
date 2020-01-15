@@ -315,7 +315,7 @@ def initializeGnuPG(config):
 
     if primarySK and primaryPK:
         logging.info("Found GnuPG primary key with fingerprint: %s" % primary)
-        for sub in primaryPK[0]['subkeys']:
+        for sub in list(primaryPK)[0]['subkeys']:
             logging.info("  Subkey: %s  Usage: %s" % (sub[0], sub[1].upper()))
     else:
         logging.warn("GnuPG key %s could not be found in %s!" % (primary, gpg.secring))

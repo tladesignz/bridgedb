@@ -235,7 +235,7 @@ a ball of timey-wimey, wibbly-warbly... stuff."""
         response = autoresponder.EmailResponse()
         response.write(self.body)
         response.rewind()
-        contents = str(response.read()).replace('\x00', '')
+        contents = response.read().replace(b'\x00', b'').decode('utf-8')
         # The newlines in the email body should have been replaced with
         # ``EmailResponse.delimiter``.
         delimited = self.body.replace('\n', response.delimiter) \
@@ -247,7 +247,7 @@ a ball of timey-wimey, wibbly-warbly... stuff."""
         response = autoresponder.EmailResponse()
         response.write(self.body)
         response.rewind()
-        contents = str(response.read(3)).replace('\x00', '')
+        contents = response.read(3).replace(b'\x00', b'').decode('utf-8')
         self.assertEqual(contents, self.body[:3])
 
     def test_EmailResponse_write(self):
@@ -370,7 +370,7 @@ class SMTPAutoresponderTests(unittest.TestCase):
         """
         self._getIncomingLines()
         ours = Address(self.context.fromAddr)
-        plus = '@'.join([ours.local + '+zh_cn', ours.domain])
+        plus = '@'.join([ours.local.decode('utf-8') + '+zh_cn', ours.domain.decode('utf-8')])
         self.message.lines[1] = 'To: {0}'.format(plus)
         self._setUpResponder()
         recipient = str(self.responder.getMailFrom())
@@ -383,7 +383,7 @@ class SMTPAutoresponderTests(unittest.TestCase):
         """
         self._getIncomingLines()
         ours = Address(self.context.fromAddr)
-        plus = '@'.join(['get' + ours.local + '+zh_cn', ours.domain])
+        plus = '@'.join(['get' + ours.local.decode('utf-8') + '+zh_cn', ours.domain.decode('utf-8')])
         self.message.lines[1] = 'To: {0}'.format(plus)
         self._setUpResponder()
         recipient = str(self.responder.getMailFrom())
