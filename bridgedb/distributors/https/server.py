@@ -135,13 +135,13 @@ def replaceErrorPage(request, error, template_name=None, html=True):
     errorMessage = _("Sorry! Something went wrong with your request.")
 
     if not html:
-        return bytes(errorMessage)
+        return errorMessage.encode('utf-8')
 
     try:
         rendered = resource500.render(request)
     except Exception as err:
         logging.exception(err)
-        rendered = bytes(errorMessage)
+        rendered = errorMessage.encode('utf-8')
 
     return rendered
 
@@ -1024,7 +1024,7 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
         if format == 'plain':
             request.setHeader("Content-Type", "text/plain")
             try:
-                rendered = bytes('\n'.join(bridgeLines))
+                rendered = '\n'.join(bridgeLines).encode('utf-8')
             except Exception as err:
                 rendered = replaceErrorPage(request, err, html=False)
         else:
@@ -1100,7 +1100,7 @@ def addWebServer(config, distributor):
     howto   = HowtoResource()
     robots  = static.File(os.path.join(TEMPLATE_DIR, 'robots.txt'))
     assets  = static.File(os.path.join(TEMPLATE_DIR, 'assets/'))
-    keys    = static.Data(bytes(strings.BRIDGEDB_OPENPGP_KEY), 'text/plain')
+    keys    = static.Data(strings.BRIDGEDB_OPENPGP_KEY.encode('utf-8'), 'text/plain')
     csp     = CSPResource(enabled=config.CSP_ENABLED,
                           includeSelf=config.CSP_INCLUDE_SELF,
                           reportViolations=config.CSP_REPORT_ONLY,
