@@ -263,7 +263,7 @@ def replaceControlChars(text, replacement=None, encoding="utf-8"):
     escaped = bytearray()
 
     for byte in bytearray(text, encoding):
-        if byte in range(0, 32) + [92, 127]:
+        if byte in list(range(0, 32)) + [92, 127]:
             if replacement:
                 byte = replacement
             else:
