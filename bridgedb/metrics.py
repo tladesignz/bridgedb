@@ -184,15 +184,12 @@ class Singleton(type):
             pass
 
 
-class Metrics(object):
+class Metrics(metaclass=Singleton):
     """Base class representing metrics.
 
     This class provides functionality that our three distribution mechanisms
     share.
     """
-
-    # We're using a meta class to implement a singleton for Metrics.
-    __metaclass__ = Singleton
 
     def __init__(self, binSize=BIN_SIZE):
         logging.debug("Instantiating metrics class.")
