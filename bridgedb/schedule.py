@@ -200,7 +200,7 @@ class ScheduledInterval(Unscheduled):
         :raises UnknownInterval: if the specified **count** was invalid.
         """
         try:
-            if not count > 0:
+            if count is None or not count > 0:
                 count = 1
             count = int(count)
         except (TypeError, ValueError):
