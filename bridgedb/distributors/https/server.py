@@ -135,15 +135,15 @@ def replaceErrorPage(request, error, template_name=None, html=True):
     errorMessage = _("Sorry! Something went wrong with your request.")
 
     if not html:
-        return errorMessage.encode('utf-8')
+        return errorMessage
 
     try:
         rendered = resource500.render(request)
     except Exception as err:
         logging.exception(err)
-        rendered = errorMessage.encode('utf-8')
+        rendered = errorMessage
 
-    return rendered
+    return rendered.decode('utf-8') if isinstance(rendered, bytes) else rendered
 
 
 def redirectMaliciousRequest(request):
@@ -343,7 +343,7 @@ class ErrorResource(CSPResource):
         except Exception as err:
             rendered = replaceErrorPage(request, err, html=False)
 
-        return rendered
+        return rendered.decode('utf-8') if isinstance(rendered, bytes) else rendered
 
     render_POST = render_GET
 
@@ -392,7 +392,7 @@ class TranslatedTemplateResource(CustomErrorHandlingResource, CSPResource):
         except Exception as err:  # pragma: no cover
             rendered = replaceErrorPage(request, err)
         request.setHeader("Content-Type", "text/html; charset=utf-8")
-        return rendered
+        return rendered.decode('utf-8') if isinstance(rendered, bytes) else rendered
 
     render_POST = render_GET
 
@@ -509,7 +509,7 @@ class CaptchaProtectedResource(CustomErrorHandlingResource, CSPResource):
             langs = translations.getLocaleFromHTTPRequest(request)
             rtl = translations.usingRTLLang(langs)
             # TODO: this does not work for versions of IE < 8.0
-            imgstr = 'data:image/jpeg;base64,%s' % base64.b64encode(image)
+            imgstr = b'data:image/jpeg;base64,%s' % base64.b64encode(image.encode('utf-8'))
             template = lookup.get_template('captcha.html')
             rendered = template.render(strings,
                                        getSortedLangList(),
@@ -522,7 +522,7 @@ class CaptchaProtectedResource(CustomErrorHandlingResource, CSPResource):
             rendered = replaceErrorPage(request, err, 'captcha.html')
 
         request.setHeader("Content-Type", "text/html; charset=utf-8")
-        return rendered
+        return rendered.decode('utf-8') if isinstance(rendered, bytes) else rendered
 
     def render_POST(self, request):
         """Process a client's CAPTCHA solution.
@@ -730,7 +730,7 @@ class ReCaptchaProtectedResource(CaptchaProtectedResource):
             rendered = redirectTo(request.uri, request)
 
         try:
-            request.write(rendered)
+            request.write(rendered.encode('utf-8') if isinstance(rendered, str) else rendered)
             request.finish()
         except Exception as err:  # pragma: no cover
             logging.exception(err)
@@ -919,7 +919,7 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
             logging.exception(err)
             response = self.renderAnswer(request)
 
-        return response
+        return response.decode('utf-8') if isinstance(response, bytes) else response
 
     def getClientIP(self, request):
         """Get the client's IP address from the ``'X-Forwarded-For:'``
@@ -1048,7 +1048,7 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
             except Exception as err:
                 rendered = replaceErrorPage(request, err)
 
-        return rendered
+        return rendered.decode('utf-8') if isinstance(rendered, bytes) else rendered
 
 
 def addWebServer(config, distributor):
@@ -1135,7 +1135,7 @@ def addWebServer(config, distributor):
 
     if config.HTTPS_ROTATION_PERIOD:
         count, period = config.HTTPS_ROTATION_PERIOD.split()
-        sched = ScheduledInterval(count, period)
+        sched = ScheduledInterval(int(count), period)
     else:
         sched = Unscheduled()
 

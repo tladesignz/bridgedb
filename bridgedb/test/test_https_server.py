@@ -27,7 +27,7 @@ from twisted.trial import unittest
 from twisted.web.resource import Resource
 from twisted.web.test import requesthelper
 
-from bridgedb import translations
+from bridgedb import _langs, translations
 from bridgedb.distributors.https import server
 from bridgedb.schedule import ScheduledInterval
 
@@ -218,6 +218,10 @@ class IndexResourceTests(unittest.TestCase):
 
     def test_IndexResource_render_GET_lang_ta(self):
         """renderGet() with ?lang=ta should return the index page in Tamil."""
+
+        if 'ta' not in _langs.get_langs():
+            self.skipTest("'ta' language unsupported")
+
         request = DummyRequest([self.pagename])
         request.method = b'GET'
         request.addArg('lang', 'ta')
@@ -243,6 +247,10 @@ class HowtoResourceTests(unittest.TestCase):
 
     def test_HowtoResource_render_GET_lang_ru(self):
         """renderGet() with ?lang=ru should return the howto page in Russian."""
+
+        if 'ru' not in _langs.get_langs():
+            self.skipTest("'ru' language unsupported")
+
         request = DummyRequest([self.pagename])
         request.method = b'GET'
         request.addArg('lang', 'ru')
@@ -522,7 +530,7 @@ class ReCaptchaProtectedResourceTests(unittest.TestCase):
         def testCB(request):
             """Check the ``Request`` returned from ``_renderDeferred``."""
             self.assertIsInstance(request, DummyRequest)
-            soup = BeautifulSoup(b''.join(request.written)).find('meta')['http-equiv']
+            soup = BeautifulSoup(b''.join(request.written)).find(b'meta')['http-equiv']
             self.assertEqual(soup, 'refresh')
 
         d = task.deferLater(reactor, 0, lambda x: x, (False, self.request))
@@ -541,7 +549,7 @@ class ReCaptchaProtectedResourceTests(unittest.TestCase):
             """Check the ``Request`` returned from ``_renderDeferred``."""
             self.assertIsInstance(request, DummyRequest)
             html = b''.join(request.written)
-            self.assertSubstring('Uh oh, spaghettios!', html)
+            self.assertSubstring(b'Uh oh, spaghettios!', html)
 
         d = task.deferLater(reactor, 0, lambda x: x, (True, self.request))
         d.addCallback(self.captchaResource._renderDeferred)
@@ -668,7 +676,7 @@ class BridgesResourceTests(unittest.TestCase):
         # The bridge lines are contained in a <div class='bridges'> tag:
         soup = BeautifulSoup(page)
         well = soup.find('div', {'class': 'bridge-lines'})
-        content = well.renderContents().strip()
+        content = well.renderContents().decode('utf-8').strip()
         lines = content.splitlines()
 
         bridges = []
@@ -794,6 +802,10 @@ class BridgesResourceTests(unittest.TestCase):
 
     def test_render_GET_RTLlang(self):
         """Test rendering a request for plain bridges in Arabic."""
+
+        if 'ar' not in _langs.get_langs():
+            self.skipTest("'ar' language unsupported")
+
         self.useBenignBridges()
 
         request = DummyRequest([b"bridges?transport=obfs3"])
@@ -816,6 +828,10 @@ class BridgesResourceTests(unittest.TestCase):
 
     def test_render_GET_RTLlang_obfs3(self):
         """Test rendering a request for obfs3 bridges in Farsi."""
+
+        if 'fa' not in _langs.get_langs():
+            self.skipTest("'ar' language unsupported")
+
         self.useBenignBridges()
 
         request = DummyRequest([b"bridges?transport=obfs3"])
@@ -915,6 +931,10 @@ class OptionsResourceTests(unittest.TestCase):
 
     def test_render_GET_RTLlang(self):
         """Test rendering a request for obfs3 bridges in Hebrew."""
+
+        if 'he' not in _langs.get_langs():
+            self.skipTest("'ar' language unsupported")
+
         request = DummyRequest(["bridges?transport=obfs3"])
         request.method = b'GET'
         request.getClientIP = lambda: '3.3.3.3'
