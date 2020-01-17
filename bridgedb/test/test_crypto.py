@@ -15,6 +15,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import base64
+import binascii
 import io
 import logging
 import math
@@ -87,7 +88,7 @@ class GetKeyTests(unittest.TestCase):
                          """The example key and the one read from file differ!
                          key (in hex): %s
                          SEKRIT_KEY (in hex): %s"""
-                         % (key.encode('hex'), SEKRIT_KEY.encode('hex')))
+                         % (binascii.hexlify(key).decode('utf-8'), binascii.hexlify(SEKRIT_KEY).decode('utf-8')))
 
 
 class InitializeGnuPGTests(unittest.TestCase):

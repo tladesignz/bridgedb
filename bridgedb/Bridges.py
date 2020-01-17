@@ -10,6 +10,7 @@
 them into hashrings for distributors.
 """
 
+import binascii
 import bisect
 import logging
 import re
@@ -329,7 +330,7 @@ class BridgeRing(object):
             else:
                 logging.debug(
                     "Got duplicate bridge %r in main hashring for position %r."
-                    % (logSafely(k.encode('hex')), pos.encode('hex')))
+                    % (logSafely(binascii.hexlify(k).decode('utf-8')), binascii.hexlify(pos).decode('utf-8')))
         keys.sort()
 
         if filterBySubnet:
