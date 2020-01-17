@@ -232,7 +232,7 @@ class Metrics(metaclass=Singleton):
         :returns: A list of metric lines.
         """
         lines = []
-        for key, value in self.coldMetrics.iteritems():
+        for key, value in self.coldMetrics.items():
             # Round up our value to the nearest multiple of self.binSize to
             # reduce the accuracy of our real values.
             if (value % self.binSize) > 0:

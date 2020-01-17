@@ -539,7 +539,7 @@ class BridgeSplitter(object):
             logging.info("Current rings: %s" % " ".join(self.ringsByName))
 
     def dumpAssignments(self, f, description=""):
-        for name,ring in self.ringsByName.iteritems():
+        for name,ring in self.ringsByName.items():
             ring.dumpAssignments(f, "%s %s" % (description, name))
 
 
