@@ -1377,7 +1377,7 @@ class Bridge(BridgeBackwardsCompatibility):
             :meth:`_getBlockKey`.
         :param str countryCode: A two-character country code specifier.
         """
-        if self._blockedIn.has_key(key):
+        if key in self._blockedIn:
             self._blockedIn[key].append(countryCode.lower())
         else:
             self._blockedIn[key] = [countryCode.lower(),]
