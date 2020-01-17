@@ -627,8 +627,8 @@ class FilteredBridgeSplitter(object):
         """
         filterNames = []
 
-        for filterName in [x.func_name for x in list(ringname)]:
-            # Using `assignBridgesToSubring.func_name` gives us a messy
+        for filterName in [x.__name__ for x in list(ringname)]:
+            # Using `assignBridgesToSubring.__name__` gives us a messy
             # string which includes all parameters and memory addresses. Get
             # rid of this by partitioning at the first `(`:
             realFilterName = filterName.partition('(')[0]
