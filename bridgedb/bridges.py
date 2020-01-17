@@ -1037,7 +1037,7 @@ class Bridge(BridgeBackwardsCompatibility):
         if safelog.safe_logging:
             prefix = '$$'
             if fingerprint:
-                fingerprint = hashlib.sha1(fingerprint).hexdigest().upper()
+                fingerprint = hashlib.sha1(fingerprint.encode('utf-8')).hexdigest().upper()
 
         if not fingerprint:
             fingerprint = '0' * 40
