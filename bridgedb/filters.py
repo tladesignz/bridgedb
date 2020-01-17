@@ -13,6 +13,7 @@
 
 """Functions for filtering :class:`Bridges <bridgedb.bridges.Bridge>`."""
 
+import binascii
 import logging
 
 from ipaddr import IPv4Address
@@ -43,7 +44,7 @@ def bySubring(hmac, assigned, total):
     logging.debug(("Creating a filter for assigning bridges to subhashring "
                    "%s-of-%s...") % (assigned, total))
 
-    name = "-".join([str(hmac("")[:8]).encode('hex'),
+    name = "-".join([binascii.hexlify(str(hmac("")[:8]).encode('utf-8')).decode('utf-8'),
                      str(assigned), "of", str(total)])
     try:
         return _cache[name]
