@@ -64,8 +64,8 @@ def parseAcceptLanguage(header):
     for only in langsOnly:
         if only not in langs:
             # Add the fallback after the other languages like it:
-            insertAfter = filter(lambda x: x.startswith(only),
-                                 [x for x in langs])
+            insertAfter = list(filter(lambda x: x.startswith(only),
+                                 [x for x in langs]))
             if insertAfter:
                 placement = langs.index(insertAfter[0]) + 1
                 langs.insert(placement, only)

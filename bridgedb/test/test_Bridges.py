@@ -62,7 +62,7 @@ class BridgeRingTests(unittest.TestCase):
         """
         self.addBridgesFromSameSubnet()
 
-        chosen = self.ring.bridges.keys()[:10]
+        chosen = list(self.ring.bridges.keys())[:10]
         bridges = self.ring.filterDistinctSubnets(chosen)
 
         # Since they're all in the same /16, we should only get one
@@ -75,7 +75,7 @@ class BridgeRingTests(unittest.TestCase):
         """
         self.addRandomBridges()
 
-        chosen = self.ring.bridges.keys()[:3]
+        chosen = list(self.ring.bridges.keys())[:3]
         bridges = self.ring.filterDistinctSubnets(chosen)
 
         self.assertGreaterEqual(len(bridges), 1)

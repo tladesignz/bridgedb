@@ -350,7 +350,7 @@ class ProxySetUnittests(unittest.TestCase):
         whatever tags we want.
         """
         tags = ['foo', 'bar', 'baz']
-        extraProxies = zip(self.moarProxies, tags)
+        extraProxies = list(zip(self.moarProxies, tags))
         self.proxyList.addProxies(extraProxies)
         self.assertEquals(len(self.proxyList), len(self.proxies) + len(extraProxies))
         self.assertIn(extraProxies[0][0], self.proxyList)

@@ -848,10 +848,10 @@ class BridgeTests(unittest.TestCase):
             self._networkstatusFile)[0]
         self.serverdescriptor = descriptors.parseServerDescriptorsFile(
             self._serverDescriptorFile)[0]
-        self.extrainfo = descriptors.parseExtraInfoFiles(
-            self._extrainfoFile).values()[0]
-        self.extrainfoNew = descriptors.parseExtraInfoFiles(
-            self._extrainfoNewFile).values()[0]
+        self.extrainfo = list(descriptors.parseExtraInfoFiles(
+            self._extrainfoFile).values())[0]
+        self.extrainfoNew = list(descriptors.parseExtraInfoFiles(
+            self._extrainfoNewFile).values())[0]
 
     def _writeNetworkstatus(self, networkstatus):
         with open(self._networkstatusFile, 'w') as fh:

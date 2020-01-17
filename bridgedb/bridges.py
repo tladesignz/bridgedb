@@ -1177,7 +1177,7 @@ class Bridge(BridgeBackwardsCompatibility):
         # their ``methodname`` matches the requested transport:
         transports = filter(lambda pt: pt.methodname == desired, self.transports)
         # Filter again for whichever of IPv4 or IPv6 was requested:
-        transports = filter(lambda pt: pt.address.version == ipVersion, transports)
+        transports = list(filter(lambda pt: pt.address.version == ipVersion, transports))
 
         if not transports:
             raise PluggableTransportUnavailable(
