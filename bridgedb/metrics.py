@@ -279,6 +279,9 @@ class Metrics(metaclass=Singleton):
             combinations.
         """
 
+        if isinstance(countryOrProvider, bytes):
+            countryOrProvider = countryOrProvider.decode('utf-8')
+
         countryOrProvider = countryOrProvider.lower()
         bridgeType = bridgeType.lower()
         success = "success" if success else "fail"
@@ -400,7 +403,7 @@ class EmailMetrics(Metrics):
 
         logging.debug("Recording %svalid email request for %s from %s." %
                       ("" if success else "in", bridgeType, emailAddr))
-        sld = emailAddr.domain.split(".")[0]
+        sld = emailAddr.domain.split(b".")[0]
 
         # Now update our metrics.
         key = self.createKey(self.keyPrefix, bridgeType, sld, success,
