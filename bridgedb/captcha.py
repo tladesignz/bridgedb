@@ -366,7 +366,7 @@ class GimpCaptcha(Captcha):
         """
         timestamp = str(int(time.time())).zfill(12)
         blob = timestamp + answer
-        encBlob = self.publicKey.encrypt(blob)
+        encBlob = self.publicKey.encrypt(blob.encode('utf-8'))
         hmac = crypto.getHMAC(self.hmacKey, encBlob)
         challenge = urlsafe_b64encode(hmac + encBlob)
         return challenge
@@ -387,7 +387,7 @@ class GimpCaptcha(Captcha):
         try:
             imageFilename = random.choice(os.listdir(self.cacheDir))
             imagePath = os.path.join(self.cacheDir, imageFilename)
-            with open(imagePath) as imageFile:
+            with open(imagePath, 'rb') as imageFile:
                 self.image = imageFile.read()
         except IndexError:
             raise GimpCaptchaError("CAPTCHA cache dir appears empty: %r"

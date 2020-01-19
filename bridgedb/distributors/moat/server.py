@@ -368,7 +368,7 @@ class CaptchaFetchResource(CaptchaResource):
             logging.error("Unhandled error while retrieving Gimp captcha!")
             logging.error(impossible)
 
-        return (capt.image, capt.challenge)
+        return (capt.image, capt.challenge.decode('utf-8') if isinstance(capt.challenge, bytes) else capt.challenge)
 
     def getPreferredTransports(self, supportedTransports):
         """Choose which transport a client should request, based on their list
@@ -476,7 +476,7 @@ class CaptchaFetchResource(CaptchaResource):
         }
 
         try:
-            data["data"][0]["image"] = base64.b64encode(image)
+            data["data"][0]["image"] = base64.b64encode(image).decode('utf-8')
         except Exception as impossible:
             logging.error("Could not construct or encode captcha!")
             logging.error(impossible)
