@@ -92,7 +92,7 @@ class BridgeRingTests(unittest.TestCase):
         filtering by distinct subnets.
         """
         self.addRandomBridges()
-        bridges = self.ring.getBridges('a' * Bridges.DIGEST_LEN, N=3, filterBySubnet=True)
+        bridges = self.ring.getBridges(b'a' * Bridges.DIGEST_LEN, N=3, filterBySubnet=True)
         self.assertEqual(len(bridges), 3)
 
     def test_dumpAssignments(self):
