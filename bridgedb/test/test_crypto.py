@@ -215,7 +215,7 @@ class InitializeGnuPGTests(unittest.TestCase):
         sig = signfunc("This is a test of the public broadcasting system.")
         print(sig)
         self.assertIsNotNone(sig)
-        self.assertTrue(sig.startswith('-----BEGIN PGP SIGNED MESSAGE-----'))
+        self.assertTrue(sig.startswith(b'-----BEGIN PGP SIGNED MESSAGE-----'))
 
     def test_crypto_initializeGnuPG_nonexistent_default_key(self):
         """When the key specified by EMAIL_GPG_PRIMARY_KEY_FINGERPRINT doesn't
