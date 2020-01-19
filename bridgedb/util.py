@@ -307,7 +307,6 @@ class JustifiedLogFormatter(logging.Formatter):
         :param bool logTrace: If ``True``, include information on the calling
             function in formatted log messages.
         """
-        super(JustifiedLogFormatter, self).__init__(datefmt=datefmt)
         self.logThreads = logThreads
         self.logTrace = logTrace
 
@@ -317,7 +316,7 @@ class JustifiedLogFormatter(logging.Formatter):
         _fmt.append("%(callingFunc)s")
         _fmt.append("%(message)s")
 
-        self._fmt = " ".join(_fmt)
+        super(JustifiedLogFormatter, self).__init__(fmt = " ".join(_fmt), datefmt=datefmt)
 
     def _formatCallingFuncName(self, record):
         """Format the combined module name and function name of the place where
