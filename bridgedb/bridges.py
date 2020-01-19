@@ -1713,7 +1713,6 @@ class Bridge(BridgeBackwardsCompatibility):
             actualDigest = hashlib.sha1(document.encode('utf-8')).hexdigest()
 
         except Exception as error:
-            raise
             logging.debug("Error verifying extrainfo signature: %s" % error)
             raise InvalidExtraInfoSignature(
                 "Extrainfo signature for %s couldn't be decoded: %s" %
