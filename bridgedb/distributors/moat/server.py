@@ -179,7 +179,7 @@ class JsonAPIResource(resource.Resource):
         :returns: The encoded data.
         """
         request.responseHeaders.addRawHeader(b"Content-Type", b"application/vnd.api+json")
-        request.responseHeaders.addRawHeader(b"Server", b"moat/%s" % MOAT_API_VERSION)
+        request.responseHeaders.addRawHeader(b"Server", b"moat/%s" % MOAT_API_VERSION.encode('utf-8'))
 
         if data:
             rendered = json.dumps(data)
