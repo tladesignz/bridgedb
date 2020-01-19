@@ -200,13 +200,14 @@ class ScheduledInterval(Unscheduled):
         :raises UnknownInterval: if the specified **count** was invalid.
         """
         try:
-            if count is None or not count > 0:
+            if count is None:
                 count = 1
             count = int(count)
         except (TypeError, ValueError):
-            raise UnknownInterval("%s.intervalCount: %r ist not an integer."
+            raise UnknownInterval("%s.intervalCount: %r is not an integer."
                                   % (self.__class__.__name__, count))
-        self.intervalCount = count
+
+        self.intervalCount = max(1, count)
 
     def _setIntervalPeriod(self, period=None):
         """Set our :attr:`intervalPeriod`.

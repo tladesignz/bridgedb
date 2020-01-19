@@ -373,10 +373,10 @@ class SMTPIncomingDelivery(smtp.SMTP):
         ourAddress = smtp.Address(self.context.smtpFromAddr)
 
         if not ((ourAddress.domain in recipient.domain) or
-                (recipient.domain == "bridgedb")):
+                (recipient.domain == b"bridgedb")):
             logging.debug(("Not our domain (%s) or subdomain, skipping"
                            " SMTP 'RCPT TO' address: %s")
-                          % (ourAddress.domain, str(recipient)))
+                          % (ourAddress.domain.decode('utf-8'), str(recipient)))
             raise smtp.SMTPBadRcpt(str(recipient))
         # The recipient's username should at least start with ours,
         # but it still might be a '+' address.
@@ -385,7 +385,7 @@ class SMTPIncomingDelivery(smtp.SMTP):
                            " SMTP 'RCPT TO' address: %s") % str(recipient))
             raise smtp.SMTPBadRcpt(str(recipient))
         # Ignore everything after the first '+', if there is one.
-        beforePlus = recipient.local.split('+', 1)[0]
+        beforePlus = recipient.local.split(b'+', 1)[0]
         if beforePlus != ourAddress.local:
             raise smtp.SMTPBadRcpt(str(recipient))
 

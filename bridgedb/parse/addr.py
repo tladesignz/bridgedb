@@ -231,6 +231,7 @@ def canonicalizeEmailDomain(domain, domainmap):
     :returns: The canonical domain name for the email address.
     """
     permitted = None
+    domain = domain.decode('utf-8') if isinstance(domain, bytes) else domain
 
     try:
         permitted = domainmap.get(domain)
