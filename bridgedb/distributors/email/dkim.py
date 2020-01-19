@@ -63,7 +63,7 @@ def checkDKIM(message, rules):
     if 'dkim' in rules:
         # getheader() returns the last of a given kind of header; we want
         # to get the first, so we use getheaders() instead.
-        dkimHeaders = message.getheaders("X-DKIM-Authentication-Results")
+        dkimHeaders = message.get("X-DKIM-Authentication-Results")
         dkimHeader = "<no header>"
         if dkimHeaders:
             dkimHeader = dkimHeaders[0]

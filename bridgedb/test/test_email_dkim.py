@@ -11,6 +11,7 @@
 
 """Unittests for the :mod:`bridgedb.distributors.email.dkim` module."""
 
+import email
 import email.message
 import io
 
@@ -47,8 +48,7 @@ get bridges
 
     def _createMessage(self, messageString):
         """Create an ``email.message.Message`` from a string."""
-        messageIO = io.StringIO(unicode(messageString))
-        return rfc822.Message(messageIO)
+        return email.message_from_string(messageString)
 
     def test_checkDKIM_good(self):
         message = self._createMessage(self.goodMessage)
