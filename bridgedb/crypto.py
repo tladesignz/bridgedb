@@ -47,7 +47,7 @@ import io
 import logging
 import os
 import re
-import urllib
+import urllib.parse
 
 import OpenSSL
 
@@ -410,7 +410,8 @@ class SSLVerifyingContextFactory(ssl.CertificateOptions):
         :rtype: str
         :returns: The full hostname (including any subdomains).
         """
-        hostname = urllib.splithost(urllib.splittype(url)[1])[0]
+
+        hostname = urllib.parse.urlparse(url).netloc
         logging.debug("Parsed hostname %r for cert CN matching." % hostname)
         return hostname
 
