@@ -970,7 +970,7 @@ class BridgeTests(unittest.TestCase):
         self.assertEqual(
             identifier,
             ''.join(['$$',
-                     hashlib.sha1(bridge.fingerprint).hexdigest().upper(),
+                     hashlib.sha1(bridge.fingerprint.encode('utf-8')).hexdigest().upper(),
                      '~', bridge.nickname]))
 
     def test_Bridge_str_without_fingerprint(self):

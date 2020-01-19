@@ -356,7 +356,7 @@ class BridgeRing(object):
 
     def dumpAssignments(self, f, description=""):
         logging.info("Dumping bridge assignments for %s..." % self.name)
-        for b in self.bridges.itervalues():
+        for b in self.bridges.values():
             desc = [ description ]
             for tp,val,_,subring in self.subrings:
                 if subring.getBridgeByID(b.identity):

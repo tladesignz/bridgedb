@@ -240,7 +240,7 @@ class BridgeAddressBase(object):
         :param str value: The binary-encoded SHA-1 hash digest of the public
             half of this Bridge's identity key.
         """
-        self.fingerprint = toHex(value)
+        self.fingerprint = toHex(value).decode('utf-8')
 
     @identity.deleter
     def identity(self):
@@ -743,7 +743,7 @@ class BridgeBackwardsCompatibility(BridgeBase):
             if not fingerprint:
                 if not len(idDigest) == 20:
                     raise TypeError("Bridge with invalid ID")
-                self.fingerprint = toHex(idDigest)
+                self.fingerprint = toHex(idDigest).decode('utf-8')
         elif fingerprint:
             if not isValidFingerprint(fingerprint):
                 raise TypeError("Bridge with invalid fingerprint (%r)"
@@ -1665,7 +1665,7 @@ class Bridge(BridgeBackwardsCompatibility):
         logging.info("Verifying extrainfo signature for %s..." % self)
 
         # Get the bytes of the descriptor signature without the headers:
-        document, signature = descriptor.get_bytes().split(TOR_BEGIN_SIGNATURE)
+        document, signature = str(descriptor).split(TOR_BEGIN_SIGNATURE)
         signature = signature.replace(TOR_END_SIGNATURE, '')
         signature = signature.replace('\n', '')
         signature = signature.strip()
@@ -1709,10 +1709,11 @@ class Bridge(BridgeBackwardsCompatibility):
 
             # This is the hexadecimal SHA-1 hash digest of the descriptor document
             # as it was signed:
-            signedDigest = codecs.encode(unpadded, 'hex_codec')
-            actualDigest = hashlib.sha1(document).hexdigest()
+            signedDigest = codecs.encode(unpadded, 'hex_codec').decode('utf-8')
+            actualDigest = hashlib.sha1(document.encode('utf-8')).hexdigest()
 
         except Exception as error:
+            raise
             logging.debug("Error verifying extrainfo signature: %s" % error)
             raise InvalidExtraInfoSignature(
                 "Extrainfo signature for %s couldn't be decoded: %s" %

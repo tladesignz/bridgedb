@@ -149,7 +149,7 @@ class FixedBridgeSplitterTests(unittest.TestCase):
         f.seek(0)
 
         data = f.read()
-        first = self.splitter.rings[0].bridges.values()[0].fingerprint
+        first = list(self.splitter.rings[0].bridges.values())[0].fingerprint
 
         # The first bridge's fingerprint should be within the data somewhere
         self.assertIn(first, data)
