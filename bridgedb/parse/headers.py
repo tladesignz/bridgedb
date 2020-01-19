@@ -75,5 +75,4 @@ def parseAcceptLanguage(header):
 
     # Gettext wants underderscores, because that is how it creates the
     # directories under i18n/, not hyphens:
-    langs = map(lambda x: x.replace('-', '_'), [x for x in langs])
-    return langs
+    return list(map(lambda x: x.replace('-', '_'), [x for x in langs]))
