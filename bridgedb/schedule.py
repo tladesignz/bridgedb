@@ -49,7 +49,7 @@ def fromUnixSeconds(timestamp):
     :param int timestamp: A timestamp in Unix Era seconds.
     :rtype: :any:`datetime.datetime`
     """
-    return datetime.fromtimestamp(timestamp)
+    return datetime.utcfromtimestamp(timestamp)
 
 
 class ISchedule(interface.Interface):
