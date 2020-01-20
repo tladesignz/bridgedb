@@ -240,7 +240,7 @@ class CustomErrorHandlingResource(resource.Resource):
 
         response = resource501
         response.detail = "moat version %s does not implement %s %s" % \
-                          (MOAT_API_VERSION, request.method, request.uri)
+                          (MOAT_API_VERSION, request.method.decode('utf-8'), request.uri.decode('utf-8'))
         return response
 
 
