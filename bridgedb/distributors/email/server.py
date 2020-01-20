@@ -290,11 +290,11 @@ class SMTPIncomingDelivery(smtp.SMTP):
         :type recipients: list
         :param recipients: A list of :api:`twisted.mail.smtp.User` instances.
         """
-        helo_ = ' helo={0}'.format(helo[0]) if helo[0] else ''
-        from_ = 'from %s ([%s]%s)' % (helo[0], helo[1], helo_)
-        by_ = 'by %s with BridgeDB (%s)' % (smtp.DNSNAME, __version__)
-        for_ = 'for %s; %s ' % (' '.join(map(str, recipients)), rfc822date())
-        return str('Received: %s\n\t%s\n\t%s' % (from_, by_, for_))
+        helo_ = b' helo=%s' % (helo[0] if helo[0] else '')
+        from_ = b'from %s ([%s]%s)' % (helo[0], helo[1], helo_)
+        by_ = b'by %s with BridgeDB (%s)' % (smtp.DNSNAME, __version__.encode('utf-8'))
+        for_ = b'for %s; %s ' % (b' '.join([str(r).encode('utf-8') for r in recipients]), rfc822date())
+        return 'Received: %s\n\t%s\n\t%s' % (from_.decode('utf-8'), by_.decode('utf-8'), for_.decode('utf-8'))
 
     def validateFrom(self, helo, origin):
         """Validate the ``MAIL FROM:`` address on the incoming SMTP connection.
