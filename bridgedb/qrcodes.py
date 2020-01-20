@@ -26,7 +26,7 @@ except ImportError:  # pragma: no cover
                    "python-qrcode package."))
 
 
-def generateQR(bridgelines, imageFormat=u'JPEG', bridgeSchema=False):
+def generateQR(bridgelines, imageFormat='JPEG', bridgeSchema=False):
     """Generate a QRCode for the client's bridge lines.
 
     :param str bridgelines: The Bridge Lines which we are distributing to the
@@ -60,7 +60,7 @@ def generateQR(bridgelines, imageFormat=u'JPEG', bridgeSchema=False):
         qr = qrcode.QRCode()
         qr.add_data(bridgelines)
 
-        buf = io.StringIO()
+        buf = io.BytesIO()
         img = qr.make_image().resize([350, 350])
         img.save(buf, imageFormat)
         buf.seek(0)
