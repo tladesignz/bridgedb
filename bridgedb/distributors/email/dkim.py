@@ -64,9 +64,7 @@ def checkDKIM(message, rules):
         # getheader() returns the last of a given kind of header; we want
         # to get the first, so we use getheaders() instead.
         dkimHeaders = message.get("X-DKIM-Authentication-Results")
-        dkimHeader = "<no header>"
-        if dkimHeaders:
-            dkimHeader = dkimHeaders[0]
+        dkimHeader = dkimHeaders if dkimHeaders else "<no header>"
         if not dkimHeader.startswith("pass"):
             logging.info("Rejecting bad DKIM header on incoming email: %r "
                          % dkimHeader)
