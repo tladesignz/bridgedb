@@ -289,10 +289,10 @@ class GimpCaptcha(Captcha):
             if hmacIsValid:
                 try:
                     answerBlob = secretKey.decrypt(encBlob)
-                    timestamp = answerBlob[:12].lstrip('0')
+                    timestamp = answerBlob[:12].lstrip(b'0')
                     then = cls.sched.nextIntervalStarts(int(timestamp))
                     now = int(time.time())
-                    answer = answerBlob[12:]
+                    answer = answerBlob[12:].decode('utf-8')
                 except Exception as error:
                     logging.warn(str(error))
                 else:
