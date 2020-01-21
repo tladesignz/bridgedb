@@ -673,7 +673,7 @@ class PortListTest(unittest.TestCase):
         log.msg("Testing addr.PortList(%s))"
                 % ', '.join([type('')(port) for port in ports]))
         portList = addr.PortList(*ports)
-        self.assertEqual(len(portList), tooMany)
+        self.assertEqual(len(portList), len(set(ports)))
 
     def test_invalidPortNumber(self):
         """Test creating a :class:`addr.PortList` with an invalid port.
