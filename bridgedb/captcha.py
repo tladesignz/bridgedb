@@ -270,6 +270,10 @@ class GimpCaptcha(Captcha):
         :returns: ``True`` if the CAPTCHA solution was correct and not
             stale. ``False`` otherwise.
         """
+
+        if isinstance(solution, bytes):
+            solution = solution.decode('utf-8')
+
         hmacIsValid = False
 
         if not solution:

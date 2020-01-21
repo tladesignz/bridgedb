@@ -182,7 +182,7 @@ class GimpCaptchaTests(unittest.TestCase):
         timestamp = int(decrypted[:12].lstrip(b'0'))
         # The timestamp should be within 30 seconds of right now.
         self.assertApproximates(timestamp, int(time.time()), 30)
-        self.assertEqual('ThisAnswerShouldDecryptToThis', decrypted[12:])
+        self.assertEqual(b'ThisAnswerShouldDecryptToThis', decrypted[12:])
 
     def test_get(self):
         """GimpCaptcha.get() should return image and challenge strings."""
