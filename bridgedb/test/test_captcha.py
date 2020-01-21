@@ -77,8 +77,8 @@ class ReCaptchaTests(unittest.TestCase):
             reason += "connection.\nThis test failed with: %s" % error
             raise unittest.SkipTest(reason)
         else:
-            self.assertIsInstance(self.c.image, str)
-            self.assertIsInstance(self.c.challenge, str)
+            self.assertIsInstance(self.c.image, bytes)
+            self.assertIsInstance(self.c.challenge, bytes)
         finally:
             # Replace the original environment variable if there was one:
             if oldkey:
@@ -146,7 +146,7 @@ class GimpCaptchaTests(unittest.TestCase):
         c = captcha.GimpCaptcha(self.publik, self.sekrit, self.hmacKey,
                                 self.cacheDir)
         challenge = c.createChallenge('w00t')
-        self.assertIsInstance(challenge, str)
+        self.assertIsInstance(challenge, bytes)
 
     def test_createChallenge_base64(self):
         """createChallenge() return value should be urlsafe base64-encoded."""
@@ -189,8 +189,8 @@ class GimpCaptchaTests(unittest.TestCase):
         c = captcha.GimpCaptcha(self.publik, self.sekrit, self.hmacKey,
                                 self.cacheDir)
         image, challenge = c.get()
-        self.assertIsInstance(image, str)
-        self.assertIsInstance(challenge, str)
+        self.assertIsInstance(image, bytes)
+        self.assertIsInstance(challenge, bytes)
 
     def test_get_emptyCacheDir(self):
         """An empty cacheDir should raise GimpCaptchaError."""
