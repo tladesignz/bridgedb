@@ -58,10 +58,11 @@ deploy time, as of right now) means doing the following:
     $ git checkout develop
     [merge some fix/bug/feature/etc branches]
     $ git checkout -b release-0.0.2 develop
-    $ git tag -a -s bridgedb-0.0.2
+    [bump version number in CHANGELOG]
     [pip maintainance commands *would* go here, if we ever have any]
     $ git checkout master
     $ git merge -S --no-ff release-0.0.2
+    $ git tag -a -s bridgedb-0.0.2
     $ git checkout develop
     $ git merge -S --no-ff master
     $ git push <remote> master develop
