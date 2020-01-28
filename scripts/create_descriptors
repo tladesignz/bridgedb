@@ -85,6 +85,10 @@ def get_transport_line(probing_resistant, addr, port):
     active probing attacks.
     """
 
+    # Make sure that we won't end up with a negative port.
+    if port <= 21:
+        port = 21
+
     transports = []
     if probing_resistant:
         transports.append("obfs2 %s:%s" % (addr, port-10))
