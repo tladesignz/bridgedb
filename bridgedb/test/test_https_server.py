@@ -70,8 +70,8 @@ class ReplaceErrorPageTests(unittest.TestCase):
         request = DummyRequest([''])
         exc = Exception("vegan gümmibären")
         errorPage = server.replaceErrorPage(request, exc)
-        self.assertSubstring("Bad News Bears", errorPage)
-        self.assertNotSubstring("vegan gümmibären", errorPage)
+        self.assertSubstring(b"Bad News Bears", errorPage)
+        self.assertNotSubstring("vegan gümmibären".encode("utf-8"), errorPage)
 
     def test_replaceErrorPage_matches_resource500(self):
         """``replaceErrorPage`` should return the error-500.html page."""
@@ -89,9 +89,9 @@ class ReplaceErrorPageTests(unittest.TestCase):
         exc = Exception("vegan gümmibären")
         server.resource500 = None
         errorPage = server.replaceErrorPage(request, exc)
-        self.assertNotSubstring("Bad News Bears", errorPage)
-        self.assertNotSubstring("vegan gümmibären", errorPage)
-        self.assertSubstring("Sorry! Something went wrong with your request.",
+        self.assertNotSubstring(b"Bad News Bears", errorPage)
+        self.assertNotSubstring("vegan gümmibären".encode("utf-8"), errorPage)
+        self.assertSubstring(b"Sorry! Something went wrong with your request.",
                              errorPage)
 
 class ErrorResourceTests(unittest.TestCase):
@@ -103,17 +103,17 @@ class ErrorResourceTests(unittest.TestCase):
     def test_resource404(self):
         """``server.resource404`` should display the error-404.html page."""
         page = server.resource404.render(self.request)
-        self.assertSubstring('We dug around for the page you requested', page)
+        self.assertSubstring(b'We dug around for the page you requested', page)
 
     def test_resource500(self):
         """``server.resource500`` should display the error-500.html page."""
         page = server.resource500.render(self.request)
-        self.assertSubstring('Bad News Bears', page)
+        self.assertSubstring(b'Bad News Bears', page)
 
     def test_maintenance(self):
         """``server.maintenance`` should display the error-503.html page."""
         page = server.maintenance.render(self.request)
-        self.assertSubstring('Under Maintenance', page)
+        self.assertSubstring(b'Under Maintenance', page)
 
 
 class CustomErrorHandlingResourceTests(unittest.TestCase):
@@ -214,7 +214,7 @@ class IndexResourceTests(unittest.TestCase):
         request = DummyRequest([self.pagename])
         request.method = b'GET'
         page = self.indexResource.render_GET(request)
-        self.assertSubstring("add the bridges to Tor Browser", page)
+        self.assertSubstring(b"add the bridges to Tor Browser", page)
 
     def test_IndexResource_render_GET_lang_ta(self):
         """renderGet() with ?lang=ta should return the index page in Tamil."""
@@ -224,9 +224,9 @@ class IndexResourceTests(unittest.TestCase):
 
         request = DummyRequest([self.pagename])
         request.method = b'GET'
-        request.addArg('lang', 'ta')
+        request.addArg(b'lang', 'ta')
         page = self.indexResource.render_GET(request)
-        self.assertSubstring("bridge-களை Tor Browser-உள்", page)
+        self.assertSubstring("bridge-களை Tor Browser-உள்".encode("utf-8"), page)
 
 
 class HowtoResourceTests(unittest.TestCase):
@@ -243,7 +243,7 @@ class HowtoResourceTests(unittest.TestCase):
         request = DummyRequest([self.pagename])
         request.method = b'GET'
         page = self.howtoResource.render_GET(request)
-        self.assertSubstring("the wizard", page)
+        self.assertSubstring(b"the wizard", page)
 
     def test_HowtoResource_render_GET_lang_ru(self):
         """renderGet() with ?lang=ru should return the howto page in Russian."""
@@ -253,9 +253,9 @@ class HowtoResourceTests(unittest.TestCase):
 
         request = DummyRequest([self.pagename])
         request.method = b'GET'
-        request.addArg('lang', 'ru')
+        request.addArg(b'lang', 'ru')
         page = self.howtoResource.render_GET(request)
-        self.assertSubstring("следовать инструкциям установщика", page)
+        self.assertSubstring("следовать инструкциям установщика".encode("utf-8"), page)
 
 
 class CaptchaProtectedResourceTests(unittest.TestCase):
@@ -279,7 +279,7 @@ class CaptchaProtectedResourceTests(unittest.TestCase):
         request.method = b'GET'
         page = self.captchaResource.render_GET(request)
         self.assertSubstring(
-            "Your browser is not displaying images properly", page)
+            b"Your browser is not displaying images properly", page)
 
     def test_render_GET_missingTemplate(self):
         """render_GET() with a missing template should raise an error and
@@ -816,10 +816,10 @@ class BridgesResourceTests(unittest.TestCase):
         request.headers.update({'accept-language': 'ar,en,en_US,'})
 
         page = self.bridgesResource.render(request)
-        self.assertSubstring("rtl.css", page)
+        self.assertSubstring(b"rtl.css", page)
         self.assertSubstring(
             # "I need an alternative way to get bridges!"
-            "أحتاج إلى وسيلة بديلة للحصول على bridges", page)
+            "أحتاج إلى وسيلة بديلة للحصول على bridges".encode("utf-8"), page)
 
         for bridgeLine in self.parseBridgesFromHTMLPage(page):
             # Check that each bridge line had the expected number of fields:
@@ -843,12 +843,12 @@ class BridgesResourceTests(unittest.TestCase):
         request.args.update({'transport': ['obfs3']})
 
         page = self.bridgesResource.render(request)
-        self.assertSubstring("rtl.css", page)
+        self.assertSubstring(b"rtl.css", page)
         self.assertSubstring(
             # "How to use the above bridge lines" (since there should be
             # bridges in this response, we don't tell them about alternative
             # mechanisms for getting bridges)
-            "چگونگی از پل‌های خود استفاده کنید", page)
+            "چگونگی از پل‌های خود استفاده کنید".encode("utf-8"), page)
 
         for bridgeLine in self.parseBridgesFromHTMLPage(page):
             # Check that each bridge line had the expected number of fields:
@@ -884,14 +884,14 @@ class BridgesResourceTests(unittest.TestCase):
         #
         # (Yes, there are two leading spaces at the beginning of each line)
         #
-        bridgeLines = [line.strip() for line in page.strip().split('\n')]
+        bridgeLines = [line.strip() for line in page.strip().split(b'\n')]
 
         for bridgeLine in bridgeLines:
-            bridgeLine = bridgeLine.split(' ')
+            bridgeLine = bridgeLine.split(b' ')
             self.assertEqual(len(bridgeLine), 2)
 
             # Check that the IP and port seem okay:
-            ip, port = bridgeLine[0].rsplit(':')
+            ip, port = bridgeLine[0].rsplit(b':')
             self.assertIsInstance(ipaddr.IPv4Address(ip), ipaddr.IPv4Address)
             self.assertIsInstance(int(port), int)
             self.assertGreater(int(port), 0)
@@ -913,8 +913,8 @@ class BridgesResourceTests(unittest.TestCase):
         page = self.bridgesResource.renderAnswer(request, bridgeLines=None)
 
         # We don't want the fancy version:
-        self.assertNotSubstring("Bad News Bears", page)
-        self.assertSubstring("Sorry! Something went wrong with your request.",
+        self.assertNotSubstring(b"Bad News Bears", page)
+        self.assertSubstring(b"Sorry! Something went wrong with your request.",
                              page)
 
 
@@ -944,8 +944,8 @@ class OptionsResourceTests(unittest.TestCase):
         request.args.update({'transport': ['obfs2']})
 
         page = self.optionsResource.render(request)
-        self.assertSubstring("rtl.css", page)
-        self.assertSubstring("מהם גשרים?", page)
+        self.assertSubstring(b"rtl.css", page)
+        self.assertSubstring("מהם גשרים?".encode("utf-8"), page)
 
 
 class HTTPSServerServiceTests(unittest.TestCase):

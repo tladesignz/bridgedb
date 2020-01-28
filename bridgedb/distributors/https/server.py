@@ -95,6 +95,25 @@ supported_langs = []
 metrix = metrics.HTTPSMetrics()
 
 
+def stringifyRequestArgs(args):
+    """Turn the given HTTP request arguments from bytes to str.
+
+    :param dict args: A dictionary of request arguments.
+    :rtype: dict
+    :returns: A dictionary of request arguments.
+    """
+
+    # Convert all key/value pairs from bytes to str.
+    str_args = {}
+    for arg, values in args.items():
+        arg = arg if isinstance(arg, str) else arg.decode("utf-8")
+        values = [value.decode("utf-8") if isinstance(value, bytes)
+                  else value for value in values]
+        str_args[arg] = values
+
+    return str_args
+
+
 def replaceErrorPage(request, error, template_name=None, html=True):
     """Create a general error page for displaying in place of tracebacks.
 
@@ -114,9 +133,9 @@ def replaceErrorPage(request, error, template_name=None, html=True):
         or if **html** is ``False``, then we return a very simple HTML page
         (without CSS, Javascript, images, etc.)  which simply says
         ``"Sorry! Something went wrong with your request."``
-    :rtype: str
-    :returns: A string containing some content to serve to the client (rather
-        than serving a Twisted traceback).
+    :rtype: bytes
+    :returns: A bytes object containing some content to serve to the client
+        (rather than serving a Twisted traceback).
     """
     logging.error("Error while attempting to render %s: %s"
                   % (template_name or 'template',
@@ -135,15 +154,15 @@ def replaceErrorPage(request, error, template_name=None, html=True):
     errorMessage = _("Sorry! Something went wrong with your request.")
 
     if not html:
-        return errorMessage
+        return errorMessage.encode("utf-8")
 
     try:
         rendered = resource500.render(request)
     except Exception as err:
         logging.exception(err)
-        rendered = errorMessage
+        rendered = errorMessage.encode("utf-8")
 
-    return rendered.decode('utf-8') if isinstance(rendered, bytes) else rendered
+    return rendered
 
 
 def redirectMaliciousRequest(request):
@@ -336,6 +355,7 @@ class ErrorResource(CSPResource):
         self.setCSPHeader(request)
         request.setHeader("Content-Type", "text/html; charset=utf-8")
         request.setResponseCode(self.code)
+        request.args = stringifyRequestArgs(request.args)
 
         try:
             template = lookup.get_template(self.template)
@@ -343,7 +363,7 @@ class ErrorResource(CSPResource):
         except Exception as err:
             rendered = replaceErrorPage(request, err, html=False)
 
-        return rendered.decode('utf-8') if isinstance(rendered, bytes) else rendered
+        return rendered
 
     render_POST = render_GET
 
@@ -379,6 +399,7 @@ class TranslatedTemplateResource(CustomErrorHandlingResource, CSPResource):
 
     def render_GET(self, request):
         self.setCSPHeader(request)
+        request.args = stringifyRequestArgs(request.args)
         rtl = False
         try:
             langs = translations.getLocaleFromHTTPRequest(request)
@@ -392,7 +413,7 @@ class TranslatedTemplateResource(CustomErrorHandlingResource, CSPResource):
         except Exception as err:  # pragma: no cover
             rendered = replaceErrorPage(request, err)
         request.setHeader("Content-Type", "text/html; charset=utf-8")
-        return rendered.decode('utf-8') if isinstance(rendered, bytes) else rendered
+        return rendered
 
     render_POST = render_GET
 
@@ -468,7 +489,7 @@ class CaptchaProtectedResource(CustomErrorHandlingResource, CSPResource):
         :type request: :api:`twisted.web.http.Request`
         :param request: A ``Request`` object for 'bridges.html'.
         :returns: A redirect for a request for a new CAPTCHA if there was a
-            problem. Otherwise, returns a 2-tuple of strings, the first is the
+            problem. Otherwise, returns a 2-tuple of bytes, the first is the
             client's CAPTCHA solution from the text input area, and the second
             is the challenge string.
         """
@@ -491,16 +512,17 @@ class CaptchaProtectedResource(CustomErrorHandlingResource, CSPResource):
         return False
 
     def render_GET(self, request):
-        """Retrieve a ReCaptcha from the API server and serve it to the client.
+        """Retrieve a CAPTCHA and serve it to the client.
 
         :type request: :api:`twisted.web.http.Request`
         :param request: A ``Request`` object for a page which should be
             protected by a CAPTCHA.
-        :rtype: str
-        :returns: A rendered HTML page containing a ReCaptcha challenge image
+        :rtype: bytes
+        :returns: A rendered HTML page containing a CAPTCHA challenge image
             for the client to solve.
         """
         self.setCSPHeader(request)
+        request.args = stringifyRequestArgs(request.args)
 
         rtl = False
         image, challenge = self.getCaptchaImage(request)
@@ -509,20 +531,20 @@ class CaptchaProtectedResource(CustomErrorHandlingResource, CSPResource):
             langs = translations.getLocaleFromHTTPRequest(request)
             rtl = translations.usingRTLLang(langs)
             # TODO: this does not work for versions of IE < 8.0
-            imgstr = b'data:image/jpeg;base64,%s' % base64.b64encode(image.encode('utf-8'))
+            imgstr = b'data:image/jpeg;base64,%s' % base64.b64encode(image)
             template = lookup.get_template('captcha.html')
             rendered = template.render(strings,
                                        getSortedLangList(),
                                        rtl=rtl,
                                        lang=langs[0],
                                        langOverride=translations.isLangOverridden(request),
-                                       imgstr=imgstr,
-                                       challenge_field=challenge)
+                                       imgstr=imgstr.decode("utf-8"),
+                                       challenge_field=challenge.decode("utf-8"))
         except Exception as err:
             rendered = replaceErrorPage(request, err, 'captcha.html')
 
         request.setHeader("Content-Type", "text/html; charset=utf-8")
-        return rendered.decode('utf-8') if isinstance(rendered, bytes) else rendered
+        return rendered
 
     def render_POST(self, request):
         """Process a client's CAPTCHA solution.
@@ -543,6 +565,7 @@ class CaptchaProtectedResource(CustomErrorHandlingResource, CSPResource):
         """
         self.setCSPHeader(request)
         request.setHeader("Content-Type", "text/html; charset=utf-8")
+        request.args = stringifyRequestArgs(request.args)
 
         try:
             if self.checkSolution(request) is True:
@@ -862,6 +885,7 @@ class ReCaptchaProtectedResource(CaptchaProtectedResource):
             HTML to the client.
         """
         self.setCSPHeader(request)
+        request.args = stringifyRequestArgs(request.args)
         d = self.checkSolution(request)
         d.addCallback(self._renderDeferred)
         return NOT_DONE_YET
@@ -908,10 +932,11 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
         :type request: :api:`twisted.web.http.Request`
         :param request: A ``Request`` object containing the HTTP method, full
             URI, and any URL/POST arguments and headers present.
-        :rtype: str
+        :rtype: bytes
         :returns: A plaintext or HTML response to serve.
         """
         self.setCSPHeader(request)
+        request.args = stringifyRequestArgs(request.args)
 
         try:
             response = self.getBridgeRequestAnswer(request)
@@ -919,7 +944,7 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
             logging.exception(err)
             response = self.renderAnswer(request)
 
-        return response.decode('utf-8') if isinstance(response, bytes) else response
+        return response.encode('utf-8') if isinstance(response, str) else response
 
     def getClientIP(self, request):
         """Get the client's IP address from the ``'X-Forwarded-For:'``
@@ -1015,7 +1040,7 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
             to use a bridge. If ``None``, then the returned page will instead
             explain that there were no bridges of the type they requested,
             with instructions on how to proceed.
-        :rtype: str
+        :rtype: bytes
         :returns: A plaintext or HTML response to serve.
         """
         rtl = False
@@ -1048,7 +1073,7 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
             except Exception as err:
                 rendered = replaceErrorPage(request, err)
 
-        return rendered.decode('utf-8') if isinstance(rendered, bytes) else rendered
+        return rendered.encode("utf-8") if isinstance(rendered, str) else rendered
 
 
 def addWebServer(config, distributor):
@@ -1107,14 +1132,14 @@ def addWebServer(config, distributor):
                           useForwardedHeader=fwdHeaders)
 
     root = CustomErrorHandlingResource()
-    root.putChild('', index)
-    root.putChild('robots.txt', robots)
-    root.putChild('keys', keys)
-    root.putChild('assets', assets)
-    root.putChild('options', options)
-    root.putChild('howto', howto)
-    root.putChild('maintenance', maintenance)
-    root.putChild('error', resource500)
+    root.putChild(b'', index)
+    root.putChild(b'robots.txt', robots)
+    root.putChild(b'keys', keys)
+    root.putChild(b'assets', assets)
+    root.putChild(b'options', options)
+    root.putChild(b'howto', howto)
+    root.putChild(b'maintenance', maintenance)
+    root.putChild(b'error', resource500)
     root.putChild(CSPResource.reportURI, csp)
 
     if config.RECAPTCHA_ENABLED:
@@ -1147,10 +1172,10 @@ def addWebServer(config, distributor):
                             secretKey=secretKey,
                             useForwardedHeader=fwdHeaders,
                             protectedResource=bridges)
-        root.putChild('bridges', protected)
+        root.putChild(b'bridges', protected)
         logging.info("Protecting resources with %s." % captcha.func.__name__)
     else:
-        root.putChild('bridges', bridges)
+        root.putChild(b'bridges', bridges)
 
     site = Site(root)
     site.displayTracebacks = False

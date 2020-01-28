@@ -85,7 +85,7 @@ def getLocaleFromHTTPRequest(request):
         logging.debug("Client Accept-Language (top 5): %s" % langs[:5])
 
     # Check if we got a ?lang=foo argument, and if we did, insert it first
-    chosenLang = request.args.get(b"lang", [None,])[0]
+    chosenLang = request.args.get("lang", [None,])[0]
     if chosenLang:
         logging.debug("Client requested language: %r" % chosenLang)
         langs.insert(0, chosenLang)

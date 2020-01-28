@@ -353,7 +353,7 @@ class _HTTPTranslationsTests(unittest.TestCase):
                                            localedir=self.i18n,
                                            languages=[locale,],
                                            fallback=True)
-            expected = language.gettext("What are bridges?")
+            expected = language.gettext("What are bridges?").encode("utf-8")
 
             if not locale.startswith('en'):
                 self.assertNotEqual(expected, "What are bridges?")

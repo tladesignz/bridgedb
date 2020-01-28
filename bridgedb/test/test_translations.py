@@ -40,8 +40,8 @@ class TranslationsMiscTests(unittest.TestCase):
         request = DummyRequest([b"bridges"])
         request.headers.update(REALISH_HEADERS)
         request.args.update({
-            b'transport': [b'obfs3',],
-            b'lang': [b'ar',],
+            'transport': ['obfs3',],
+            'lang': ['ar',],
         })
 
         parsed = translations.getLocaleFromHTTPRequest(request)
@@ -59,7 +59,7 @@ class TranslationsMiscTests(unittest.TestCase):
         """
         request = DummyRequest([b"options"])
         request.headers.update(ACCEPT_LANGUAGE_HEADER)
-        request.args.update({b'lang': [b'fa']})
+        request.args.update({'lang': ['fa']})
 
         parsed = translations.getLocaleFromHTTPRequest(request)
 
