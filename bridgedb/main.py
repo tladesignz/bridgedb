@@ -198,7 +198,7 @@ def load(state, hashring, clear=False):
         inserted = 0
         logging.info("Trying to insert %d bridges into hashring, %d of which "
                      "have the 'Running' flag..." % (len(bridges),
-                     len(filter(lambda b: b.flags.running, bridges.values()))))
+                     len(list(filter(lambda b: b.flags.running, bridges.values())))))
 
         for fingerprint, bridge in bridges.items():
             # Skip insertion of bridges which are geolocated to be in one of the
