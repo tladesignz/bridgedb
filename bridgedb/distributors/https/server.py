@@ -974,6 +974,14 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
         logging.info("Replying to web request from %s. Parameters were %r"
                      % (ip, request.args))
 
+        # Convert all key/value pairs from bytes to str.
+        str_args = {}
+        for arg, values in request.args.items():
+            arg = arg if isinstance(arg, str) else arg.decode("utf-8")
+            values = [value.decode("utf-8") if isinstance(value, bytes) else value for value in values]
+            str_args[arg] = values
+        request.args = str_args
+
         if ip:
             bridgeRequest = HTTPSBridgeRequest()
             bridgeRequest.client = ip
