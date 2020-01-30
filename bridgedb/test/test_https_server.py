@@ -17,7 +17,7 @@ import logging
 import os
 import shutil
 
-import ipaddr
+import ipaddress
 
 from bs4 import BeautifulSoup
 
@@ -588,14 +588,14 @@ class ReCaptchaProtectedResourceTests(unittest.TestCase):
         """Check that removing our remoteip setting produces a random IP."""
         self.captchaResource.remoteIP = None
         ip = self.captchaResource.getRemoteIP()
-        realishIP = ipaddr.IPv4Address(ip).compressed
+        realishIP = ipaddress.IPv4Address(ip).compressed
         self.assertTrue(realishIP)
         self.assertNotEquals(realishIP, '111.111.111.111')
 
     def test_getRemoteIP_useConfiguredIP(self):
         """Check that our remoteip setting is used if configured."""
         ip = self.captchaResource.getRemoteIP()
-        realishIP = ipaddr.IPv4Address(ip).compressed
+        realishIP = ipaddress.IPv4Address(ip).compressed
         self.assertTrue(realishIP)
         self.assertEquals(realishIP, '111.111.111.111')
 
@@ -774,7 +774,7 @@ class BridgesResourceTests(unittest.TestCase):
 
             # Check that the IP and port seem okay:
             ip, port = fields[0].rsplit(':')
-            self.assertIsInstance(ipaddr.IPv4Address(ip), ipaddr.IPv4Address)
+            self.assertIsInstance(ipaddress.ip_address(ip), ipaddress.IPv4Address)
             self.assertIsInstance(int(port), int)
             self.assertGreater(int(port), 0)
             self.assertLessEqual(int(port), 65535)
@@ -858,7 +858,7 @@ class BridgesResourceTests(unittest.TestCase):
 
             # Check that the IP and port seem okay:
             ip, port = bridgeLine[1].rsplit(':')
-            self.assertIsInstance(ipaddr.IPv4Address(ip), ipaddr.IPv4Address)
+            self.assertIsInstance(ipaddress.ip_address(ip), ipaddress.IPv4Address)
             self.assertIsInstance(int(port), int)
             self.assertGreater(int(port), 0)
             self.assertLessEqual(int(port), 65535)
@@ -892,7 +892,7 @@ class BridgesResourceTests(unittest.TestCase):
 
             # Check that the IP and port seem okay:
             ip, port = bridgeLine[0].rsplit(b':')
-            self.assertIsInstance(ipaddr.IPv4Address(ip), ipaddr.IPv4Address)
+            self.assertIsInstance(ipaddress.ip_address(ip.decode("utf-8")), ipaddress.IPv4Address)
             self.assertIsInstance(int(port), int)
             self.assertGreater(int(port), 0)
             self.assertLessEqual(int(port), 65535)

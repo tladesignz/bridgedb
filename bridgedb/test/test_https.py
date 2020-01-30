@@ -27,7 +27,7 @@ repository.
 from __future__ import print_function
 
 import gettext
-import ipaddr
+import ipaddress
 import mechanize
 import os
 
@@ -199,7 +199,7 @@ class HTTPTests(unittest.TestCase):
         for bridge in bridges:
             self.assertTrue(bridge != None)
             addr = bridge[0].rsplit(':', 1)[0]
-            self.assertIsInstance(ipaddr.IPAddress(addr), ipaddr.IPv4Address)
+            self.assertIsInstance(ipaddress.ip_address(addr), ipaddress.IPv4Address)
 
     def test_get_vanilla_ipv6(self):
         self.openBrowser()
@@ -212,7 +212,7 @@ class HTTPTests(unittest.TestCase):
         for bridge in bridges:
             self.assertTrue(bridge != None)
             addr = bridge[0].rsplit(':', 1)[0].strip('[]')
-            self.assertIsInstance(ipaddr.IPAddress(addr), ipaddr.IPv6Address)
+            self.assertIsInstance(ipaddress.ip_address(addr), ipaddress.IPv6Address)
 
     def test_get_obfs4_ipv4(self):
         """Try asking for obfs4 bridges, and check that the PT arguments in the
