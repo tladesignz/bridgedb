@@ -152,7 +152,7 @@ class SMTPTests(unittest.TestCase):
 
         # then check that our local SMTP server received a response
         # and that response contained some bridges
-        self.server.getAndCheckMessageContains("Here are your bridges")
+        self.server.getAndCheckMessageContains(b"Here are your bridges")
 
     def test_getBridges_rateLimitExceeded(self):
         if os.environ.get("CI"):
@@ -168,14 +168,14 @@ class SMTPTests(unittest.TestCase):
 
         # then check that our local SMTP server received a response
         # and that response contained some bridges
-        self.server.getAndCheckMessageContains("Here are your bridges")
+        self.server.getAndCheckMessageContains(b"Here are your bridges")
 
         # send another request from the same email address
         sendMail(FROM_ADDRESS)
 
         # this time, the email response should not contain any bridges
         self.server.getAndCheckMessageContains(
-            "You have exceeded the rate limit. Please slow down!")
+            b"You have exceeded the rate limit. Please slow down!")
 
         # then we send another request from the same email address
         sendMail(FROM_ADDRESS)
@@ -203,4 +203,4 @@ class SMTPTests(unittest.TestCase):
                      % random.randint(MIN_FROM_ADDRESS, MAX_FROM_ADDRESS))
 
         for i in range(NUM_MAILS):
-            self.server.getAndCheckMessageContains("Here are your bridges")
+            self.server.getAndCheckMessageContains(b"Here are your bridges")
