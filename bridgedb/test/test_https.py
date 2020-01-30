@@ -174,10 +174,10 @@ class HTTPTests(unittest.TestCase):
         self.br.set_debug_http(True)
         self.br.open(HTTP_ROOT)
 
-        headers = ''.join(self.br.response().info().headers)
+        headers = self.br.response().info()
 
-        self.assertIn("Content-Security-Policy", headers)
-        self.assertIn("default-src 'none';", headers)
+        self.assertIn("Content-Security-Policy", headers.keys())
+        self.assertIn("default-src 'none';", ''.join(headers.values()))
 
     def test_404(self):
         """Asking for a non-existent resource should yield our custom 404 page,
