@@ -44,7 +44,7 @@ LOCAL_SMTP_SERVER_PORT = 2525 # Must be the same as bridgedb's EMAIL_SMTP_PORT
 
 
 class EmailServer(SMTPServer):
-    def process_message(self, peer, mailfrom, rcpttos, data):
+    def process_message(self, peer, mailfrom, rcpttos, data, **kwargs):
         ''' Overridden from SMTP server, called whenever a message is received'''
         self.message_queue.put(data)
 
