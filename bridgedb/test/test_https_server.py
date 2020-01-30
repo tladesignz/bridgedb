@@ -337,7 +337,7 @@ class CaptchaProtectedResourceTests(unittest.TestCase):
         request = DummyRequest([self.pagename])
         request.method = b'POST'
         page = self.captchaResource.render_POST(request)
-        self.assertEqual(BeautifulSoup(page).find('meta')['http-equiv'],
+        self.assertEqual(BeautifulSoup(page, features="html5lib").find('meta')['http-equiv'],
                          'refresh')
 
 
@@ -462,7 +462,7 @@ class GimpCaptchaProtectedResourceTests(unittest.TestCase):
         self.request.addArg('captcha_response_field', '')
 
         page = self.captchaResource.render_POST(self.request)
-        self.assertEqual(BeautifulSoup(page).find('meta')['http-equiv'],
+        self.assertEqual(BeautifulSoup(page, features="html5lib").find('meta')['http-equiv'],
                          'refresh')
 
     def test_render_POST_wrongSolution(self):
@@ -477,7 +477,7 @@ class GimpCaptchaProtectedResourceTests(unittest.TestCase):
         self.request.addArg('captcha_response_field', expectedResponse)
 
         page = self.captchaResource.render_POST(self.request)
-        self.assertEqual(BeautifulSoup(page).find('meta')['http-equiv'],
+        self.assertEqual(BeautifulSoup(page, features="html5lib").find('meta')['http-equiv'],
                          'refresh')
 
 
@@ -530,7 +530,7 @@ class ReCaptchaProtectedResourceTests(unittest.TestCase):
         def testCB(request):
             """Check the ``Request`` returned from ``_renderDeferred``."""
             self.assertIsInstance(request, DummyRequest)
-            soup = BeautifulSoup(b''.join(request.written)).find(b'meta')['http-equiv']
+            soup = BeautifulSoup(b''.join(request.written), features="html5lib").find(b'meta')['http-equiv']
             self.assertEqual(soup, 'refresh')
 
         d = task.deferLater(reactor, 0, lambda x: x, (False, self.request))
@@ -674,7 +674,7 @@ class BridgesResourceTests(unittest.TestCase):
         :returns: A list of the bridge lines contained on the **page**.
         """
         # The bridge lines are contained in a <div class='bridges'> tag:
-        soup = BeautifulSoup(page)
+        soup = BeautifulSoup(page, features="html5lib")
         well = soup.find('div', {'class': 'bridge-lines'})
         content = well.renderContents().decode('utf-8').strip()
         lines = content.splitlines()

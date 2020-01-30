@@ -137,7 +137,7 @@ class HTTPTests(unittest.TestCase):
         # ------------- Results
         # URL should be the same as last time
         self.assertEquals(self.br.response().geturl(), EXPECTED_URL)
-        soup = BeautifulSoup(captcha_response.read())
+        soup = BeautifulSoup(captcha_response.read(), features="html5lib")
         return soup
 
     def getBridgeLinesFromSoup(self, soup, fieldsPerBridge):
