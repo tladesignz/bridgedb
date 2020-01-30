@@ -425,7 +425,7 @@ class ExitListProtocol(protocol.ProcessProtocol):
 
     def outReceived(self, data):
         """Some data was received from stdout."""
-        self.data.append(data)
+        self.data.append(data.decode("utf-8"))
 
     def outConnectionLost(self):
         """This will be called when stdout is closed."""
