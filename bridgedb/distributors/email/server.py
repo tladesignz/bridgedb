@@ -126,7 +126,7 @@ class MailServerContext(object):
         self.nBridges = config.EMAIL_N_BRIDGES_PER_ANSWER
 
         self.username = (config.EMAIL_USERNAME or "bridges")
-        self.hostname = socket.gethostname()
+        self.hostname = socket.gethostname().encode("utf-8")
         self.fromAddr = (config.EMAIL_FROM_ADDR or "bridges@torproject.org")
         self.smtpFromAddr = (config.EMAIL_SMTP_FROM_ADDR or self.fromAddr)
         self.smtpServerPort = (config.EMAIL_SMTP_PORT or 25)
