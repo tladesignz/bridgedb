@@ -1,3 +1,10 @@
+Changes in version X.Y.Z - YYYY-MM-DD
+
+        * FIXES <https://bugs.torproject.org/31427>
+        This patch updates the AUTHORS file, HACKING.md, contact information,
+        the Trac URL to report bugs, our instructions on BridgeDB's landing
+        page, and it fixes a small bug in descriptor generation.
+
 Changes in version 0.9.1 - 2019-10-29
 
         * FIXES https://bugs.torproject.org/32203

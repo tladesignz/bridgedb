@@ -105,10 +105,12 @@ FAQ = {
 
 OTHER_DISTRIBUTORS = {
     0: _("I need an alternative way of getting bridges!"),
+# TRANSLATORS: Please DO NOT translate "get transport obfs4".
     1: _("""\
-Another way to get bridges is to send an email to %s. Please note that you must
-send the email using an address from one of the following email providers:
-%s or %s."""),
+Another way to get bridges is to send an email to %s. Leave the email subject
+empty and write "get transport obfs4" in the email's message body. Please note
+that you must send the email using an address from one of the following email
+providers: %s or %s."""),
 }
 
 HELP = {
