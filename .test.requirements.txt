@@ -5,8 +5,8 @@
 #     $ pip install -r .test.requirements.txt
 #     $ make coverage
 #
-coverage==4.5.4
-mechanize==0.4.3
+coverage==5.0.3
+mechanize==0.4.5
 pep8==1.7.1
-pylint==2.4.2
+pylint==2.4.4
 sure==1.4.11
