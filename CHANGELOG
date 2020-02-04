@@ -1,4 +1,4 @@
-Changes in version X.Y.Z - YYYY-MM-DD
+Changes in version 0.9.2 - 2020-02-04
 
         * FIXES <https://bugs.torproject.org/31427>
         This patch updates the AUTHORS file, HACKING.md, contact information,
