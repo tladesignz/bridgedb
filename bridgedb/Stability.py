@@ -278,7 +278,7 @@ def updateBridgeHistory(bridges, timestamps):
     logging.debug("Beginning bridge stability calculations")
     sortedTimestamps = {}
 
-    for fingerprint, stamps in timestamps.items()[:]:
+    for fingerprint, stamps in timestamps.items():
         stamps.sort()
         bridge = bridges[fingerprint]
         for timestamp in stamps:

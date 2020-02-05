@@ -52,7 +52,7 @@ def mockUpdateBridgeHistory(bridges, timestamps):
     which doesn't access the database (so that we can test functions which
     call it, like :func:`bridgedb.main.load`).
     """
-    for fingerprint, stamps in timestamps.items()[:]:
+    for fingerprint, stamps in timestamps.items():
         for timestamp in stamps:
             print("Pretending to update Bridge %s with timestamp %s..." %
                   (fingerprint, timestamp))
