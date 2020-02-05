@@ -78,7 +78,7 @@ class ReCaptchaTests(unittest.TestCase):
             raise unittest.SkipTest(reason)
         else:
             self.assertIsInstance(self.c.image, bytes)
-            self.assertIsInstance(self.c.challenge, bytes)
+            self.assertIsInstance(self.c.challenge, str)
         finally:
             # Replace the original environment variable if there was one:
             if oldkey:
@@ -146,7 +146,7 @@ class GimpCaptchaTests(unittest.TestCase):
         c = captcha.GimpCaptcha(self.publik, self.sekrit, self.hmacKey,
                                 self.cacheDir)
         challenge = c.createChallenge('w00t')
-        self.assertIsInstance(challenge, bytes)
+        self.assertIsInstance(challenge, str)
 
     def test_createChallenge_base64(self):
         """createChallenge() return value should be urlsafe base64-encoded."""
@@ -190,7 +190,7 @@ class GimpCaptchaTests(unittest.TestCase):
                                 self.cacheDir)
         image, challenge = c.get()
         self.assertIsInstance(image, bytes)
-        self.assertIsInstance(challenge, bytes)
+        self.assertIsInstance(challenge, str)
 
     def test_get_emptyCacheDir(self):
         """An empty cacheDir should raise GimpCaptchaError."""
@@ -238,7 +238,7 @@ class GimpCaptchaTests(unittest.TestCase):
         c = captcha.GimpCaptcha(self.publik, self.sekrit, self.hmacKey,
                                 self.cacheDir)
         image, challenge = c.get()
-        challengeBadB64 = challenge.decode('utf-8').rstrip('==') + "\x42\x42\x42"
+        challengeBadB64 = challenge.rstrip('==') + "\x42\x42\x42"
         self.assertEquals(
             c.check(challenge, c.answer, c.secretKey, c.hmacKey),
             True)

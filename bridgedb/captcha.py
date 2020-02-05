@@ -373,7 +373,7 @@ class GimpCaptcha(Captcha):
         encBlob = self.publicKey.encrypt(blob.encode('utf-8'))
         hmac = crypto.getHMAC(self.hmacKey, encBlob)
         challenge = urlsafe_b64encode(hmac + encBlob)
-        return challenge
+        return challenge.decode("utf-8")
 
     def get(self):
         """Get a random CAPTCHA from the cache directory.

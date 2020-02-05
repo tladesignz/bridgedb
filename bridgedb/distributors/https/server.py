@@ -473,11 +473,11 @@ class CaptchaProtectedResource(CustomErrorHandlingResource, CSPResource):
 
         :rtype: tuple
         :returns: A 2-tuple of ``(image, challenge)``, where ``image`` is a
-            binary, JPEG-encoded image, and ``challenge`` is a unique
+            JPEG-encoded image of type bytes, and ``challenge`` is a unique
             string. If unable to retrieve a CAPTCHA, returns a tuple
-            containing two empty strings.
+            containing (b'', '').
         """
-        return ('', '')
+        return (b'', '')
 
     def extractClientSolution(self, request):
         """Extract the client's CAPTCHA solution from a POST request.
@@ -539,7 +539,7 @@ class CaptchaProtectedResource(CustomErrorHandlingResource, CSPResource):
                                        lang=langs[0],
                                        langOverride=translations.isLangOverridden(request),
                                        imgstr=imgstr.decode("utf-8"),
-                                       challenge_field=challenge.decode("utf-8"))
+                                       challenge_field=challenge)
         except Exception as err:
             rendered = replaceErrorPage(request, err, 'captcha.html')
 
