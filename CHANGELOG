@@ -1,3 +1,7 @@
+        * FIXES https://bugs.torproject.org/30946
+        This patch ports BridgeDB to Python 3.  Python 2 is no longer supported
+        since Jan 1, 2020.
+
 Changes in version 0.9.3 - 2020-02-18
 
         * FIXES <https://bugs.torproject.org/33299>
