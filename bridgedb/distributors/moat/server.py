@@ -178,11 +178,11 @@ class JsonAPIResource(resource.Resource):
         :param request: A ``Request`` for a :api:`twisted.web.resource.Resource`.
         :returns: The encoded data.
         """
-        request.responseHeaders.addRawHeader(b"Content-Type", b"application/vnd.api+json")
-        request.responseHeaders.addRawHeader(b"Server", b"moat/%s" % MOAT_API_VERSION.encode('utf-8'))
+        request.responseHeaders.addRawHeader("Content-Type", "application/vnd.api+json")
+        request.responseHeaders.addRawHeader("Server", "moat/%s" % MOAT_API_VERSION)
 
         if data:
-            rendered = json.dumps(data)
+            rendered = json.dumps(data).encode("utf-8")
         else:
             rendered = b""
 
@@ -824,13 +824,13 @@ def addMoatServer(config, distributor):
                                  hmacKey, publicKey, secretKey,
                                  fwdHeaders, skipLoopback)
 
-    moat.putChild("fetch", fetch)
-    moat.putChild("check", check)
-    meek.putChild("moat", moat)
+    moat.putChild(b"fetch", fetch)
+    moat.putChild(b"check", check)
+    meek.putChild(b"moat", moat)
 
     root = CustomErrorHandlingResource()
-    root.putChild("meek", meek)
-    root.putChild("moat", moat)
+    root.putChild(b"meek", meek)
+    root.putChild(b"moat", moat)
 
     site = Site(root)
     site.displayTracebacks = False

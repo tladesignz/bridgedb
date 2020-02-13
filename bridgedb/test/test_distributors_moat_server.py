@@ -884,7 +884,7 @@ class CaptchaCheckResourceTests(unittest.TestCase):
 
         response = self.resource.failureResponse(6, request, bridgeRequest)
 
-        self.assertIn("No bridges available", response)
+        self.assertIn(b"No bridges available", response)
 
     def test_render_POST_no_bridges(self):
         self.mock_getBridgeLines()
@@ -892,7 +892,7 @@ class CaptchaCheckResourceTests(unittest.TestCase):
         request = self.create_valid_POST_make_new_challenge()
         response = self.resource.render(request)
 
-        self.assertIn("No bridges available", response)
+        self.assertIn(b"No bridges available", response)
 
     def test_render_POST_unexpired(self):
         request = self.create_valid_POST_make_new_challenge()
