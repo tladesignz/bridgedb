@@ -407,8 +407,7 @@ class CaptchaFetchResource(CaptchaResource):
                 * "supported": ['TRANSPORT', … ]
             where:
                 * TRANSPORT is a string identifying a transport, e.g. "obfs3" or
-                  "obfs4". Currently supported transport identifiers are:
-                  "vanilla", "fte", "obfs3", "obfs4", "scramblesuit".
+                  "obfs4".
         :rtype: list
         :returns: The list of transports the client supports.
         """
