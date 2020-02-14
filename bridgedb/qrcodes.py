@@ -33,8 +33,8 @@ def generateQR(bridgelines, imageFormat='JPEG', bridgeSchema=False):
         client.
     :param bool bridgeSchema: If ``True``, prepend ``'bridge://'`` to the
         beginning of each bridge line before QR encoding.
-    :rtype: str or ``None``
-    :returns: The generated QRCode, as a string.
+    :rtype: bytes or ``None``
+    :returns: The generated QRCode, as a bytes.
     """
     logging.debug("Attempting to encode bridge lines into a QRCode...")
 
