@@ -1066,7 +1066,9 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
             qrjpeg = generateQR(bridgeLines)
 
             if qrjpeg:
-                qrcode = 'data:image/jpeg;base64,%s' % base64.b64encode(qrjpeg)
+                qrcode = b'data:image/jpeg;base64,%s' % base64.b64encode(qrjpeg)
+                qrcode = qrcode.decode("utf-8")
+
             try:
                 langs = translations.getLocaleFromHTTPRequest(request)
                 rtl = translations.usingRTLLang(langs)
