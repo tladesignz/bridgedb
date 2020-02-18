@@ -406,8 +406,7 @@ class CaptchaFetchResource(CaptchaResource):
                 * "type": "client-transports".
                 * "supported": ['TRANSPORT', … ]
             where:
-                * TRANSPORT is a string identifying a transport, e.g. "obfs3" or
-                  "obfs4".
+                * TRANSPORT is a string identifying a transport, e.g. "obfs4".
         :rtype: list
         :returns: The list of transports the client supports.
         """

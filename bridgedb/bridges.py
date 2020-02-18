@@ -335,8 +335,7 @@ class PluggableTransport(BridgeAddressBase):
     :vartype methodname: str
     :ivar methodname: The canonical "name" for this pluggable transport,
         i.e. the one which would be specified in a torrc file. For example,
-        ``"obfs2"``, ``"obfs3"``, ``"scramblesuit"`` would all be pluggable
-        transport method names.
+        ``"obfs4"``.
 
     :vartype address: ``ipaddr.IPv4Address`` or ``ipaddr.IPv6Address``
     :ivar address: The IP address of the transport. Currently (as of 20 March
@@ -514,7 +513,7 @@ class PluggableTransport(BridgeAddressBase):
 
         :rtype: str
         :returns: The (lowercased) methodname of this ``PluggableTransport``,
-            i.e. ``"obfs3"``, ``"scramblesuit"``, etc.
+            e.g. ``"obfs4"``.
         """
         return self._methodname
 
@@ -1413,7 +1412,7 @@ class Bridge(BridgeBackwardsCompatibility):
 
         :param str countryCode: A two-character country code specifier.
         :param str methodname: The type of pluggable transport to check,
-            i.e. ``'obfs3'``.
+            e.g. ``'obfs4'``.
         :rtype: bool
         :returns: ``True`` if any address:port pair which this bridge is
             running a :class:`PluggableTransport` on is blocked in

@@ -128,10 +128,7 @@ def replaceErrorPage(request, error, template_name=None, html=True):
     # "BridgeDB"
     # "pluggable transport"
     # "pluggable transports"
-    # "obfs2"
-    # "obfs3"
-    # "scramblesuit"
-    # "fteproxy"
+    # "obfs4"
     # "Tor"
     # "Tor Browser"
     #
