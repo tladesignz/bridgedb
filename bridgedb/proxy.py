@@ -161,7 +161,7 @@ class ProxySet(MutableSet):
         only added if it passes the checks in
         :func:`~bridgedb.parse.addr.isIPAddress`.
 
-        :type ip: basestring or int
+        :type ip: str or int
         :param ip: The IP address to add.
         :param tag: An optional value to link to **ip**. If not given, it will
             be a timestamp (seconds since epoch, as a float) for when **ip**
@@ -183,7 +183,7 @@ class ProxySet(MutableSet):
     def __contains__(self, ip):
         """x.__contains__(y) <==> y in x.
 
-        :type ip: basestring or int
+        :type ip: str or int
         :param ip: The IP address to check.
         :rtype: boolean
         :returns: True if ``ip`` is in this set; False otherwise.
@@ -196,7 +196,7 @@ class ProxySet(MutableSet):
     def __sub__(self, ip):
         """Entirely remove **ip** from this set.
 
-        :type ip: basestring or int
+        :type ip: str or int
         :param ip: The IP address to remove.
         """
         try:
@@ -244,7 +244,7 @@ class ProxySet(MutableSet):
                         if len(x) == 2:   self.add(x[0], x[1])
                         elif len(x) == 1: self.add(x, tag)
                         else: raise ValueError(self._getErrorMessage(x, proxies))
-                    elif isinstance(x, (basestring, int)):
+                    elif isinstance(x, (str, int)):
                         self.add(x, tag)
                     else:
                         raise ValueError(self._getErrorMessage(x, proxies))
@@ -270,9 +270,9 @@ class ProxySet(MutableSet):
     def getTag(self, ip):
         """Get the tag for an **ip** in this ``ProxySet``, if available.
 
-        :type ip: basestring or int
+        :type ip: str or int
         :param ip: The IP address to obtain the tag for.
-        :rtype: ``None`` or basestring or int
+        :rtype: ``None`` or str or int
         :returns: The tag for that **ip**, iff **ip** exists in this
             ``ProxySet`` and it has a tag.
         """
@@ -281,7 +281,7 @@ class ProxySet(MutableSet):
     def getAllWithTag(self, tag):
         """Get all proxies in this ``ProxySet`` with a given tag.
 
-        :param basestring tag: A tag to search for.
+        :param str tag: A tag to search for.
         :rtype: set
         :returns: A set of all proxies which are contained within this
             :class:`~bridgedb.proxy.ProxySet` which are also tagged with
@@ -293,7 +293,7 @@ class ProxySet(MutableSet):
     def firstSeen(self, ip):
         """Get the timestamp when **ip** was first seen, if available.
 
-        :type ip: basestring or int
+        :type ip: str or int
         :param ip: The IP address to obtain a timestamp for.
         :rtype: float or None
         :returns: The timestamp (in seconds since epoch) if available.
@@ -306,7 +306,7 @@ class ProxySet(MutableSet):
     def isExitRelay(self, ip):
         """Check if ``ip`` is a known Tor exit relay.
 
-        :type ip: basestring or int
+        :type ip: str or int
         :param ip: The IP address to check.
         :rtype: boolean
         :returns: True if ``ip`` is a known Tor exit relay; False otherwise.
@@ -425,7 +425,7 @@ class ExitListProtocol(protocol.ProcessProtocol):
 
     def outReceived(self, data):
         """Some data was received from stdout."""
-        self.data.append(data)
+        self.data.append(data.decode("utf-8"))
 
     def outConnectionLost(self):
         """This will be called when stdout is closed."""

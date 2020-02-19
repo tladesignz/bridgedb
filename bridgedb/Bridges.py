@@ -10,6 +10,7 @@
 them into hashrings for distributors.
 """
 
+import binascii
 import bisect
 import logging
 import re
@@ -27,12 +28,6 @@ from bridgedb.parse import addr
 from bridgedb.parse.fingerprint import isValidFingerprint
 from bridgedb.parse.fingerprint import toHex
 from bridgedb.safelog import logSafely
-
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import StringIO
-
 
 ID_LEN = 20  # XXX Only used in commented out line in Storage.py
 DIGEST_LEN = 20
@@ -335,7 +330,7 @@ class BridgeRing(object):
             else:
                 logging.debug(
                     "Got duplicate bridge %r in main hashring for position %r."
-                    % (logSafely(k.encode('hex')), pos.encode('hex')))
+                    % (logSafely(binascii.hexlify(k).decode('utf-8')), binascii.hexlify(pos).decode('utf-8')))
         keys.sort()
 
         if filterBySubnet:
@@ -361,7 +356,7 @@ class BridgeRing(object):
 
     def dumpAssignments(self, f, description=""):
         logging.info("Dumping bridge assignments for %s..." % self.name)
-        for b in self.bridges.itervalues():
+        for b in self.bridges.values():
             desc = [ description ]
             for tp,val,_,subring in self.subrings:
                 if subring.getBridgeByID(b.identity):
@@ -380,7 +375,7 @@ class FixedBridgeSplitter(object):
     def insert(self, bridge):
         # Grab the first 4 bytes
         digest = self.hmac(bridge.identity)
-        pos = long( digest[:8], 16 )
+        pos = int( digest[:8], 16 )
         which = pos % len(self.rings)
         self.rings[which].insert(bridge)
 
@@ -405,7 +400,7 @@ class FixedBridgeSplitter(object):
             description is ``"IPv6 obfs2 bridges"`` the line would read:
             ``"IPv6 obfs2 bridges ring=3"``.
         """
-        for index, ring in zip(xrange(len(self.rings)), self.rings):
+        for index, ring in zip(range(len(self.rings)), self.rings):
             ring.dumpAssignments(filename, "%s ring=%s" % (description, index))
 
 
@@ -544,7 +539,7 @@ class BridgeSplitter(object):
             logging.info("Current rings: %s" % " ".join(self.ringsByName))
 
     def dumpAssignments(self, f, description=""):
-        for name,ring in self.ringsByName.iteritems():
+        for name,ring in self.ringsByName.items():
             ring.dumpAssignments(f, "%s %s" % (description, name))
 
 
@@ -633,8 +628,8 @@ class FilteredBridgeSplitter(object):
         """
         filterNames = []
 
-        for filterName in [x.func_name for x in list(ringname)]:
-            # Using `assignBridgesToSubring.func_name` gives us a messy
+        for filterName in [x.__name__ for x in list(ringname)]:
+            # Using `assignBridgesToSubring.__name__` gives us a messy
             # string which includes all parameters and memory addresses. Get
             # rid of this by partitioning at the first `(`:
             realFilterName = filterName.partition('(')[0]

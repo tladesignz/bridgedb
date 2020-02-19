@@ -59,6 +59,7 @@ def addCommands(template):
 
 def addGreeting(template, clientName=None, welcome=False):
     greeting = ""
+    clientName = clientName.decode('utf-8') if isinstance(clientName, bytes) else clientName
 
     if not clientName:
         greeting = template.gettext(strings.EMAIL_MISC_TEXT[7])

@@ -198,7 +198,7 @@ def load(state, hashring, clear=False):
         inserted = 0
         logging.info("Trying to insert %d bridges into hashring, %d of which "
                      "have the 'Running' flag..." % (len(bridges),
-                     len(filter(lambda b: b.flags.running, bridges.values()))))
+                     len(list(filter(lambda b: b.flags.running, bridges.values())))))
 
         for fingerprint, bridge in bridges.items():
             # Skip insertion of bridges which are geolocated to be in one of the
@@ -423,17 +423,17 @@ def run(options, reactor=reactor):
         logging.info("Reloading decoy bridges...")
         antibot.loadDecoyBridges(config.DECOY_BRIDGES_FILE)
 
-        logging.info("Reparsing bridge descriptors...")
         (hashring,
          emailDistributorTmp,
          ipDistributorTmp,
          moatDistributorTmp) = createBridgeRings(cfg, proxies, key)
-        logging.info("Bridges loaded: %d" % len(hashring))
 
         # Initialize our DB.
         bridgedb.Storage.initializeDBLock()
         bridgedb.Storage.setDBFilename(cfg.DB_FILE + ".sqlite")
+        logging.info("Reparsing bridge descriptors...")
         load(state, hashring, clear=False)
+        logging.info("Bridges loaded: %d" % len(hashring))
 
         if emailDistributorTmp is not None:
             emailDistributorTmp.prepopulateRings() # create default rings

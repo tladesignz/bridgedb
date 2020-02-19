@@ -178,11 +178,11 @@ class JsonAPIResource(resource.Resource):
         :param request: A ``Request`` for a :api:`twisted.web.resource.Resource`.
         :returns: The encoded data.
         """
-        request.responseHeaders.addRawHeader(b"Content-Type", b"application/vnd.api+json")
-        request.responseHeaders.addRawHeader(b"Server", b"moat/%s" % MOAT_API_VERSION)
+        request.responseHeaders.addRawHeader("Content-Type", "application/vnd.api+json")
+        request.responseHeaders.addRawHeader("Server", "moat/%s" % MOAT_API_VERSION)
 
         if data:
-            rendered = json.dumps(data)
+            rendered = json.dumps(data).encode("utf-8")
         else:
             rendered = b""
 
@@ -240,7 +240,7 @@ class CustomErrorHandlingResource(resource.Resource):
 
         response = resource501
         response.detail = "moat version %s does not implement %s %s" % \
-                          (MOAT_API_VERSION, request.method, request.uri)
+                          (MOAT_API_VERSION, request.method.decode('utf-8'), request.uri.decode('utf-8'))
         return response
 
 
@@ -368,7 +368,7 @@ class CaptchaFetchResource(CaptchaResource):
             logging.error("Unhandled error while retrieving Gimp captcha!")
             logging.error(impossible)
 
-        return (capt.image, capt.challenge)
+        return (capt.image, capt.challenge.decode('utf-8') if isinstance(capt.challenge, bytes) else capt.challenge)
 
     def getPreferredTransports(self, supportedTransports):
         """Choose which transport a client should request, based on their list
@@ -476,7 +476,7 @@ class CaptchaFetchResource(CaptchaResource):
         }
 
         try:
-            data["data"][0]["image"] = base64.b64encode(image)
+            data["data"][0]["image"] = base64.b64encode(image).decode('utf-8')
         except Exception as impossible:
             logging.error("Could not construct or encode captcha!")
             logging.error(impossible)
@@ -602,7 +602,7 @@ class CaptchaCheckResource(CaptchaResource):
             logging.warn(("Error processing client POST request: "
                           "Client JSON API data missing '%s' field.") % err)
         except ValueError as err:
-            logging.warn("Error processing client POST request: %s" % err.message)
+            logging.warn("Error processing client POST request: %s" % err)
         except Exception as impossible:
             logging.error(impossible)
 
@@ -824,13 +824,13 @@ def addMoatServer(config, distributor):
                                  hmacKey, publicKey, secretKey,
                                  fwdHeaders, skipLoopback)
 
-    moat.putChild("fetch", fetch)
-    moat.putChild("check", check)
-    meek.putChild("moat", moat)
+    moat.putChild(b"fetch", fetch)
+    moat.putChild(b"check", check)
+    meek.putChild(b"moat", moat)
 
     root = CustomErrorHandlingResource()
-    root.putChild("meek", meek)
-    root.putChild("moat", moat)
+    root.putChild(b"meek", meek)
+    root.putChild(b"moat", moat)
 
     site = Site(root)
     site.displayTracebacks = False

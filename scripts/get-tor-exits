@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of BridgeDB, a Tor bridge distribution system.
@@ -17,8 +17,9 @@ from __future__ import print_function
 import os.path
 import socket
 import sys
+import io
 
-from ipaddr import IPAddress
+from ipaddress import IPv4Address
 
 from OpenSSL import SSL
 
@@ -57,10 +58,10 @@ def getSelfIPAddress():
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(('bridges.torproject.org', 443))
         name = s.getsockname()[0]
-        ip = IPAddress(name)
+        ip = IPv4Address(name)
         if ip.is_link_local or ip.is_private or ip.is_reserved:
             name = s.getpeername()[0]
-            ip = IPAddress(name)
+            ip = IPv4Address(name)
     except ValueError as error:
         log.err("get-tor-exits: A socket gave us something that wasn't an IP: %s"
                 % error)
@@ -117,7 +118,7 @@ class FileWriter(protocol.Protocol):
         """Write a portion of the download with ``bytes`` size to disk."""
         if self.remaining:
             display = bytes[:self.remaining]
-            self.fh.write(display)
+            self.fh.write(display.decode("utf-8"))
             self.fh.flush()
             self.remaining -= len(display)
 
@@ -128,32 +129,11 @@ class FileWriter(protocol.Protocol):
         self.finished.callback(None)
 
 
-class WebClientContextFactory(ssl.ClientContextFactory):
-    """An HTTPS client."""
-
-    def getContext(self, hostname, port):
-        """Get this connection's OpenSSL context.
-
-        By default, :api:`twisted.internet.ssl.ClientContextFactory` uses
-        ``OpenSSL.SSL.SSLv23_METHOD``, which allows SSLv2, SSLv3, and TLSv1,
-        then they disable SSLv2 in the
-        :api:`twisted.internet.ssl.ClientContextFactory.getContext` method.
-
-        We disable SSLv3 also.
-
-        :rtype: ``OpenSSL.SSL.Context``
-        :returns: An OpenSSL context with options set.
-        """
-        ctx = self._contextFactory(self.method)
-        ctx.set_options(SSL.OP_NO_SSLv2 ^ SSL.OP_NO_SSLv3)
-        return ctx
-
-
 def main(filename=None, address=None, port=None):
 
     fh = filename
     if filename:
-        if (not isinstance(filename, file)) and (filename is not sys.stdout):
+        if (not isinstance(filename, io.TextIOBase)) and (filename is not sys.stdout):
             fh = open(filename, 'w')
 
     if not address:
@@ -170,9 +150,8 @@ def main(filename=None, address=None, port=None):
 
     log.msg("get-tor-exits: Requesting %s..." % check)
 
-    contextFactory = WebClientContextFactory()
-    agent = client.Agent(reactor, contextFactory)
-    d = agent.request("GET", check)
+    agent = client.Agent(reactor)
+    d = agent.request(b"GET", check.encode("utf-8"))
     d.addCallback(writeToFile, fh)
     d.addErrback(handle)
     d.addCallbacks(log.msg, log.err)
@@ -182,7 +161,7 @@ def main(filename=None, address=None, port=None):
         reactor.run()
 
     if filename:
-        if (not isinstance(filename, file)) and (filename is not sys.stdout):
+        if (not isinstance(filename, io.TextIOBase)) and (filename is not sys.stdout):
             fh.flush()
             fh.close()
 

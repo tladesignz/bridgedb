@@ -49,10 +49,10 @@ Servers which interface with clients and distribute bridges over SMTP.
 
 from __future__ import unicode_literals
 
+import email.message
 import logging
 import io
 import socket
-import rfc822
 
 from twisted.internet import defer
 from twisted.internet import reactor
@@ -62,7 +62,7 @@ from twisted.mail import smtp
 from twisted.mail.smtp import rfc822date
 from twisted.python import failure
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from bridgedb import __version__
 from bridgedb import safelog
@@ -126,7 +126,7 @@ class MailServerContext(object):
         self.nBridges = config.EMAIL_N_BRIDGES_PER_ANSWER
 
         self.username = (config.EMAIL_USERNAME or "bridges")
-        self.hostname = socket.gethostname()
+        self.hostname = socket.gethostname().encode("utf-8")
         self.fromAddr = (config.EMAIL_FROM_ADDR or "bridges@torproject.org")
         self.smtpFromAddr = (config.EMAIL_SMTP_FROM_ADDR or self.fromAddr)
         self.smtpServerPort = (config.EMAIL_SMTP_PORT or 25)
@@ -165,6 +165,7 @@ class MailServerContext(object):
         return canon
 
 
+@implementer(smtp.IMessage)
 class SMTPMessage(object):
     """Plugs into the Twisted Mail and receives an incoming message.
 
@@ -186,7 +187,6 @@ class SMTPMessage(object):
         :meth:`~bridgedb.distributors.email.autoresponder.SMTPAutoresponder.reply` email
         and :meth:`~bridgedb.distributors.email.autoresponder.SMTPAutoresponder.send` it.
     """
-    implements(smtp.IMessage)
 
     def __init__(self, context, canonicalFromSMTP=None):
         """Create a new SMTPMessage.
@@ -222,7 +222,7 @@ class SMTPMessage(object):
         if self.nBytes > self.context.maximumSize:
             self.ignoring = True
         else:
-            self.lines.append(line)
+            self.lines.append(line.decode('utf-8') if isinstance(line, bytes) else line)
         if not safelog.safe_logging:
             try:
                 ln = line.rstrip("\r\n").encode('utf-8', 'replace')
@@ -251,13 +251,11 @@ class SMTPMessage(object):
         :rtype: :api:`twisted.mail.smtp.rfc822.Message`
         :returns: A ``Message`` comprised of all lines received thus far.
         """
-        rawMessage = io.StringIO()
-        for line in self.lines:
-            rawMessage.writelines(unicode(line.decode('utf8')) + u'\n')
-        rawMessage.seek(0)
-        return rfc822.Message(rawMessage)
+
+        return email.message_from_string('\n'.join(self.lines))
 
 
+@implementer(smtp.IMessageDelivery)
 class SMTPIncomingDelivery(smtp.SMTP):
     """Plugs into :class:`SMTPIncomingServerFactory` and handles SMTP commands
     for incoming connections.
@@ -272,7 +270,6 @@ class SMTPIncomingDelivery(smtp.SMTP):
     :var fromCanonicalSMTP: If set, this is the canonicalized domain name of
        the address we received from incoming connection's ``MAIL FROM:``.
     """
-    implements(smtp.IMessageDelivery)
 
     context = None
     deferred = defer.Deferred()
@@ -293,11 +290,11 @@ class SMTPIncomingDelivery(smtp.SMTP):
         :type recipients: list
         :param recipients: A list of :api:`twisted.mail.smtp.User` instances.
         """
-        helo_ = ' helo={0}'.format(helo[0]) if helo[0] else ''
-        from_ = 'from %s ([%s]%s)' % (helo[0], helo[1], helo_)
-        by_ = 'by %s with BridgeDB (%s)' % (smtp.DNSNAME, __version__)
-        for_ = 'for %s; %s ' % (' '.join(map(str, recipients)), rfc822date())
-        return str('Received: %s\n\t%s\n\t%s' % (from_, by_, for_))
+        helo_ = b' helo=%s' % (helo[0] if helo[0] else '')
+        from_ = b'from %s ([%s]%s)' % (helo[0], helo[1], helo_)
+        by_ = b'by %s with BridgeDB (%s)' % (smtp.DNSNAME, __version__.encode('utf-8'))
+        for_ = b'for %s; %s ' % (b' '.join([str(r).encode('utf-8') for r in recipients]), rfc822date())
+        return 'Received: %s\n\t%s\n\t%s' % (from_.decode('utf-8'), by_.decode('utf-8'), for_.decode('utf-8'))
 
     def validateFrom(self, helo, origin):
         """Validate the ``MAIL FROM:`` address on the incoming SMTP connection.
@@ -376,10 +373,10 @@ class SMTPIncomingDelivery(smtp.SMTP):
         ourAddress = smtp.Address(self.context.smtpFromAddr)
 
         if not ((ourAddress.domain in recipient.domain) or
-                (recipient.domain == "bridgedb")):
+                (recipient.domain == b"bridgedb")):
             logging.debug(("Not our domain (%s) or subdomain, skipping"
                            " SMTP 'RCPT TO' address: %s")
-                          % (ourAddress.domain, str(recipient)))
+                          % (ourAddress.domain.decode('utf-8'), str(recipient)))
             raise smtp.SMTPBadRcpt(str(recipient))
         # The recipient's username should at least start with ours,
         # but it still might be a '+' address.
@@ -388,13 +385,14 @@ class SMTPIncomingDelivery(smtp.SMTP):
                            " SMTP 'RCPT TO' address: %s") % str(recipient))
             raise smtp.SMTPBadRcpt(str(recipient))
         # Ignore everything after the first '+', if there is one.
-        beforePlus = recipient.local.split('+', 1)[0]
+        beforePlus = recipient.local.split(b'+', 1)[0]
         if beforePlus != ourAddress.local:
             raise smtp.SMTPBadRcpt(str(recipient))
 
         return lambda: SMTPMessage(self.context, self.fromCanonicalSMTP)
 
 
+@implementer(smtp.IMessageDeliveryFactory)
 class SMTPIncomingDeliveryFactory(object):
     """Factory for :class:`SMTPIncomingDelivery` s.
 
@@ -408,7 +406,6 @@ class SMTPIncomingDeliveryFactory(object):
     :var delivery: A :class:`SMTPIncomingDelivery` to deliver incoming
         SMTP messages to.
     """
-    implements(smtp.IMessageDeliveryFactory)
 
     context = None
     delivery = SMTPIncomingDelivery
@@ -499,7 +496,7 @@ def addServer(config, distributor):
         reactor.listenTCP(port, factory, interface=addr)
     except CannotListenError as error:  # pragma: no cover
         logging.fatal(error)
-        raise SystemExit(error.message)
+        raise SystemExit(str(error))
 
     # Set up a LoopingCall to run every 30 minutes and forget old email times.
     lc = LoopingCall(distributor.cleanDatabase)

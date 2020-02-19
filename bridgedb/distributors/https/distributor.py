@@ -20,6 +20,7 @@ A Distributor that hands out bridges through a web interface.
     :parts: 1
 """
 
+import binascii
 import ipaddr
 import logging
 
@@ -324,9 +325,9 @@ class HTTPSDistributor(Distributor):
 
         logging.debug("Client request within time interval: %s" % interval)
         logging.debug("Assigned client to subhashring %d/%d" % (subring, self.totalSubrings))
-        logging.debug("Assigned client to subhashring position: %s" % position.encode('hex'))
+        logging.debug("Assigned client to subhashring position: %s" % binascii.hexlify(position).decode('utf-8'))
         logging.debug("Total bridges: %d" % len(self.hashring))
-        logging.debug("Bridge filters: %s" % ' '.join([x.func_name for x in filters]))
+        logging.debug("Bridge filters: %s" % ' '.join([x.__name__ for x in filters]))
 
         # Check wheth we have a cached copy of the hashring:
         if filters in self.hashring.filterRings.keys():

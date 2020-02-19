@@ -17,10 +17,10 @@ functioning as expected.
 
 from __future__ import print_function
 
+import io
 import os.path
 
 from copy import deepcopy
-from io   import StringIO
 
 from bridgedb import persistent
 from bridgedb.parse.options import MainOptions
@@ -33,9 +33,9 @@ from sure import the
 from sure import expect
 
 
-TEST_CONFIG_FILE = StringIO(unicode("""\
+TEST_CONFIG_FILE = io.StringIO("""\
 BRIDGE_FILES = ['bridge-descriptors', 'bridge-descriptors.new']
-LOGFILE = 'bridgedb.log'"""))
+LOGFILE = 'bridgedb.log'""")
 
 
 class StateTest(unittest.TestCase):
@@ -47,10 +47,10 @@ class StateTest(unittest.TestCase):
         configuration = {}
         TEST_CONFIG_FILE.seek(0)
         compiled = compile(TEST_CONFIG_FILE.read(), '<string>', 'exec')
-        exec compiled in configuration
+        exec(compiled, configuration)
         config = persistent.Conf(**configuration)
 
-        fakeArgs = ['-c', os.path.join(os.getcwdu(), '..', 'bridgedb.conf')]
+        fakeArgs = ['-c', os.path.join(os.getcwd(), '..', 'bridgedb.conf')]
         options = MainOptions()
         options.parseOptions(fakeArgs)
 
@@ -142,8 +142,8 @@ class StateTest(unittest.TestCase):
         setattr(thatConfig, 'BAR', 'all of the things')
         setattr(thatConfig, 'LOGFILE', 42)
 
-        this(thatConfig).should.have.property('FOO').being.a(basestring)
-        this(thatConfig).should.have.property('BAR').being.a(basestring)
+        this(thatConfig).should.have.property('FOO').being.a(str)
+        this(thatConfig).should.have.property('BAR').being.a(str)
         this(thatConfig).should.have.property('LOGFILE').being.an(int)
         this(thatConfig).should.have.property('BRIDGE_FILES').being.a(list)
 
@@ -156,8 +156,8 @@ class StateTest(unittest.TestCase):
         thatState.useChangedSettings(thatConfig)
 
         the(thatState.FOO).should.equal('fuuuuu')
-        the(thatState).should.have.property('FOO').being.a(basestring)
-        the(thatState).should.have.property('BAR').being.a(basestring)
+        the(thatState).should.have.property('FOO').being.a(str)
+        the(thatState).should.have.property('BAR').being.a(str)
         the(thatState).should.have.property('LOGFILE').being.an(int)
         the(thatState.FOO).must.equal(thatConfig.FOO)
         the(thatState.BAR).must.equal(thatConfig.BAR)

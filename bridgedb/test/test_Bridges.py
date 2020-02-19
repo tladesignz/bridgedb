@@ -62,7 +62,7 @@ class BridgeRingTests(unittest.TestCase):
         """
         self.addBridgesFromSameSubnet()
 
-        chosen = self.ring.bridges.keys()[:10]
+        chosen = list(self.ring.bridges.keys())[:10]
         bridges = self.ring.filterDistinctSubnets(chosen)
 
         # Since they're all in the same /16, we should only get one
@@ -75,7 +75,7 @@ class BridgeRingTests(unittest.TestCase):
         """
         self.addRandomBridges()
 
-        chosen = self.ring.bridges.keys()[:3]
+        chosen = list(self.ring.bridges.keys())[:3]
         bridges = self.ring.filterDistinctSubnets(chosen)
 
         self.assertGreaterEqual(len(bridges), 1)
@@ -92,7 +92,7 @@ class BridgeRingTests(unittest.TestCase):
         filtering by distinct subnets.
         """
         self.addRandomBridges()
-        bridges = self.ring.getBridges('a' * Bridges.DIGEST_LEN, N=3, filterBySubnet=True)
+        bridges = self.ring.getBridges(b'a' * Bridges.DIGEST_LEN, N=3, filterBySubnet=True)
         self.assertEqual(len(bridges), 3)
 
     def test_dumpAssignments(self):
@@ -107,7 +107,7 @@ class BridgeRingTests(unittest.TestCase):
         f.seek(0)
 
         data = f.read()
-        first = self.ring.bridges.values()[0].fingerprint
+        first = list(self.ring.bridges.values())[0].fingerprint
 
         # The first bridge's fingerprint should be within the data somewhere
         self.assertIn(first, data)
@@ -149,7 +149,7 @@ class FixedBridgeSplitterTests(unittest.TestCase):
         f.seek(0)
 
         data = f.read()
-        first = self.splitter.rings[0].bridges.values()[0].fingerprint
+        first = list(self.splitter.rings[0].bridges.values())[0].fingerprint
 
         # The first bridge's fingerprint should be within the data somewhere
         self.assertIn(first, data)

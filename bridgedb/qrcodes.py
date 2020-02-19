@@ -13,7 +13,7 @@
 """Utilities for working with QRCodes."""
 
 
-import cStringIO
+import io
 import logging
 
 try:
@@ -26,15 +26,15 @@ except ImportError:  # pragma: no cover
                    "python-qrcode package."))
 
 
-def generateQR(bridgelines, imageFormat=u'JPEG', bridgeSchema=False):
+def generateQR(bridgelines, imageFormat='JPEG', bridgeSchema=False):
     """Generate a QRCode for the client's bridge lines.
 
     :param str bridgelines: The Bridge Lines which we are distributing to the
         client.
     :param bool bridgeSchema: If ``True``, prepend ``'bridge://'`` to the
         beginning of each bridge line before QR encoding.
-    :rtype: str or ``None``
-    :returns: The generated QRCode, as a string.
+    :rtype: bytes or ``None``
+    :returns: The generated QRCode, as a bytes.
     """
     logging.debug("Attempting to encode bridge lines into a QRCode...")
 
@@ -60,7 +60,7 @@ def generateQR(bridgelines, imageFormat=u'JPEG', bridgeSchema=False):
         qr = qrcode.QRCode()
         qr.add_data(bridgelines)
 
-        buf = cStringIO.StringIO()
+        buf = io.BytesIO()
         img = qr.make_image().resize([350, 350])
         img.save(buf, imageFormat)
         buf.seek(0)

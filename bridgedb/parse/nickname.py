@@ -38,7 +38,7 @@ def isValidRouterNickname(nickname):
     :rtype: bool
     :returns: ``True`` if the nickname is valid, ``False`` otherwise.
     """
-    ALPHANUMERIC = string.letters + string.digits
+    ALPHANUMERIC = string.ascii_letters + string.digits
 
     try:
         if not (1 <= len(nickname) <= 19):

@@ -64,7 +64,7 @@ class HTTPSBridgeRequestTests(unittest.TestCase):
         self.request = request.HTTPSBridgeRequest(addClientCountryCode=False)
         self.request.client = '5.5.5.5'
         self.request.withoutBlockInCountry(httprequest)
-        self.assertItemsEqual(['nl'], self.request.notBlockedIn)
+        self.assertCountEqual(['nl'], self.request.notBlockedIn)
 
     def test_HTTPSBridgeRequest_withoutBlockInCountry_bad_params(self):
         """HTTPSBridgeRequest.withoutBlockInCountry() should stop processing if

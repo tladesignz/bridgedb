@@ -15,6 +15,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import base64
+import binascii
 import io
 import logging
 import math
@@ -63,15 +64,15 @@ class GetKeyTests(unittest.TestCase):
         """Test retrieving the secret_key from an empty file."""
         filename = os.path.join(os.getcwd(), 'sekrit')
         key = crypto.getKey(filename)
-        self.failUnlessIsInstance(key, basestring,
-                                  "key isn't a string! type=%r" % type(key))
+        self.failUnlessIsInstance(key, bytes,
+                                  "key isn't bytes! type=%r" % type(key))
 
     def test_getKey_tmpfile(self):
         """Test retrieving the secret_key from a new tmpfile."""
         filename = self.mktemp()
         key = crypto.getKey(filename)
-        self.failUnlessIsInstance(key, basestring,
-                                  "key isn't a string! type=%r" % type(key))
+        self.failUnlessIsInstance(key, bytes,
+                                  "key isn't bytes! type=%r" % type(key))
 
     def test_getKey_keyexists(self):
         """Write the example key to a file and test reading it back."""
@@ -81,13 +82,13 @@ class GetKeyTests(unittest.TestCase):
             fh.flush()
 
         key = crypto.getKey(filename)
-        self.failUnlessIsInstance(key, basestring,
-                                  "key isn't a string! type=%r" % type(key))
+        self.failUnlessIsInstance(key, bytes,
+                                  "key isn't bytes! type=%r" % type(key))
         self.assertEqual(SEKRIT_KEY, key,
                          """The example key and the one read from file differ!
                          key (in hex): %s
                          SEKRIT_KEY (in hex): %s"""
-                         % (key.encode('hex'), SEKRIT_KEY.encode('hex')))
+                         % (binascii.hexlify(key).decode('utf-8'), binascii.hexlify(SEKRIT_KEY).decode('utf-8')))
 
 
 class InitializeGnuPGTests(unittest.TestCase):
@@ -214,7 +215,7 @@ class InitializeGnuPGTests(unittest.TestCase):
         sig = signfunc("This is a test of the public broadcasting system.")
         print(sig)
         self.assertIsNotNone(sig)
-        self.assertTrue(sig.startswith('-----BEGIN PGP SIGNED MESSAGE-----'))
+        self.assertTrue(sig.startswith(b'-----BEGIN PGP SIGNED MESSAGE-----'))
 
     def test_crypto_initializeGnuPG_nonexistent_default_key(self):
         """When the key specified by EMAIL_GPG_PRIMARY_KEY_FINGERPRINT doesn't

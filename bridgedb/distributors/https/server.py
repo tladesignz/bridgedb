@@ -95,6 +95,25 @@ supported_langs = []
 metrix = metrics.HTTPSMetrics()
 
 
+def stringifyRequestArgs(args):
+    """Turn the given HTTP request arguments from bytes to str.
+
+    :param dict args: A dictionary of request arguments.
+    :rtype: dict
+    :returns: A dictionary of request arguments.
+    """
+
+    # Convert all key/value pairs from bytes to str.
+    str_args = {}
+    for arg, values in args.items():
+        arg = arg if isinstance(arg, str) else arg.decode("utf-8")
+        values = [value.decode("utf-8") if isinstance(value, bytes)
+                  else value for value in values]
+        str_args[arg] = values
+
+    return str_args
+
+
 def replaceErrorPage(request, error, template_name=None, html=True):
     """Create a general error page for displaying in place of tracebacks.
 
@@ -114,9 +133,9 @@ def replaceErrorPage(request, error, template_name=None, html=True):
         or if **html** is ``False``, then we return a very simple HTML page
         (without CSS, Javascript, images, etc.)  which simply says
         ``"Sorry! Something went wrong with your request."``
-    :rtype: str
-    :returns: A string containing some content to serve to the client (rather
-        than serving a Twisted traceback).
+    :rtype: bytes
+    :returns: A bytes object containing some content to serve to the client
+        (rather than serving a Twisted traceback).
     """
     logging.error("Error while attempting to render %s: %s"
                   % (template_name or 'template',
@@ -135,13 +154,13 @@ def replaceErrorPage(request, error, template_name=None, html=True):
     errorMessage = _("Sorry! Something went wrong with your request.")
 
     if not html:
-        return bytes(errorMessage)
+        return errorMessage.encode("utf-8")
 
     try:
         rendered = resource500.render(request)
     except Exception as err:
         logging.exception(err)
-        rendered = bytes(errorMessage)
+        rendered = errorMessage.encode("utf-8")
 
     return rendered
 
@@ -336,6 +355,7 @@ class ErrorResource(CSPResource):
         self.setCSPHeader(request)
         request.setHeader("Content-Type", "text/html; charset=utf-8")
         request.setResponseCode(self.code)
+        request.args = stringifyRequestArgs(request.args)
 
         try:
             template = lookup.get_template(self.template)
@@ -373,12 +393,13 @@ class TranslatedTemplateResource(CustomErrorHandlingResource, CSPResource):
         """Create a new :api:`Resource <twisted.web.resource.Resource>` for a
         Mako-templated webpage.
         """
-        gettext.install("bridgedb", unicode=True)
+        gettext.install("bridgedb")
         CSPResource.__init__(self)
         self.template = template
 
     def render_GET(self, request):
         self.setCSPHeader(request)
+        request.args = stringifyRequestArgs(request.args)
         rtl = False
         try:
             langs = translations.getLocaleFromHTTPRequest(request)
@@ -452,11 +473,11 @@ class CaptchaProtectedResource(CustomErrorHandlingResource, CSPResource):
 
         :rtype: tuple
         :returns: A 2-tuple of ``(image, challenge)``, where ``image`` is a
-            binary, JPEG-encoded image, and ``challenge`` is a unique
+            JPEG-encoded image of type bytes, and ``challenge`` is a unique
             string. If unable to retrieve a CAPTCHA, returns a tuple
-            containing two empty strings.
+            containing (b'', '').
         """
-        return ('', '')
+        return (b'', '')
 
     def extractClientSolution(self, request):
         """Extract the client's CAPTCHA solution from a POST request.
@@ -468,7 +489,7 @@ class CaptchaProtectedResource(CustomErrorHandlingResource, CSPResource):
         :type request: :api:`twisted.web.http.Request`
         :param request: A ``Request`` object for 'bridges.html'.
         :returns: A redirect for a request for a new CAPTCHA if there was a
-            problem. Otherwise, returns a 2-tuple of strings, the first is the
+            problem. Otherwise, returns a 2-tuple of bytes, the first is the
             client's CAPTCHA solution from the text input area, and the second
             is the challenge string.
         """
@@ -491,16 +512,17 @@ class CaptchaProtectedResource(CustomErrorHandlingResource, CSPResource):
         return False
 
     def render_GET(self, request):
-        """Retrieve a ReCaptcha from the API server and serve it to the client.
+        """Retrieve a CAPTCHA and serve it to the client.
 
         :type request: :api:`twisted.web.http.Request`
         :param request: A ``Request`` object for a page which should be
             protected by a CAPTCHA.
-        :rtype: str
-        :returns: A rendered HTML page containing a ReCaptcha challenge image
+        :rtype: bytes
+        :returns: A rendered HTML page containing a CAPTCHA challenge image
             for the client to solve.
         """
         self.setCSPHeader(request)
+        request.args = stringifyRequestArgs(request.args)
 
         rtl = False
         image, challenge = self.getCaptchaImage(request)
@@ -509,14 +531,14 @@ class CaptchaProtectedResource(CustomErrorHandlingResource, CSPResource):
             langs = translations.getLocaleFromHTTPRequest(request)
             rtl = translations.usingRTLLang(langs)
             # TODO: this does not work for versions of IE < 8.0
-            imgstr = 'data:image/jpeg;base64,%s' % base64.b64encode(image)
+            imgstr = b'data:image/jpeg;base64,%s' % base64.b64encode(image)
             template = lookup.get_template('captcha.html')
             rendered = template.render(strings,
                                        getSortedLangList(),
                                        rtl=rtl,
                                        lang=langs[0],
                                        langOverride=translations.isLangOverridden(request),
-                                       imgstr=imgstr,
+                                       imgstr=imgstr.decode("utf-8"),
                                        challenge_field=challenge)
         except Exception as err:
             rendered = replaceErrorPage(request, err, 'captcha.html')
@@ -543,15 +565,16 @@ class CaptchaProtectedResource(CustomErrorHandlingResource, CSPResource):
         """
         self.setCSPHeader(request)
         request.setHeader("Content-Type", "text/html; charset=utf-8")
+        request.args = stringifyRequestArgs(request.args)
 
         try:
             if self.checkSolution(request) is True:
                 metrix.recordValidHTTPSRequest(request)
                 return self.resource.render(request)
         except ValueError as err:
-            logging.debug(err.message)
+            logging.debug(str(err))
         except MaliciousRequest as err:
-            logging.debug(err.message)
+            logging.debug(str(err))
             # Make them wait a bit, then redirect them to a "daring
             # work of art" as pennance for their sins.
             d = task.deferLater(reactor, 1, lambda: request)
@@ -559,7 +582,7 @@ class CaptchaProtectedResource(CustomErrorHandlingResource, CSPResource):
             metrix.recordInvalidHTTPSRequest(request)
             return NOT_DONE_YET
         except Exception as err:
-            logging.debug(err.message)
+            logging.debug(str(err))
             metrix.recordInvalidHTTPSRequest(request)
             return replaceErrorPage(request, err)
 
@@ -730,7 +753,7 @@ class ReCaptchaProtectedResource(CaptchaProtectedResource):
             rendered = redirectTo(request.uri, request)
 
         try:
-            request.write(rendered)
+            request.write(rendered.encode('utf-8') if isinstance(rendered, str) else rendered)
             request.finish()
         except Exception as err:  # pragma: no cover
             logging.exception(err)
@@ -862,6 +885,7 @@ class ReCaptchaProtectedResource(CaptchaProtectedResource):
             HTML to the client.
         """
         self.setCSPHeader(request)
+        request.args = stringifyRequestArgs(request.args)
         d = self.checkSolution(request)
         d.addCallback(self._renderDeferred)
         return NOT_DONE_YET
@@ -888,7 +912,7 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
         :param bool includeFingerprints: Do we include the bridge's
             fingerprint in the response?
         """
-        gettext.install("bridgedb", unicode=True)
+        gettext.install("bridgedb")
         CSPResource.__init__(self)
         self.distributor = distributor
         self.schedule = schedule
@@ -908,10 +932,11 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
         :type request: :api:`twisted.web.http.Request`
         :param request: A ``Request`` object containing the HTTP method, full
             URI, and any URL/POST arguments and headers present.
-        :rtype: str
+        :rtype: bytes
         :returns: A plaintext or HTML response to serve.
         """
         self.setCSPHeader(request)
+        request.args = stringifyRequestArgs(request.args)
 
         try:
             response = self.getBridgeRequestAnswer(request)
@@ -919,7 +944,7 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
             logging.exception(err)
             response = self.renderAnswer(request)
 
-        return response
+        return response.encode('utf-8') if isinstance(response, str) else response
 
     def getClientIP(self, request):
         """Get the client's IP address from the ``'X-Forwarded-For:'``
@@ -948,6 +973,14 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
 
         logging.info("Replying to web request from %s. Parameters were %r"
                      % (ip, request.args))
+
+        # Convert all key/value pairs from bytes to str.
+        str_args = {}
+        for arg, values in request.args.items():
+            arg = arg if isinstance(arg, str) else arg.decode("utf-8")
+            values = [value.decode("utf-8") if isinstance(value, bytes) else value for value in values]
+            str_args[arg] = values
+        request.args = str_args
 
         if ip:
             bridgeRequest = HTTPSBridgeRequest()
@@ -1015,7 +1048,7 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
             to use a bridge. If ``None``, then the returned page will instead
             explain that there were no bridges of the type they requested,
             with instructions on how to proceed.
-        :rtype: str
+        :rtype: bytes
         :returns: A plaintext or HTML response to serve.
         """
         rtl = False
@@ -1024,7 +1057,7 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
         if format == 'plain':
             request.setHeader("Content-Type", "text/plain")
             try:
-                rendered = bytes('\n'.join(bridgeLines))
+                rendered = '\n'.join(bridgeLines).encode('utf-8')
             except Exception as err:
                 rendered = replaceErrorPage(request, err, html=False)
         else:
@@ -1033,7 +1066,9 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
             qrjpeg = generateQR(bridgeLines)
 
             if qrjpeg:
-                qrcode = 'data:image/jpeg;base64,%s' % base64.b64encode(qrjpeg)
+                qrcode = b'data:image/jpeg;base64,%s' % base64.b64encode(qrjpeg)
+                qrcode = qrcode.decode("utf-8")
+
             try:
                 langs = translations.getLocaleFromHTTPRequest(request)
                 rtl = translations.usingRTLLang(langs)
@@ -1048,7 +1083,7 @@ class BridgesResource(CustomErrorHandlingResource, CSPResource):
             except Exception as err:
                 rendered = replaceErrorPage(request, err)
 
-        return rendered
+        return rendered.encode("utf-8") if isinstance(rendered, str) else rendered
 
 
 def addWebServer(config, distributor):
@@ -1100,21 +1135,21 @@ def addWebServer(config, distributor):
     howto   = HowtoResource()
     robots  = static.File(os.path.join(TEMPLATE_DIR, 'robots.txt'))
     assets  = static.File(os.path.join(TEMPLATE_DIR, 'assets/'))
-    keys    = static.Data(bytes(strings.BRIDGEDB_OPENPGP_KEY), 'text/plain')
+    keys    = static.Data(strings.BRIDGEDB_OPENPGP_KEY.encode('utf-8'), 'text/plain')
     csp     = CSPResource(enabled=config.CSP_ENABLED,
                           includeSelf=config.CSP_INCLUDE_SELF,
                           reportViolations=config.CSP_REPORT_ONLY,
                           useForwardedHeader=fwdHeaders)
 
     root = CustomErrorHandlingResource()
-    root.putChild('', index)
-    root.putChild('robots.txt', robots)
-    root.putChild('keys', keys)
-    root.putChild('assets', assets)
-    root.putChild('options', options)
-    root.putChild('howto', howto)
-    root.putChild('maintenance', maintenance)
-    root.putChild('error', resource500)
+    root.putChild(b'', index)
+    root.putChild(b'robots.txt', robots)
+    root.putChild(b'keys', keys)
+    root.putChild(b'assets', assets)
+    root.putChild(b'options', options)
+    root.putChild(b'howto', howto)
+    root.putChild(b'maintenance', maintenance)
+    root.putChild(b'error', resource500)
     root.putChild(CSPResource.reportURI, csp)
 
     if config.RECAPTCHA_ENABLED:
@@ -1135,7 +1170,7 @@ def addWebServer(config, distributor):
 
     if config.HTTPS_ROTATION_PERIOD:
         count, period = config.HTTPS_ROTATION_PERIOD.split()
-        sched = ScheduledInterval(count, period)
+        sched = ScheduledInterval(int(count), period)
     else:
         sched = Unscheduled()
 
@@ -1147,10 +1182,10 @@ def addWebServer(config, distributor):
                             secretKey=secretKey,
                             useForwardedHeader=fwdHeaders,
                             protectedResource=bridges)
-        root.putChild('bridges', protected)
+        root.putChild(b'bridges', protected)
         logging.info("Protecting resources with %s." % captcha.func.__name__)
     else:
-        root.putChild('bridges', bridges)
+        root.putChild(b'bridges', bridges)
 
     site = Site(root)
     site.displayTracebacks = False

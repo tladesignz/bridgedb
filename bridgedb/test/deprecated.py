@@ -126,7 +126,7 @@ class Bridge(object):
 
         if not request: request = 'default'
         digest = getHMACFunc('Order-Or-Addresses')(request)
-        pos = long(digest[:8], 16) # lower 8 bytes -> long
+        pos = int(digest[:8], 16) # lower 8 bytes -> int
 
         # default address type
         if not addressClass: addressClass = ipaddr.IPv4Address

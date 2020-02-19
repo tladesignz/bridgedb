@@ -27,7 +27,7 @@ class EmailTemplatesTests(unittest.TestCase):
     """Unittests for :func:`b.e.templates`."""
 
     def setUp(self):
-        self.t = NullTranslations(StringIO(unicode('test')))
+        self.t = NullTranslations(StringIO('test'))
         self.client = Address('blackhole@torproject.org')
         self.answer = 'obfs3 1.1.1.1:1111\nobfs3 2.2.2.2:2222'
         # This is the fingerprint of BridgeDB's offline, certification-only

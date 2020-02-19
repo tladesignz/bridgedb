@@ -27,11 +27,11 @@ repository.
 from __future__ import print_function
 
 import gettext
-import ipaddr
+import ipaddress
 import mechanize
 import os
 
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 from twisted.trial import unittest
 from twisted.trial.reporter import TestResult
@@ -137,7 +137,7 @@ class HTTPTests(unittest.TestCase):
         # ------------- Results
         # URL should be the same as last time
         self.assertEquals(self.br.response().geturl(), EXPECTED_URL)
-        soup = BeautifulSoup(captcha_response.read())
+        soup = BeautifulSoup(captcha_response.read(), features="html5lib")
         return soup
 
     def getBridgeLinesFromSoup(self, soup, fieldsPerBridge):
@@ -174,10 +174,10 @@ class HTTPTests(unittest.TestCase):
         self.br.set_debug_http(True)
         self.br.open(HTTP_ROOT)
 
-        headers = ''.join(self.br.response().info().headers)
+        headers = self.br.response().info()
 
-        self.assertIn("Content-Security-Policy", headers)
-        self.assertIn("default-src 'none';", headers)
+        self.assertIn("Content-Security-Policy", headers.keys())
+        self.assertIn("default-src 'none';", ''.join(headers.values()))
 
     def test_404(self):
         """Asking for a non-existent resource should yield our custom 404 page,
@@ -199,7 +199,7 @@ class HTTPTests(unittest.TestCase):
         for bridge in bridges:
             self.assertTrue(bridge != None)
             addr = bridge[0].rsplit(':', 1)[0]
-            self.assertIsInstance(ipaddr.IPAddress(addr), ipaddr.IPv4Address)
+            self.assertIsInstance(ipaddress.ip_address(addr), ipaddress.IPv4Address)
 
     def test_get_vanilla_ipv6(self):
         self.openBrowser()
@@ -212,7 +212,7 @@ class HTTPTests(unittest.TestCase):
         for bridge in bridges:
             self.assertTrue(bridge != None)
             addr = bridge[0].rsplit(':', 1)[0].strip('[]')
-            self.assertIsInstance(ipaddr.IPAddress(addr), ipaddr.IPv6Address)
+            self.assertIsInstance(ipaddress.ip_address(addr), ipaddress.IPv6Address)
 
     def test_get_obfs4_ipv4(self):
         """Try asking for obfs4 bridges, and check that the PT arguments in the
@@ -353,7 +353,7 @@ class _HTTPTranslationsTests(unittest.TestCase):
                                            localedir=self.i18n,
                                            languages=[locale,],
                                            fallback=True)
-            expected = language.gettext("What are bridges?")
+            expected = language.gettext("What are bridges?").encode("utf-8")
 
             if not locale.startswith('en'):
                 self.assertNotEqual(expected, "What are bridges?")
