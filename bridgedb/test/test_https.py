@@ -188,18 +188,6 @@ class HTTPTests(unittest.TestCase):
         self.openBrowser()
         self.assertRaises(mechanize.HTTPError, self.br.open, page)
 
-    def test_get_obfs3_ipv4(self):
-        self.openBrowser()
-        self.goToOptionsPage()
-
-        PT = 'obfs3'
-        soup = self.submitOptions(transport=PT, ipv6=False,
-                                  captchaResponse=CAPTCHA_RESPONSE)
-        bridges = self.getBridgeLinesFromSoup(soup, fieldsPerBridge=3)
-        for bridge in bridges:
-            pt = bridge[0]
-            self.assertEquals(PT, pt)
-
     def test_get_vanilla_ipv4(self):
         self.openBrowser()
         self.goToOptionsPage()
@@ -225,21 +213,6 @@ class HTTPTests(unittest.TestCase):
             self.assertTrue(bridge != None)
             addr = bridge[0].rsplit(':', 1)[0].strip('[]')
             self.assertIsInstance(ipaddr.IPAddress(addr), ipaddr.IPv6Address)
-
-    def test_get_scramblesuit_ipv4(self):
-        self.openBrowser()
-        self.goToOptionsPage()
-
-        PT = 'scramblesuit'
-        soup = self.submitOptions(transport=PT, ipv6=False,
-                                  captchaResponse=CAPTCHA_RESPONSE)
-        bridges = self.getBridgeLinesFromSoup(soup, fieldsPerBridge=4)
-        for bridge in bridges:
-            pt = bridge[0]
-            password = bridge[-1]
-            self.assertEquals(PT, pt)
-            self.assertTrue(password.find("password=") != -1,
-                            "Password field missing expected text")
 
     def test_get_obfs4_ipv4(self):
         """Try asking for obfs4 bridges, and check that the PT arguments in the

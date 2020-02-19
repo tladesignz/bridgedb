@@ -1,3 +1,8 @@
+Changes in version 0.9.3 - 2020-02-18
+
+        * FIXES <https://bugs.torproject.org/33299>
+        This patch disables the distribution of FTE, ScrambleSuit, and obfs3.
+
 Changes in version 0.9.2 - 2020-02-04
 
         * FIXES <https://bugs.torproject.org/31427>
