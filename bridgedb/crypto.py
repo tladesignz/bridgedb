@@ -47,7 +47,7 @@ import io
 import logging
 import os
 import re
-import urllib
+import urllib.parse
 
 import OpenSSL
 
@@ -57,28 +57,8 @@ from Crypto.PublicKey import RSA
 from twisted.internet import ssl
 from twisted.python.procutils import which
 
-
 #: The hash digest to use for HMACs.
 DIGESTMOD = hashlib.sha1
-
-# Test to see if we have the old or new style buffer() interface. Trying
-# to use an old-style buffer on Python2.7 prior to version 2.7.5 will produce:
-#
-#     TypeError: 'buffer' does not have the buffer interface
-#
-#: ``True`` if we have the new-style `buffer`_ interface; ``False`` otherwise.
-#:
-#: .. _buffer: https://docs.python.org/2/c-api/buffer.html
-NEW_BUFFER_INTERFACE = False
-try:
-    io.BytesIO(buffer('test'))
-except TypeError:  # pragma: no cover
-    logging.warn(
-        "This Python version is too old! "\
-        "It doesn't support new-style buffer interfaces: "\
-        "https://mail.python.org/pipermail/python-dev/2010-October/104917.html")
-else:
-    NEW_BUFFER_INTERFACE = True
 
 
 class PKCS1PaddingError(Exception):
@@ -89,7 +69,7 @@ class RSAKeyGenerationError(Exception):
 
 
 def writeKeyToFile(key, filename):
-    """Write **key** to **filename**, with ``0400`` permissions.
+    """Write **key** to **filename**, with ``400`` octal permissions.
 
     If **filename** doesn't exist, it will be created. If it does exist
     already, and is writable by the owner of the current process, then it will
@@ -102,7 +82,7 @@ def writeKeyToFile(key, filename):
     """
     logging.info("Writing key to file: %r" % filename)
     flags = os.O_WRONLY | os.O_TRUNC | os.O_CREAT | getattr(os, "O_BIN", 0)
-    fd = os.open(filename, flags, 0400)
+    fd = os.open(filename, flags, 0o400)
     os.write(fd, key)
     os.fsync(fd)
     os.close(fd)
@@ -210,6 +190,12 @@ def getKey(filename):
 
 def getHMAC(key, value):
     """Return the HMAC of **value** using the **key**."""
+
+    # normalize inputs to be bytes
+
+    key = key.encode('utf-8') if isinstance(key, str) else key
+    value = value.encode('utf-8') if isinstance(value, str) else value
+
     h = hmac.new(key, value, digestmod=DIGESTMOD)
     return h.digest()
 
@@ -220,14 +206,19 @@ def getHMACFunc(key, hex=True):
     :rtype: callable
     :returns: A function which can be uses to generate HMACs.
     """
+
+    key = key.encode('utf-8') if isinstance(key, str) else key
     h = hmac.new(key, digestmod=DIGESTMOD)
+
     def hmac_fn(value):
+        value = value.encode('utf-8') if isinstance(value, str) else value
         h_tmp = h.copy()
         h_tmp.update(value)
         if hex:
             return h_tmp.hexdigest()
         else:
             return h_tmp.digest()
+
     return hmac_fn
 
 def removePKCS1Padding(message):
@@ -319,11 +310,12 @@ def initializeGnuPG(config):
         logging.warn("No secret keys found in %s!" % gpg.secring)
         return ret
 
-    primarySK = filter(lambda key: key['fingerprint'] == primary, secrets)
-    primaryPK = filter(lambda key: key['fingerprint'] == primary, publics)
+    primarySK = list(filter(lambda key: key['fingerprint'] == primary, secrets))
+    primaryPK = list(filter(lambda key: key['fingerprint'] == primary, publics))
 
     if primarySK and primaryPK:
         logging.info("Found GnuPG primary key with fingerprint: %s" % primary)
+
         for sub in primaryPK[0]['subkeys']:
             logging.info("  Subkey: %s  Usage: %s" % (sub[0], sub[1].upper()))
     else:
@@ -419,7 +411,8 @@ class SSLVerifyingContextFactory(ssl.CertificateOptions):
         :rtype: str
         :returns: The full hostname (including any subdomains).
         """
-        hostname = urllib.splithost(urllib.splittype(url)[1])[0]
+
+        hostname = urllib.parse.urlparse(url).netloc
         logging.debug("Parsed hostname %r for cert CN matching." % hostname)
         return hostname
 

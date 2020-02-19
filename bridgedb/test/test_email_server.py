@@ -13,10 +13,10 @@
 
 from __future__ import print_function
 
+import email.message
 import socket
 import string
 import types
-import rfc822
 
 from twisted.python import log
 from twisted.internet import defer
@@ -95,10 +95,10 @@ class SMTPMessageTests(unittest.TestCase):
                               defer.Deferred)
 
     def test_SMTPMessage_getIncomingMessage(self):
-        """``getIncomingMessage`` should return a ``rfc822.Message``."""
+        """``getIncomingMessage`` should return a ``email.message.Message``."""
         self.message.lineReceived(self.line)
         self.assertIsInstance(self.message.getIncomingMessage(),
-                              rfc822.Message)
+                              email.message.Message)
 
 
 class SMTPIncomingDeliveryTests(unittest.TestCase):
@@ -154,7 +154,7 @@ class SMTPIncomingDeliveryTests(unittest.TestCase):
         """
         self.helo = (domain, ipaddress)
         self._createProtocolWithHost(domain)
-        self.origin = Address('@'.join((username, domain,)))
+        self.origin = Address(b'@'.join((username, domain,)))
         self.user = User(username, self.helo, self.proto, self.origin)
 
     def _setUpMAILFROM(self):
@@ -173,9 +173,9 @@ class SMTPIncomingDeliveryTests(unittest.TestCase):
 
         The default is to emulate sending: ``RCPT TO: bridges@localhost``.
         """
-        name = username if username is not None else self.config.EMAIL_USERNAME
-        host = domain if domain is not None else 'localhost'
-        addr = ip if ip is not None else '127.0.0.1'
+        name = username if username is not None else self.config.EMAIL_USERNAME.encode('utf-8')
+        host = domain if domain is not None else b'localhost'
+        addr = ip if ip is not None else b'127.0.0.1'
         self._createUser(name, host, ip)
         self.delivery.setContext(self.context)
 
@@ -203,7 +203,7 @@ class SMTPIncomingDeliveryTests(unittest.TestCase):
         ``'client@example.com'`` should contain a header stating:
         ``'Received: from example.com'``.
         """
-        self._createUser('client', 'example.com', '127.0.0.1')
+        self._createUser(b'client', b'example.com', b'127.0.0.1')
         hdr = self.delivery.receivedHeader(self.helo, self.origin, [self.user,])
         self.assertSubstring("Received: from example.com", hdr)
 
@@ -237,14 +237,14 @@ class SMTPIncomingDeliveryTests(unittest.TestCase):
 
     def test_SMTPIncomingDelivery_validateTo_plusAddress(self):
         """Should return a callable that results in a SMTPMessage."""
-        self._setUpRCPTTO('bridges+ar')
+        self._setUpRCPTTO(b'bridges+ar')
         validated = self.delivery.validateTo(self.user)
         self.assertIsInstance(validated, types.FunctionType)
         self.assertIsInstance(validated(), server.SMTPMessage)
 
     def test_SMTPIncomingDelivery_validateTo_badUsername_plusAddress(self):
         """'givemebridges+zh_cn@...' should raise an SMTPBadRcpt exception."""
-        self._setUpRCPTTO('givemebridges+zh_cn')
+        self._setUpRCPTTO(b'givemebridges+zh_cn')
         self.assertRaises(SMTPBadRcpt, self.delivery.validateTo, self.user)
 
     def test_SMTPIncomingDelivery_validateTo_badUsername(self):
@@ -252,20 +252,20 @@ class SMTPIncomingDeliveryTests(unittest.TestCase):
         ``RCPT TO: yo.mama@localhost`` should raise a
         ``twisted.mail.smtp.SMTPBadRcpt`` exception.
         """
-        self._setUpRCPTTO('yo.mama')
+        self._setUpRCPTTO(b'yo.mama')
         self.assertRaises(SMTPBadRcpt, self.delivery.validateTo, self.user)
 
     def test_SMTPIncomingDelivery_validateTo_notOurDomain(self):
         """An SMTP ``RCPT TO: bridges@forealsi.es`` should raise an SMTPBadRcpt
         exception.
         """
-        self._setUpRCPTTO('bridges', 'forealsi.es')
+        self._setUpRCPTTO(b'bridges', b'forealsi.es')
         self.assertRaises(SMTPBadRcpt, self.delivery.validateTo, self.user)
 
     def test_SMTPIncomingDelivery_validateTo_subdomain(self):
         """An SMTP ``RCPT TO: bridges@subdomain.localhost`` should be allowed.
         """
-        self._setUpRCPTTO('bridges', 'subdomain.localhost')
+        self._setUpRCPTTO(b'bridges', b'subdomain.localhost')
         validated = self.delivery.validateTo(self.user)
         self.assertIsInstance(validated, types.FunctionType)
         self.assertIsInstance(validated(), server.SMTPMessage)
@@ -339,7 +339,7 @@ class SMTPTestCaseMixin(util.TestCaseMixin):
                     'Subject: %s' % subject,
                     '\r\n %s' % body,
                     '.']  # SMTP DATA EOM command
-        emailText = self.proto.delimiter.join(contents)
+        emailText = self.proto.delimiter.decode('utf-8').join(contents)
         return emailText
 
     def _buildSMTP(self, commands):
@@ -351,7 +351,7 @@ class SMTPTestCaseMixin(util.TestCaseMixin):
         :returns: The string for sending those **commands**, suitable for
             giving to a :api:`twisted.internet.Protocol.dataReceived` method.
         """
-        data = self.proto.delimiter.join(commands) + self.proto.delimiter
+        data = self.proto.delimiter.decode('utf-8').join(commands) + self.proto.delimiter.decode('utf-8')
         return data
 
     def _test(self, commands, expected, noisy=False):
@@ -369,8 +369,8 @@ class SMTPTestCaseMixin(util.TestCaseMixin):
             "client" and the "server" in a nicely formatted manner.
         """
         data = self._buildSMTP(commands)
-        self.proto.dataReceived(data)
-        recv = self.transport.value()
+        self.proto.dataReceived(data.encode('utf-8'))
+        recv = self.transport.value().decode('utf-8')
 
         if noisy:
             client = data.replace('\r\n', '\r\n ')
@@ -515,7 +515,12 @@ class EmailServerServiceTests(SMTPTestCaseMixin, unittest.TestCase):
     def tearDown(self):
         """Kill all connections with fire."""
         if self.transport:
+            if not hasattr(self.transport, 'protocol'):
+                factory = server.addServer(self.config, self.dist)
+                self.transport.protocol = factory.buildProtocol(('127.0.0.1', 0))
+
             self.transport.loseConnection()
+
         super(EmailServerServiceTests, self).tearDown()
         # FIXME: this is definitely not how we're supposed to do this, but it
         # kills the DirtyReactorAggregateErrors.

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Unittests for the :mod:`bridgedb.Storage` module."""
 
 import os

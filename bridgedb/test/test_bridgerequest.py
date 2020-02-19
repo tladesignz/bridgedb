@@ -48,11 +48,11 @@ class BridgeRequestBaseTests(unittest.TestCase):
         should use the default client identifier string.
         """
         self.assertEqual(self.request.getHashringPlacement('AAAA'),
-                         3486762050L)
+                         3486762050)
 
     def test_BridgeRequestBase_getHashringPlacement_with_client(self):
         """BridgeRequestBase.getHashringPlacement() with a client parameter
         should use the client identifier string.
         """
         self.assertEqual(self.request.getHashringPlacement('AAAA', client='you'),
-                         2870307088L)
+                         2870307088)

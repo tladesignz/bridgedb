@@ -8,7 +8,6 @@ import binascii
 import sqlite3
 import time
 import hashlib
-from contextlib import GeneratorContextManager
 from functools import wraps
 from ipaddr import IPAddress
 import sys
@@ -212,7 +211,7 @@ class Database(object):
         cur.execute("DELETE FROM EmailedBridges WHERE when_mailed < ?", (t,))
 
     def getEmailTime(self, addr):
-        addr = hashlib.sha1(addr).hexdigest()
+        addr = hashlib.sha1(addr.encode('utf-8')).hexdigest()
         cur = self._cur
         cur.execute("SELECT when_mailed FROM EmailedBridges WHERE email = ?", (addr,))
         v = cur.fetchone()
@@ -221,7 +220,7 @@ class Database(object):
         return strToTime(v[0])
 
     def setEmailTime(self, addr, whenMailed):
-        addr = hashlib.sha1(addr).hexdigest()
+        addr = hashlib.sha1(addr.encode('utf-8')).hexdigest()
         cur = self._cur
         t = timeToStr(whenMailed)
         cur.execute("INSERT OR REPLACE INTO EmailedBridges "
@@ -262,7 +261,7 @@ class Database(object):
                     (distributor, hex_key))
 
     def getWarnedEmail(self, addr):
-        addr = hashlib.sha1(addr).hexdigest()
+        addr = hashlib.sha1(addr.encode('utf-8')).hexdigest()
         cur = self._cur
         cur.execute("SELECT * FROM WarnedEmails WHERE email = ?", (addr,))
         v = cur.fetchone()
@@ -271,7 +270,7 @@ class Database(object):
         return True
 
     def setWarnedEmail(self, addr, warned=True, whenWarned=time.time()):
-        addr = hashlib.sha1(addr).hexdigest()
+        addr = hashlib.sha1(addr.encode('utf-8')).hexdigest()
         t = timeToStr(whenWarned)
         cur = self._cur
         if warned == True:
@@ -345,11 +344,18 @@ def openDatabase(sqlite_file):
     return conn
 
 
-class DBGeneratorContextManager(GeneratorContextManager):
+class DBGeneratorContextManager(object):
     """Helper for @contextmanager decorator.
 
     Overload __exit__() so we can call the generator many times
     """
+
+    def __init__(self, gen):
+      self.gen = gen
+
+    def __enter__(self):
+      return next(self.gen)
+
     def __exit__(self, type, value, traceback):
         """Handle exiting a with statement block
 
@@ -362,7 +368,7 @@ class DBGeneratorContextManager(GeneratorContextManager):
         """
         if type is None:
             try:
-                self.gen.next()
+                next(self.gen)
             except StopIteration:
                 return
             return
@@ -374,7 +380,7 @@ class DBGeneratorContextManager(GeneratorContextManager):
             try:
                 self.gen.throw(type, value, traceback)
                 raise RuntimeError("generator didn't stop after throw()")
-            except StopIteration, exc:
+            except StopIteration as exc:
                 # Suppress the exception *unless* it's the same exception that
                 # was passed to throw().  This prevents a StopIteration
                 # raised inside the "with" statement from being suppressed

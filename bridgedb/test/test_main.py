@@ -52,7 +52,7 @@ def mockUpdateBridgeHistory(bridges, timestamps):
     which doesn't access the database (so that we can test functions which
     call it, like :func:`bridgedb.main.load`).
     """
-    for fingerprint, stamps in timestamps.items()[:]:
+    for fingerprint, stamps in timestamps.items():
         for timestamp in stamps:
             print("Pretending to update Bridge %s with timestamp %s..." %
                   (fingerprint, timestamp))
@@ -323,7 +323,7 @@ class BridgedbTests(unittest.TestCase):
         # a MoatDistributor ring, and an UnallocatedHolder ring:
         self.assertEqual(len(hashring.ringsByName.keys()), 4)
         self.assertGreater(len(httpsDist.proxies), 0)
-        self.assertItemsEqual(exitRelays, httpsDist.proxies)
+        self.assertCountEqual(exitRelays, httpsDist.proxies)
 
     def test_main_createBridgeRings_no_https_dist(self):
         """When HTTPS_DIST=False, main.createBridgeRings() should add only

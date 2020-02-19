@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 #
 # This file is part of BridgeDB, a Tor bridge distribution system.
 
@@ -6,7 +6,7 @@ import os
 import random
 import sys
 import time
-import ipaddr
+import ipaddress
 import math
 import argparse
 import hashlib
@@ -117,22 +117,18 @@ def get_hex_string(size):
     return hexstr
 
 
-def get_random_ipv6_addr():
+def get_random_addr(ip_version=4):
     valid_addr = None
     while not valid_addr:
-        maybe = ipaddr.IPv6Address(random.getrandbits(128))
+        if ip_version == 4:
+            maybe = ipaddress.IPv4Address(random.getrandbits(32))
+        else:
+            maybe = ipaddress.IPv6Address(random.getrandbits(128))
         valid = check_ip_validity(maybe)
         if valid:
             valid_addr = maybe
             break
     return str(valid_addr)
-
-
-def get_random_ipv4_addr():
-    return "%i.%i.%i.%i" % (random.randint(0, 255),
-                            random.randint(0, 255),
-                            random.randint(0, 255),
-                            random.randint(0, 255))
 
 
 def get_protocol(tor_version):
@@ -198,8 +194,8 @@ def create_server_desc(signing_key):
     timestamp = make_timestamp(variation=True, period=36)
 
     server_desc = RelayDescriptor.create({
-        "router": "%s %s %s 0 0" % (nickname, get_random_ipv4_addr(), port),
-        "or-address": "[%s]:%s" % (get_random_ipv6_addr(), port-1),
+        "router": "%s %s %s 0 0" % (nickname, get_random_addr(ip_version=4), port),
+        "or-address": "[%s]:%s" % (get_random_addr(ip_version=6), port-1),
         "platform": "Tor %s on Linux" % tor_version,
         get_protocol(tor_version): "",
         "published": timestamp,

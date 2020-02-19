@@ -128,6 +128,11 @@ class State(jelly.Jellyable):
 
         :param string statefile: The filename of the statefile.
         """
+
+        if filename is None:
+          self._statefile = None
+          return
+
         filename = os.path.abspath(os.path.expanduser(filename))
         logging.debug("Setting statefile to '%s'" % filename)
         self._statefile = filename
@@ -173,8 +178,8 @@ class State(jelly.Jellyable):
         err = ''
 
         try:
-            if isinstance(statefile, basestring):
-                fh = open(statefile, 'r')
+            if isinstance(statefile, (str, bytes)):
+                fh = open(statefile, 'rb')
             elif not statefile.closed:
                 fh = statefile
         except (IOError, OSError) as error:  # pragma: no cover
@@ -183,7 +188,7 @@ class State(jelly.Jellyable):
         except (AttributeError, TypeError) as error:
             err += "Failed statefile.open() and statefile.closed:"
             err += "\n\t{0}\nstatefile type = '{1}'".format(
-                error.message, type(statefile))
+                error, type(statefile))
         else:
             try:
                 status = pickle.load(fh)
@@ -209,7 +214,7 @@ class State(jelly.Jellyable):
 
         fh = None
         try:
-            fh = open(statefile, 'w')
+            fh = open(statefile, 'wb')
         except (IOError, OSError) as error:  # pragma: no cover
             logging.warn("Error writing state file to '%s': %s"
                          % (statefile, error))
@@ -218,7 +223,7 @@ class State(jelly.Jellyable):
                 pickle.dump(jelly.jelly(self), fh)
             except AttributeError as error:
                 logging.debug("Tried jellying an unjelliable object: %s"
-                              % error.message)
+                              % error)
 
         if fh is not None:
             fh.flush()

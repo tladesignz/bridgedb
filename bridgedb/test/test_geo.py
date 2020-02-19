@@ -50,7 +50,7 @@ class GeoTests(unittest.TestCase):
         """Should return the CC since the IP is an ``ipaddr.IPAddress``."""
         cc = geo.getCountryCode(self.ipv4)
         self.assertIsNotNone(cc)
-        self.assertIsInstance(cc, basestring)
+        self.assertIsInstance(cc, str)
         self.assertEqual(len(cc), 2)
         self.assertEqual(cc, self.expectedCC)
 
@@ -77,7 +77,7 @@ class GeoTests(unittest.TestCase):
         """Should return the CC since the IP is an ``ipaddr.IPAddress``."""
         cc = geo.getCountryCode(self.ipv6)
         self.assertIsNotNone(cc)
-        self.assertIsInstance(cc, basestring)
+        self.assertIsInstance(cc, str)
         self.assertEqual(len(cc), 2)
         self.assertEqual(cc, self.expectedCC)
 

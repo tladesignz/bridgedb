@@ -140,7 +140,7 @@ class MiscellaneousTests(unittest.TestCase):
         """
         server.setSupportedTransports(self.config.SUPPORTED_TRANSPORTS)
 
-        self.assertItemsEqual(server.getSupportedTransports(),
+        self.assertCountEqual(server.getSupportedTransports(),
                               ["obfs4", "obfs3", "scramblesuit", "fte", "vanilla"])
 
 
@@ -553,7 +553,7 @@ class CaptchaFetchResourceTests(unittest.TestCase):
     def test_getPreferredTransports_unknown_transport(self):
         preferred = self.resource.getPreferredTransports(['dinosaur'])
 
-        self.assertItemsEqual(preferred,
+        self.assertCountEqual(preferred,
                               ['obfs4', 'obfs3', 'fte', 'scramblesuit', 'vanilla'])
 
     def assert_data_is_ok(self, decoded):
@@ -884,7 +884,7 @@ class CaptchaCheckResourceTests(unittest.TestCase):
 
         response = self.resource.failureResponse(6, request, bridgeRequest)
 
-        self.assertIn("No bridges available", response)
+        self.assertIn(b"No bridges available", response)
 
     def test_render_POST_no_bridges(self):
         self.mock_getBridgeLines()
@@ -892,7 +892,7 @@ class CaptchaCheckResourceTests(unittest.TestCase):
         request = self.create_valid_POST_make_new_challenge()
         response = self.resource.render(request)
 
-        self.assertIn("No bridges available", response)
+        self.assertIn(b"No bridges available", response)
 
     def test_render_POST_unexpired(self):
         request = self.create_valid_POST_make_new_challenge()

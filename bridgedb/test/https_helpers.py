@@ -50,7 +50,7 @@ CSP_ENABLED = True
 CSP_REPORT_ONLY = True
 CSP_INCLUDE_SELF = True
 
-TEST_CONFIG_FILE = io.StringIO(unicode("""\
+TEST_CONFIG_FILE = io.StringIO("""\
 SERVER_PUBLIC_FQDN = %r
 SERVER_PUBLIC_EXTERNAL_IP = %r
 HTTPS_DIST = %r
@@ -100,14 +100,14 @@ CSP_INCLUDE_SELF = %r
        GIMP_CAPTCHA_RSA_KEYFILE,
        CSP_ENABLED,
        CSP_REPORT_ONLY,
-       CSP_INCLUDE_SELF)))
+       CSP_INCLUDE_SELF))
 
 
 def _createConfig(configFile=TEST_CONFIG_FILE):
     configuration = {}
     TEST_CONFIG_FILE.seek(0)
     compiled = compile(configFile.read(), '<string>', 'exec')
-    exec compiled in configuration
+    exec(compiled, configuration)
     config = Conf(**configuration)
     return config
 

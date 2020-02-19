@@ -18,6 +18,7 @@ import logging
 import logging.config
 import logging.handlers
 import os
+import re
 import time
 
 from twisted.python import components
@@ -260,17 +261,15 @@ def replaceControlChars(text, replacement=None, encoding="utf-8"):
     :rtype: str
     :returns: The sanitized **text**.
     """
-    escaped = bytearray()
 
-    for byte in bytearray(text, encoding):
-        if byte in range(0, 32) + [92, 127]:
-            if replacement:
-                byte = replacement
-            else:
-                continue
-        escaped += bytearray([byte])
+    if replacement is None:
+        replacement = ''
 
-    return str(escaped)
+    # the following replaces characters 0-31, 92, and 127
+
+    text = text.decode(encoding) if isinstance(text, bytes) else text
+    return re.sub(r'[\x00-\x1f\x5c\x7f]', '', text)
+
 
 def registerAdapter(adapter, adapted, interface):
     """Register a Zope interface adapter for global use.
@@ -308,7 +307,6 @@ class JustifiedLogFormatter(logging.Formatter):
         :param bool logTrace: If ``True``, include information on the calling
             function in formatted log messages.
         """
-        super(JustifiedLogFormatter, self).__init__(datefmt=datefmt)
         self.logThreads = logThreads
         self.logTrace = logTrace
 
@@ -318,7 +316,7 @@ class JustifiedLogFormatter(logging.Formatter):
         _fmt.append("%(callingFunc)s")
         _fmt.append("%(message)s")
 
-        self._fmt = " ".join(_fmt)
+        super(JustifiedLogFormatter, self).__init__(fmt = " ".join(_fmt), datefmt=datefmt)
 
     def _formatCallingFuncName(self, record):
         """Format the combined module name and function name of the place where
@@ -360,7 +358,7 @@ class JustifiedLogFormatter(logging.Formatter):
         return super(JustifiedLogFormatter, self).format(record)
 
 
-class mixin:
+class mixin(metaclass=abc.ABCMeta):
     """Subclasses of me can be used as a mixin class by registering another
     class, ``ClassA``, which should be mixed with the ``mixin`` subclass, in
     order to provide simple, less error-prone, multiple inheritance models::
@@ -407,4 +405,3 @@ class mixin:
     .. info:: This class' name is lowercased because pylint is hardcoded to
         expect mixin classes to end in ``'mixin'``.
     """
-    __metaclass__ = abc.ABCMeta

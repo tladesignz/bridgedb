@@ -17,9 +17,9 @@ import logging
 import os
 import shutil
 
-import ipaddr
+import ipaddress
 
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 from twisted.internet import reactor
 from twisted.internet import task
@@ -27,7 +27,7 @@ from twisted.trial import unittest
 from twisted.web.resource import Resource
 from twisted.web.test import requesthelper
 
-from bridgedb import translations
+from bridgedb import _langs, translations
 from bridgedb.distributors.https import server
 from bridgedb.schedule import ScheduledInterval
 
@@ -70,8 +70,8 @@ class ReplaceErrorPageTests(unittest.TestCase):
         request = DummyRequest([''])
         exc = Exception("vegan gümmibären")
         errorPage = server.replaceErrorPage(request, exc)
-        self.assertSubstring("Bad News Bears", errorPage)
-        self.assertNotSubstring("vegan gümmibären", errorPage)
+        self.assertSubstring(b"Bad News Bears", errorPage)
+        self.assertNotSubstring("vegan gümmibären".encode("utf-8"), errorPage)
 
     def test_replaceErrorPage_matches_resource500(self):
         """``replaceErrorPage`` should return the error-500.html page."""
@@ -89,9 +89,9 @@ class ReplaceErrorPageTests(unittest.TestCase):
         exc = Exception("vegan gümmibären")
         server.resource500 = None
         errorPage = server.replaceErrorPage(request, exc)
-        self.assertNotSubstring("Bad News Bears", errorPage)
-        self.assertNotSubstring("vegan gümmibären", errorPage)
-        self.assertSubstring("Sorry! Something went wrong with your request.",
+        self.assertNotSubstring(b"Bad News Bears", errorPage)
+        self.assertNotSubstring("vegan gümmibären".encode("utf-8"), errorPage)
+        self.assertSubstring(b"Sorry! Something went wrong with your request.",
                              errorPage)
 
 class ErrorResourceTests(unittest.TestCase):
@@ -103,17 +103,17 @@ class ErrorResourceTests(unittest.TestCase):
     def test_resource404(self):
         """``server.resource404`` should display the error-404.html page."""
         page = server.resource404.render(self.request)
-        self.assertSubstring('We dug around for the page you requested', page)
+        self.assertSubstring(b'We dug around for the page you requested', page)
 
     def test_resource500(self):
         """``server.resource500`` should display the error-500.html page."""
         page = server.resource500.render(self.request)
-        self.assertSubstring('Bad News Bears', page)
+        self.assertSubstring(b'Bad News Bears', page)
 
     def test_maintenance(self):
         """``server.maintenance`` should display the error-503.html page."""
         page = server.maintenance.render(self.request)
-        self.assertSubstring('Under Maintenance', page)
+        self.assertSubstring(b'Under Maintenance', page)
 
 
 class CustomErrorHandlingResourceTests(unittest.TestCase):
@@ -214,15 +214,19 @@ class IndexResourceTests(unittest.TestCase):
         request = DummyRequest([self.pagename])
         request.method = b'GET'
         page = self.indexResource.render_GET(request)
-        self.assertSubstring("add the bridges to Tor Browser", page)
+        self.assertSubstring(b"add the bridges to Tor Browser", page)
 
     def test_IndexResource_render_GET_lang_ta(self):
         """renderGet() with ?lang=ta should return the index page in Tamil."""
+
+        if 'ta' not in _langs.get_langs():
+            self.skipTest("'ta' language unsupported")
+
         request = DummyRequest([self.pagename])
         request.method = b'GET'
-        request.addArg('lang', 'ta')
+        request.addArg(b'lang', 'ta')
         page = self.indexResource.render_GET(request)
-        self.assertSubstring("bridge-களை Tor Browser-உள்", page)
+        self.assertSubstring("bridge-களை Tor Browser-உள்".encode("utf-8"), page)
 
 
 class HowtoResourceTests(unittest.TestCase):
@@ -239,15 +243,19 @@ class HowtoResourceTests(unittest.TestCase):
         request = DummyRequest([self.pagename])
         request.method = b'GET'
         page = self.howtoResource.render_GET(request)
-        self.assertSubstring("the wizard", page)
+        self.assertSubstring(b"the wizard", page)
 
     def test_HowtoResource_render_GET_lang_ru(self):
         """renderGet() with ?lang=ru should return the howto page in Russian."""
+
+        if 'ru' not in _langs.get_langs():
+            self.skipTest("'ru' language unsupported")
+
         request = DummyRequest([self.pagename])
         request.method = b'GET'
-        request.addArg('lang', 'ru')
+        request.addArg(b'lang', 'ru')
         page = self.howtoResource.render_GET(request)
-        self.assertSubstring("следовать инструкциям установщика", page)
+        self.assertSubstring("следовать инструкциям установщика".encode("utf-8"), page)
 
 
 class CaptchaProtectedResourceTests(unittest.TestCase):
@@ -271,7 +279,7 @@ class CaptchaProtectedResourceTests(unittest.TestCase):
         request.method = b'GET'
         page = self.captchaResource.render_GET(request)
         self.assertSubstring(
-            "Your browser is not displaying images properly", page)
+            b"Your browser is not displaying images properly", page)
 
     def test_render_GET_missingTemplate(self):
         """render_GET() with a missing template should raise an error and
@@ -329,7 +337,7 @@ class CaptchaProtectedResourceTests(unittest.TestCase):
         request = DummyRequest([self.pagename])
         request.method = b'POST'
         page = self.captchaResource.render_POST(request)
-        self.assertEqual(BeautifulSoup(page).find('meta')['http-equiv'],
+        self.assertEqual(BeautifulSoup(page, features="html5lib").find('meta')['http-equiv'],
                          'refresh')
 
 
@@ -454,7 +462,7 @@ class GimpCaptchaProtectedResourceTests(unittest.TestCase):
         self.request.addArg('captcha_response_field', '')
 
         page = self.captchaResource.render_POST(self.request)
-        self.assertEqual(BeautifulSoup(page).find('meta')['http-equiv'],
+        self.assertEqual(BeautifulSoup(page, features="html5lib").find('meta')['http-equiv'],
                          'refresh')
 
     def test_render_POST_wrongSolution(self):
@@ -469,7 +477,7 @@ class GimpCaptchaProtectedResourceTests(unittest.TestCase):
         self.request.addArg('captcha_response_field', expectedResponse)
 
         page = self.captchaResource.render_POST(self.request)
-        self.assertEqual(BeautifulSoup(page).find('meta')['http-equiv'],
+        self.assertEqual(BeautifulSoup(page, features="html5lib").find('meta')['http-equiv'],
                          'refresh')
 
 
@@ -522,7 +530,7 @@ class ReCaptchaProtectedResourceTests(unittest.TestCase):
         def testCB(request):
             """Check the ``Request`` returned from ``_renderDeferred``."""
             self.assertIsInstance(request, DummyRequest)
-            soup = BeautifulSoup(b''.join(request.written)).find('meta')['http-equiv']
+            soup = BeautifulSoup(b''.join(request.written), features="html5lib").find(b'meta')['http-equiv']
             self.assertEqual(soup, 'refresh')
 
         d = task.deferLater(reactor, 0, lambda x: x, (False, self.request))
@@ -541,7 +549,7 @@ class ReCaptchaProtectedResourceTests(unittest.TestCase):
             """Check the ``Request`` returned from ``_renderDeferred``."""
             self.assertIsInstance(request, DummyRequest)
             html = b''.join(request.written)
-            self.assertSubstring('Uh oh, spaghettios!', html)
+            self.assertSubstring(b'Uh oh, spaghettios!', html)
 
         d = task.deferLater(reactor, 0, lambda x: x, (True, self.request))
         d.addCallback(self.captchaResource._renderDeferred)
@@ -580,14 +588,14 @@ class ReCaptchaProtectedResourceTests(unittest.TestCase):
         """Check that removing our remoteip setting produces a random IP."""
         self.captchaResource.remoteIP = None
         ip = self.captchaResource.getRemoteIP()
-        realishIP = ipaddr.IPv4Address(ip).compressed
+        realishIP = ipaddress.IPv4Address(ip).compressed
         self.assertTrue(realishIP)
         self.assertNotEquals(realishIP, '111.111.111.111')
 
     def test_getRemoteIP_useConfiguredIP(self):
         """Check that our remoteip setting is used if configured."""
         ip = self.captchaResource.getRemoteIP()
-        realishIP = ipaddr.IPv4Address(ip).compressed
+        realishIP = ipaddress.IPv4Address(ip).compressed
         self.assertTrue(realishIP)
         self.assertEquals(realishIP, '111.111.111.111')
 
@@ -666,9 +674,9 @@ class BridgesResourceTests(unittest.TestCase):
         :returns: A list of the bridge lines contained on the **page**.
         """
         # The bridge lines are contained in a <div class='bridges'> tag:
-        soup = BeautifulSoup(page)
+        soup = BeautifulSoup(page, features="html5lib")
         well = soup.find('div', {'class': 'bridge-lines'})
-        content = well.renderContents().strip()
+        content = well.renderContents().decode('utf-8').strip()
         lines = content.splitlines()
 
         bridges = []
@@ -766,7 +774,7 @@ class BridgesResourceTests(unittest.TestCase):
 
             # Check that the IP and port seem okay:
             ip, port = fields[0].rsplit(':')
-            self.assertIsInstance(ipaddr.IPv4Address(ip), ipaddr.IPv4Address)
+            self.assertIsInstance(ipaddress.ip_address(ip), ipaddress.IPv4Address)
             self.assertIsInstance(int(port), int)
             self.assertGreater(int(port), 0)
             self.assertLessEqual(int(port), 65535)
@@ -794,6 +802,10 @@ class BridgesResourceTests(unittest.TestCase):
 
     def test_render_GET_RTLlang(self):
         """Test rendering a request for plain bridges in Arabic."""
+
+        if 'ar' not in _langs.get_langs():
+            self.skipTest("'ar' language unsupported")
+
         self.useBenignBridges()
 
         request = DummyRequest([b"bridges?transport=obfs3"])
@@ -804,10 +816,10 @@ class BridgesResourceTests(unittest.TestCase):
         request.headers.update({'accept-language': 'ar,en,en_US,'})
 
         page = self.bridgesResource.render(request)
-        self.assertSubstring("rtl.css", page)
+        self.assertSubstring(b"rtl.css", page)
         self.assertSubstring(
             # "I need an alternative way to get bridges!"
-            "أحتاج إلى وسيلة بديلة للحصول على bridges", page)
+            "أحتاج إلى وسيلة بديلة للحصول على bridges".encode("utf-8"), page)
 
         for bridgeLine in self.parseBridgesFromHTMLPage(page):
             # Check that each bridge line had the expected number of fields:
@@ -816,6 +828,10 @@ class BridgesResourceTests(unittest.TestCase):
 
     def test_render_GET_RTLlang_obfs3(self):
         """Test rendering a request for obfs3 bridges in Farsi."""
+
+        if 'fa' not in _langs.get_langs():
+            self.skipTest("'ar' language unsupported")
+
         self.useBenignBridges()
 
         request = DummyRequest([b"bridges?transport=obfs3"])
@@ -827,12 +843,12 @@ class BridgesResourceTests(unittest.TestCase):
         request.args.update({'transport': ['obfs3']})
 
         page = self.bridgesResource.render(request)
-        self.assertSubstring("rtl.css", page)
+        self.assertSubstring(b"rtl.css", page)
         self.assertSubstring(
             # "How to use the above bridge lines" (since there should be
             # bridges in this response, we don't tell them about alternative
             # mechanisms for getting bridges)
-            "چگونگی از پل‌های خود استفاده کنید", page)
+            "چگونگی از پل‌های خود استفاده کنید".encode("utf-8"), page)
 
         for bridgeLine in self.parseBridgesFromHTMLPage(page):
             # Check that each bridge line had the expected number of fields:
@@ -842,7 +858,7 @@ class BridgesResourceTests(unittest.TestCase):
 
             # Check that the IP and port seem okay:
             ip, port = bridgeLine[1].rsplit(':')
-            self.assertIsInstance(ipaddr.IPv4Address(ip), ipaddr.IPv4Address)
+            self.assertIsInstance(ipaddress.ip_address(ip), ipaddress.IPv4Address)
             self.assertIsInstance(int(port), int)
             self.assertGreater(int(port), 0)
             self.assertLessEqual(int(port), 65535)
@@ -868,15 +884,15 @@ class BridgesResourceTests(unittest.TestCase):
         #
         # (Yes, there are two leading spaces at the beginning of each line)
         #
-        bridgeLines = [line.strip() for line in page.strip().split('\n')]
+        bridgeLines = [line.strip() for line in page.strip().split(b'\n')]
 
         for bridgeLine in bridgeLines:
-            bridgeLine = bridgeLine.split(' ')
+            bridgeLine = bridgeLine.split(b' ')
             self.assertEqual(len(bridgeLine), 2)
 
             # Check that the IP and port seem okay:
-            ip, port = bridgeLine[0].rsplit(':')
-            self.assertIsInstance(ipaddr.IPv4Address(ip), ipaddr.IPv4Address)
+            ip, port = bridgeLine[0].rsplit(b':')
+            self.assertIsInstance(ipaddress.ip_address(ip.decode("utf-8")), ipaddress.IPv4Address)
             self.assertIsInstance(int(port), int)
             self.assertGreater(int(port), 0)
             self.assertLessEqual(int(port), 65535)
@@ -897,8 +913,8 @@ class BridgesResourceTests(unittest.TestCase):
         page = self.bridgesResource.renderAnswer(request, bridgeLines=None)
 
         # We don't want the fancy version:
-        self.assertNotSubstring("Bad News Bears", page)
-        self.assertSubstring("Sorry! Something went wrong with your request.",
+        self.assertNotSubstring(b"Bad News Bears", page)
+        self.assertSubstring(b"Sorry! Something went wrong with your request.",
                              page)
 
 
@@ -915,6 +931,10 @@ class OptionsResourceTests(unittest.TestCase):
 
     def test_render_GET_RTLlang(self):
         """Test rendering a request for obfs3 bridges in Hebrew."""
+
+        if 'he' not in _langs.get_langs():
+            self.skipTest("'ar' language unsupported")
+
         request = DummyRequest(["bridges?transport=obfs3"])
         request.method = b'GET'
         request.getClientIP = lambda: '3.3.3.3'
@@ -924,8 +944,8 @@ class OptionsResourceTests(unittest.TestCase):
         request.args.update({'transport': ['obfs2']})
 
         page = self.optionsResource.render(request)
-        self.assertSubstring("rtl.css", page)
-        self.assertSubstring("מהם גשרים?", page)
+        self.assertSubstring(b"rtl.css", page)
+        self.assertSubstring("מהם גשרים?".encode("utf-8"), page)
 
 
 class HTTPSServerServiceTests(unittest.TestCase):

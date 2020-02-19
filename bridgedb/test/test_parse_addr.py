@@ -226,7 +226,7 @@ class ParseAddrIsIPAddressTests(unittest.TestCase):
         log.msg("addr.isIPAddress(%r) => %s" % (testAddress, result))
         self.assertTrue(result is not None,
                         "Got a None for testAddress: %r" % testAddress)
-        self.assertFalse(isinstance(result, basestring),
+        self.assertFalse(isinstance(result, str),
                         "Expected %r result from isIPAddress(%r): %r %r"
                         % (bool, testAddress, result, type(result)))
 
@@ -669,11 +669,11 @@ class PortListTest(unittest.TestCase):
         ports.
         """
         tooMany = addr.PortList.PORTSPEC_LEN + 1
-        ports = [self.getRandomPort() for x in xrange(tooMany)]
+        ports = [self.getRandomPort() for x in range(tooMany)]
         log.msg("Testing addr.PortList(%s))"
                 % ', '.join([type('')(port) for port in ports]))
         portList = addr.PortList(*ports)
-        self.assertEqual(len(portList), tooMany)
+        self.assertEqual(len(portList), len(set(ports)))
 
     def test_invalidPortNumber(self):
         """Test creating a :class:`addr.PortList` with an invalid port.
@@ -699,8 +699,8 @@ class PortListTest(unittest.TestCase):
         ports = (443, 9001, 9030)
         portList = addr.PortList(*ports)
         iterator = iter(portList)
-        for x in xrange(len(ports)):
-            self.assertIn(iterator.next(), portList)
+        for x in range(len(ports)):
+            self.assertIn(next(iterator), portList)
 
     def test_str(self):
         """Test creating a :class:`addr.PortList` with valid ports.
@@ -709,7 +709,7 @@ class PortListTest(unittest.TestCase):
         """
         ports = (443, 9001, 9030)
         portList = addr.PortList(*ports)
-        self.assertTrue(isinstance(str(portList), basestring))
+        self.assertTrue(isinstance(str(portList), str))
         for port in ports:
             self.assertIn(str(port), str(portList))
 
@@ -735,7 +735,7 @@ class PortListTest(unittest.TestCase):
         """Test ``__getitem__`` with a string."""
         ports = (443, 9001, 9030)
         portList = addr.PortList(*ports)
-        self.assertEqual(portList.__getitem__(long(0)), 9001)
+        self.assertEqual(portList.__getitem__(0), 9001)
 
     def test_mixedArgs(self):
         """Create a :class:`addr.PortList` with mixed type parameters."""

@@ -41,17 +41,17 @@ from twisted.web import client
 from twisted.web.http_headers import Headers
 from twisted.web.iweb import IBodyProducer
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from bridgedb.crypto import SSLVerifyingContextFactory
 
 #: This was taken from :data:`recaptcha.client.captcha.API_SSL_SERVER`.
-API_SSL_SERVER = API_SERVER = "https://www.google.com/recaptcha/api"
-API_SSL_VERIFY_URL = "%s/verify" % API_SSL_SERVER
+API_SSL_SERVER = API_SERVER = b"https://www.google.com/recaptcha/api"
+API_SSL_VERIFY_URL = b"%s/verify" % API_SSL_SERVER
 
 #: (:class:`OpenSSL.crypto.X509`) Only trust certificate for the reCAPTCHA
 #: :data:`API_SSL_SERVER` which were signed by the Google Internet Authority CA.
-GOOGLE_INTERNET_AUTHORITY_CA_CERT = load_certificate(FILETYPE_PEM, bytes("""\
+GOOGLE_INTERNET_AUTHORITY_CA_CERT = load_certificate(FILETYPE_PEM, b"""\
 -----BEGIN CERTIFICATE-----
 MIICsDCCAhmgAwIBAgIDFXfhMA0GCSqGSIb3DQEBBQUAME4xCzAJBgNVBAYTAlVT
 MRAwDgYDVQQKEwdFcXVpZmF4MS0wKwYDVQQLEyRFcXVpZmF4IFNlY3VyZSBDZXJ0
@@ -68,7 +68,7 @@ Y3Jscy9zZWN1cmVjYS5jcmwwDQYJKoZIhvcNAQEFBQADgYEAvprjecFG+iJsxzEF
 ZUNgujFQodUovxOWZshcnDW7fZ7mTlk3zpeVJrGPZzhaDhvuJjIfKqHweFB7gwB+
 ARlIjNvrPq86fpVg0NOTawALkSqOUMl3MynBQO+spR7EHcRbADQ/JemfTEh2Ycfl
 vZqhEFBfurZkX0eTANq98ZvVfpg=
------END CERTIFICATE-----"""))
+-----END CERTIFICATE-----""")
 
 # `t.w.client.HTTPConnectionPool` isn't available in Twisted-12.0.0
 # (see ticket #11219: https://bugs.torproject.org/11219):
@@ -209,9 +209,9 @@ class RecaptchaResponseProtocol(protocol.Protocol):
         self.finished.callback(result)
 
 
+@implementer(IBodyProducer)
 class _BodyProducer(object):
     """I write a string into the HTML body of an open request."""
-    implements(IBodyProducer)
 
     def __init__(self, body):
         self.body = body
@@ -253,12 +253,6 @@ def _ebRequest(fail):
     error = fail.getErrorMessage() or "possible problem in _ebRequest()"
     return RecaptchaResponse(is_valid=False, error_code=error)
 
-def _encodeIfNecessary(string):
-    """Encode unicode objects in utf-8 if necessary."""
-    if isinstance(string, unicode):
-        return string.encode('utf-8')
-    return string
-
 def submit(recaptcha_challenge_field, recaptcha_response_field,
            private_key, remoteip, agent=_agent):
     """Submits a reCaptcha request for verification. This function is a patched
@@ -291,14 +285,15 @@ def submit(recaptcha_challenge_field, recaptcha_response_field,
         d.errback(failure.Failure(ValueError('incorrect-captcha-sol')))
         return d
 
-    params = urllib.urlencode({
-        'privatekey': _encodeIfNecessary(private_key),
-        'remoteip':   _encodeIfNecessary(remoteip),
-        'challenge':  _encodeIfNecessary(recaptcha_challenge_field),
-        'response':   _encodeIfNecessary(recaptcha_response_field)})
+    params = urllib.parse.urlencode({
+        'privatekey': private_key,
+        'remoteip':   remoteip,
+        'challenge':  recaptcha_challenge_field,
+        'response':   recaptcha_response_field,
+    }).encode('utf-8')
     body = _BodyProducer(params)
     headers = Headers({"Content-type": ["application/x-www-form-urlencoded"],
                        "User-agent": ["reCAPTCHA Python"]})
-    d = agent.request('POST', API_SSL_VERIFY_URL, headers, body)
+    d = agent.request(b'POST', API_SSL_VERIFY_URL, headers, body)
     d.addCallbacks(_cbRequest, _ebRequest)
     return d

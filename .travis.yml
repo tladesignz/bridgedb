@@ -16,7 +16,7 @@ notifications:
     on_failure: change
 
 python:
-  - "2.7"
+  - "3.7"
 
 addons:
   hosts:

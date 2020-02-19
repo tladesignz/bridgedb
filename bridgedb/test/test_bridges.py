@@ -466,7 +466,7 @@ class BridgeAddressBaseTests(unittest.TestCase):
 
         cc = self.bab.country
         self.assertIsNotNone(cc)
-        self.assertIsInstance(cc, basestring)
+        self.assertIsInstance(cc, str)
         self.assertEqual(len(cc), 2)
 
 
@@ -506,7 +506,7 @@ class PluggableTransportTests(unittest.TestCase):
         args = pt._parseArgumentsIntoDict(["sharedsecret=foobar",
                                            "publickey=1234"])
         self.assertIsInstance(args, dict)
-        self.assertItemsEqual(args, {"sharedsecret": "foobar",
+        self.assertCountEqual(args, {"sharedsecret": "foobar",
                                      "publickey": "1234"})
 
     def test_PluggableTransport_parseArgumentsIntoDict_valid_list_multi(self):
@@ -517,7 +517,7 @@ class PluggableTransportTests(unittest.TestCase):
         args = pt._parseArgumentsIntoDict(["sharedsecret=foobar,password=baz",
                                            "publickey=1234"])
         self.assertIsInstance(args, dict)
-        self.assertItemsEqual(args, {"sharedsecret": "foobar",
+        self.assertCountEqual(args, {"sharedsecret": "foobar",
                                      "password": "baz",
                                      "publickey": "1234"})
 
@@ -528,7 +528,7 @@ class PluggableTransportTests(unittest.TestCase):
         pt = bridges.PluggableTransport()
         args = pt._parseArgumentsIntoDict(
             ["sharedsecret=foobar,password,publickey=1234"])
-        self.assertItemsEqual(args, {"sharedsecret": "foobar",
+        self.assertCountEqual(args, {"sharedsecret": "foobar",
                                      "publickey": "1234"})
 
     def test_PluggableTransport_checkArguments_scramblesuit_missing_password(self):
@@ -848,10 +848,10 @@ class BridgeTests(unittest.TestCase):
             self._networkstatusFile)[0]
         self.serverdescriptor = descriptors.parseServerDescriptorsFile(
             self._serverDescriptorFile)[0]
-        self.extrainfo = descriptors.parseExtraInfoFiles(
-            self._extrainfoFile).values()[0]
-        self.extrainfoNew = descriptors.parseExtraInfoFiles(
-            self._extrainfoNewFile).values()[0]
+        self.extrainfo = list(descriptors.parseExtraInfoFiles(
+            self._extrainfoFile).values())[0]
+        self.extrainfoNew = list(descriptors.parseExtraInfoFiles(
+            self._extrainfoNewFile).values())[0]
 
     def _writeNetworkstatus(self, networkstatus):
         with open(self._networkstatusFile, 'w') as fh:
@@ -970,7 +970,7 @@ class BridgeTests(unittest.TestCase):
         self.assertEqual(
             identifier,
             ''.join(['$$',
-                     hashlib.sha1(bridge.fingerprint).hexdigest().upper(),
+                     hashlib.sha1(bridge.fingerprint.encode('utf-8')).hexdigest().upper(),
                      '~', bridge.nickname]))
 
     def test_Bridge_str_without_fingerprint(self):
@@ -1013,11 +1013,11 @@ class BridgeTests(unittest.TestCase):
         """
         self.bridge.address = '1.1.1.1'
         self.bridge.orPort = 443
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(ipaddr.IPv4Address('1.1.1.1'), 443, 4)])
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(ipaddr.IPv4Address('1.1.1.1'), 443, 4)])
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(ipaddr.IPv4Address('1.1.1.1'), 443, 4)])
 
     def test_Bridge_allVanillaAddresses_idempotency_others(self):
@@ -1027,17 +1027,17 @@ class BridgeTests(unittest.TestCase):
         """
         self.bridge.address = '1.1.1.1'
         self.bridge.orPort = 443
-        self.assertItemsEqual(self.bridge.orAddresses, [])
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.orAddresses, [])
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(ipaddr.IPv4Address('1.1.1.1'), 443, 4)])
-        self.assertItemsEqual(self.bridge.orAddresses, [])
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.orAddresses, [])
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(ipaddr.IPv4Address('1.1.1.1'), 443, 4)])
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(ipaddr.IPv4Address('1.1.1.1'), 443, 4)])
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(ipaddr.IPv4Address('1.1.1.1'), 443, 4)])
-        self.assertItemsEqual(self.bridge.orAddresses, [])
+        self.assertCountEqual(self.bridge.orAddresses, [])
 
     def test_Bridge_allVanillaAddresses_reentrancy_all(self):
         """Bridge.allVanillaAddresses should be reentrant, i.e. updating the
@@ -1045,34 +1045,34 @@ class BridgeTests(unittest.TestCase):
         returned by allVanillaAddresses.
         """
         self.bridge.address = '1.1.1.1'
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(ipaddr.IPv4Address('1.1.1.1'), None, 4)])
         self.assertEqual(self.bridge.address, ipaddr.IPv4Address('1.1.1.1'))
         self.assertEqual(self.bridge.orPort, None)
-        self.assertItemsEqual(self.bridge.orAddresses, [])
+        self.assertCountEqual(self.bridge.orAddresses, [])
 
         self.bridge.orPort = 443
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(ipaddr.IPv4Address('1.1.1.1'), 443, 4)])
         self.assertEqual(self.bridge.address, ipaddr.IPv4Address('1.1.1.1'))
         self.assertEqual(self.bridge.orPort, 443)
-        self.assertItemsEqual(self.bridge.orAddresses, [])
+        self.assertCountEqual(self.bridge.orAddresses, [])
 
         self.bridge.address = '2.2.2.2'
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(ipaddr.IPv4Address('2.2.2.2'), 443, 4)])
         self.assertEqual(self.bridge.address, ipaddr.IPv4Address('2.2.2.2'))
         self.assertEqual(self.bridge.orPort, 443)
-        self.assertItemsEqual(self.bridge.orAddresses, [])
+        self.assertCountEqual(self.bridge.orAddresses, [])
 
         self.bridge.orAddresses.append(
             (ipaddr.IPv6Address('200::6ffb:11bb:a129'), 4443, 6))
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(ipaddr.IPv4Address('2.2.2.2'), 443, 4),
                                (ipaddr.IPv6Address('200::6ffb:11bb:a129'), 4443, 6)])
         self.assertEqual(self.bridge.address, ipaddr.IPv4Address('2.2.2.2'))
         self.assertEqual(self.bridge.orPort, 443)
-        self.assertItemsEqual(self.bridge.orAddresses,
+        self.assertCountEqual(self.bridge.orAddresses,
                          [(ipaddr.IPv6Address('200::6ffb:11bb:a129'), 4443, 6)])
 
     def test_Bridge_allVanillaAddresses_reentrancy_orPort(self):
@@ -1081,15 +1081,15 @@ class BridgeTests(unittest.TestCase):
         set, it should return the orPort.
         """
         self.bridge.address = '1.1.1.1'
-        self.assertItemsEqual(self.bridge.orAddresses, [])
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.orAddresses, [])
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(ipaddr.IPv4Address('1.1.1.1'), None, 4)])
-        self.assertItemsEqual(self.bridge.orAddresses, [])
+        self.assertCountEqual(self.bridge.orAddresses, [])
 
         self.bridge.orPort = 443
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(ipaddr.IPv4Address('1.1.1.1'), 443, 4)])
-        self.assertItemsEqual(self.bridge.orAddresses, [])
+        self.assertCountEqual(self.bridge.orAddresses, [])
 
     def test_Bridge_allVanillaAddresses_reentrancy_address(self):
         """Calling Bridge.allVanillaAddresses before Bridge.address is set
@@ -1097,10 +1097,10 @@ class BridgeTests(unittest.TestCase):
         is set, it should return the address.
         """
         self.bridge.orPort = 443
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(None, 443, 4)])
         self.bridge.address = '1.1.1.1'
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(ipaddr.IPv4Address('1.1.1.1'), 443, 4)])
 
     def test_Bridge_allVanillaAddresses_reentrancy_orAddresses(self):
@@ -1109,14 +1109,14 @@ class BridgeTests(unittest.TestCase):
         """
         self.bridge.address = '1.1.1.1'
         self.bridge.orPort = 443
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(ipaddr.IPv4Address('1.1.1.1'), 443, 4)])
-        self.assertItemsEqual(self.bridge.orAddresses, [])
+        self.assertCountEqual(self.bridge.orAddresses, [])
         self.bridge.orAddresses.append(
             (ipaddr.IPv4Address('2.2.2.2'), 4443, 4))
-        self.assertItemsEqual(self.bridge.orAddresses,
+        self.assertCountEqual(self.bridge.orAddresses,
                               [(ipaddr.IPv4Address('2.2.2.2'), 4443, 4)])
-        self.assertItemsEqual(self.bridge.allVanillaAddresses,
+        self.assertCountEqual(self.bridge.allVanillaAddresses,
                               [(ipaddr.IPv4Address('2.2.2.2'), 4443, 4),
                                (ipaddr.IPv4Address('1.1.1.1'), 443, 4)])
 

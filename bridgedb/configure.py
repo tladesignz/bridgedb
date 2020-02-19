@@ -82,7 +82,7 @@ def loadConfig(configFile=None, configCls=None):
         if itsSafeToUseLogging:
             logging.info("Loading settings from config file: '%s'" % conffile)
         compiled = compile(open(conffile).read(), '<string>', 'exec')
-        exec compiled in configuration
+        exec(compiled, configuration)
 
     if itsSafeToUseLogging:
         logging.debug("New configuration settings:")

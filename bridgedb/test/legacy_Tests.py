@@ -61,17 +61,17 @@ def fakeBridge(orport=8080, running=True, stable=True, or_addresses=False,
         transports=False):
     ip = randomIPv4()
     nn = "bridge-%s" % int(ip)
-    fp = "".join([random.choice("0123456789ABCDEF") for _ in xrange(40)])
+    fp = "".join([random.choice("0123456789ABCDEF") for _ in range(40)])
     b = bridgedb.Bridges.Bridge(nn,ip,orport,fingerprint=fp)
     b.setStatus(running, stable)
 
     oraddrs = []
     if or_addresses:
-        for i in xrange(8):
+        for i in range(8):
             b.orAddresses.append((randomValidIPv6(), randomPort(), 6))
 
     if transports:
-        for i in xrange(0,8):
+        for i in range(0,8):
             b.transports.append(bridgedb.Bridges.PluggableTransport(b,
                 random.choice(["obfs", "obfs2", "pt1"]),
                 randomIP(), randomPort()))
@@ -81,17 +81,17 @@ def fakeBridge6(orport=8080, running=True, stable=True, or_addresses=False,
         transports=False):
     ip = randomIPv6()
     nn = "bridge-%s" % int(ip)
-    fp = "".join([random.choice("0123456789ABCDEF") for _ in xrange(40)])
+    fp = "".join([random.choice("0123456789ABCDEF") for _ in range(40)])
     b = bridgedb.Bridges.Bridge(nn,ip,orport,fingerprint=fp)
     b.setStatus(running, stable)
 
     oraddrs = []
     if or_addresses:
-        for i in xrange(8):
+        for i in range(8):
             b.orAddresses.append((randomValidIPv6(), randomPort(), 6))
 
     if transports:
-        for i in xrange(0,8):
+        for i in range(0,8):
             b.transports.append(bridgedb.Bridges.PluggableTransport(b,
                 random.choice(["obfs", "obfs2", "pt1"]),
                 randomIP(), randomPort()))
@@ -226,10 +226,10 @@ class BridgeStabilityTests(unittest.TestCase):
         db = self.db
         b = random.choice([fakeBridge,fakeBridge6])()
         def timestampSeries(x):
-            for i in xrange(61):
+            for i in range(61):
                 yield (i+1)*60*30 + x # 30 minute intervals
         now = time.time()
-        time_on_address = long(60*30*60) # 30 hours
+        time_on_address = 60*30*60 # 30 hours
         downtime = 60*60*random.randint(0,4) # random hours of downtime
 
         for t in timestampSeries(now):
@@ -244,22 +244,22 @@ class BridgeStabilityTests(unittest.TestCase):
 
     def testLastSeenWithDifferentAddressAndPort(self):
         db = self.db
-        for i in xrange(10):
+        for i in range(10):
             num_desc = 30
             time_start = time.time()
-            ts = [ 60*30*(i+1) + time_start for i in xrange(num_desc) ]
+            ts = [ 60*30*(i+1) + time_start for i in range(num_desc) ]
             b = random.choice([fakeBridge(), fakeBridge6()])
             [ bridgedb.Stability.addOrUpdateBridgeHistory(b, t) for t in ts ]
 
             # change the port
             b.orport = b.orport+1
             last_seen = ts[-1]
-            ts = [ 60*30*(i+1) + last_seen for i in xrange(num_desc) ]
+            ts = [ 60*30*(i+1) + last_seen for i in range(num_desc) ]
             [ bridgedb.Stability.addOrUpdateBridgeHistory(b, t) for t in ts ]
             b = db.getBridgeHistory(b.fingerprint)
             assert b.tosa == ts[-1] - last_seen
-            assert (long(last_seen*1000) == b.lastSeenWithDifferentAddressAndPort)
-            assert (long(ts[-1]*1000) == b.lastSeenWithThisAddressAndPort)
+            assert (last_seen*1000 == b.lastSeenWithDifferentAddressAndPort)
+            assert (ts[-1]*1000 == b.lastSeenWithThisAddressAndPort)
 
     def testFamiliar(self):
         # create some bridges
@@ -267,11 +267,11 @@ class BridgeStabilityTests(unittest.TestCase):
         num_bridges = 10
         num_desc = 4*48 # 30m intervals, 48 per day
         time_start = time.time()
-        bridges = [ fakeBridge() for x in xrange(num_bridges) ]
+        bridges = [ fakeBridge() for x in range(num_bridges) ]
         t = time.time()
-        ts = [ (i+1)*60*30+t for i in xrange(num_bridges) ]
+        ts = [ (i+1)*60*30+t for i in range(num_bridges) ]
         for b in bridges:
-            time_series = [ 60*30*(i+1) + time_start for i in xrange(num_desc) ]
+            time_series = [ 60*30*(i+1) + time_start for i in range(num_desc) ]
             [ bridgedb.Stability.addOrUpdateBridgeHistory(b, i) for i in time_series ]
         assert None not in bridges
         # +1 to avoid rounding errors
@@ -288,7 +288,7 @@ class BridgeStabilityTests(unittest.TestCase):
         num_bridges = 20
         time_start = time.time()
         bridges = [random.choice([fakeBridge, fakeBridge6])()
-                   for i in xrange(num_bridges)]
+                   for i in range(num_bridges)]
 
         # run some of the bridges for the full time series
         running = bridges[:num_bridges/2]
@@ -303,7 +303,7 @@ class BridgeStabilityTests(unittest.TestCase):
         # figure out how many intervals it will take for weightedUptime to
         # decay to < 1
         num_desc = int(30*log(1/float(num_successful*30*60))/(-0.05))
-        timeseries = [ 60*30*(i+1) + time_start for i in xrange(num_desc) ]
+        timeseries = [ 60*30*(i+1) + time_start for i in range(num_desc) ]
 
         for i in timeseries:
             for b in running:

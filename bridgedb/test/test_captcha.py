@@ -57,17 +57,17 @@ class ReCaptchaTests(unittest.TestCase):
     def test_get(self):
         """Test get() method."""
 
-        # Force urllib2 to do anything less idiotic than the defaults:
+        # Force urllib.request to do anything less idiotic than the defaults:
         envkey = 'HTTPS_PROXY'
         oldkey = None
-        if os.environ.has_key(envkey):
+        if envkey in os.environ:
             oldkey = os.environ[envkey]
         os.environ[envkey] = '127.0.0.1:9150'
         # This stupid thing searches the environment for ``<protocol>_PROXY``
         # variables, hence the above 'HTTPS_PROXY' env setting:
-        proxy = captcha.urllib2.ProxyHandler()
-        opener = captcha.urllib2.build_opener(proxy)
-        captcha.urllib2.install_opener(opener)
+        proxy = captcha.urllib.request.ProxyHandler()
+        opener = captcha.urllib.request.build_opener(proxy)
+        captcha.urllib.request.install_opener(opener)
 
         try:
             # There isn't really a reliable way to test this function! :(
@@ -77,8 +77,8 @@ class ReCaptchaTests(unittest.TestCase):
             reason += "connection.\nThis test failed with: %s" % error
             raise unittest.SkipTest(reason)
         else:
-            self.assertIsInstance(self.c.image, basestring)
-            self.assertIsInstance(self.c.challenge, basestring)
+            self.assertIsInstance(self.c.image, bytes)
+            self.assertIsInstance(self.c.challenge, str)
         finally:
             # Replace the original environment variable if there was one:
             if oldkey:
@@ -146,7 +146,7 @@ class GimpCaptchaTests(unittest.TestCase):
         c = captcha.GimpCaptcha(self.publik, self.sekrit, self.hmacKey,
                                 self.cacheDir)
         challenge = c.createChallenge('w00t')
-        self.assertIsInstance(challenge, basestring)
+        self.assertIsInstance(challenge, str)
 
     def test_createChallenge_base64(self):
         """createChallenge() return value should be urlsafe base64-encoded."""
@@ -179,18 +179,18 @@ class GimpCaptchaTests(unittest.TestCase):
         self.assertEqual(hmac, correctHMAC)
 
         decrypted = self.sekrit.decrypt(orig)
-        timestamp = int(decrypted[:12].lstrip('0'))
+        timestamp = int(decrypted[:12].lstrip(b'0'))
         # The timestamp should be within 30 seconds of right now.
         self.assertApproximates(timestamp, int(time.time()), 30)
-        self.assertEqual('ThisAnswerShouldDecryptToThis', decrypted[12:])
+        self.assertEqual(b'ThisAnswerShouldDecryptToThis', decrypted[12:])
 
     def test_get(self):
         """GimpCaptcha.get() should return image and challenge strings."""
         c = captcha.GimpCaptcha(self.publik, self.sekrit, self.hmacKey,
                                 self.cacheDir)
         image, challenge = c.get()
-        self.assertIsInstance(image, basestring)
-        self.assertIsInstance(challenge, basestring)
+        self.assertIsInstance(image, bytes)
+        self.assertIsInstance(challenge, str)
 
     def test_get_emptyCacheDir(self):
         """An empty cacheDir should raise GimpCaptchaError."""
@@ -207,7 +207,7 @@ class GimpCaptchaTests(unittest.TestCase):
         with open(badFile, 'w') as fh:
             fh.write(' ')
             fh.flush()
-        os.chmod(badFile, 0266)
+        os.chmod(badFile, 0o266)
 
         c = captcha.GimpCaptcha(self.publik, self.sekrit, self.hmacKey,
                                 self.badCacheDir)
@@ -291,7 +291,7 @@ class GimpCaptchaTests(unittest.TestCase):
         c = captcha.GimpCaptcha(self.publik, self.sekrit, self.hmacKey,
                                 self.cacheDir)
         image, challenge = c.get()
-        solution = unicode(c.answer)
+        solution = c.answer if isinstance(c.answer, str) else c.answer.decode('utf-8')
         self.assertEquals(
             c.check(challenge, solution, c.secretKey, c.hmacKey),
             True)

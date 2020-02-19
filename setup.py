@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #_____________________________________________________________________________
 #
 # This file is part of BridgeDB, a Tor bridge distribution system.

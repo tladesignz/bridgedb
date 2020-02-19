@@ -184,15 +184,12 @@ class Singleton(type):
             pass
 
 
-class Metrics(object):
+class Metrics(metaclass=Singleton):
     """Base class representing metrics.
 
     This class provides functionality that our three distribution mechanisms
     share.
     """
-
-    # We're using a meta class to implement a singleton for Metrics.
-    __metaclass__ = Singleton
 
     def __init__(self, binSize=BIN_SIZE):
         logging.debug("Instantiating metrics class.")
@@ -235,7 +232,7 @@ class Metrics(object):
         :returns: A list of metric lines.
         """
         lines = []
-        for key, value in self.coldMetrics.iteritems():
+        for key, value in self.coldMetrics.items():
             # Round up our value to the nearest multiple of self.binSize to
             # reduce the accuracy of our real values.
             if (value % self.binSize) > 0:
@@ -281,6 +278,9 @@ class Metrics(object):
         :returns: A key that uniquely identifies the given metrics
             combinations.
         """
+
+        if isinstance(countryOrProvider, bytes):
+            countryOrProvider = countryOrProvider.decode('utf-8')
 
         countryOrProvider = countryOrProvider.lower()
         bridgeType = bridgeType.lower()
@@ -403,7 +403,7 @@ class EmailMetrics(Metrics):
 
         logging.debug("Recording %svalid email request for %s from %s." %
                       ("" if success else "in", bridgeType, emailAddr))
-        sld = emailAddr.domain.split(".")[0]
+        sld = emailAddr.domain.split(b".")[0]
 
         # Now update our metrics.
         key = self.createKey(self.keyPrefix, bridgeType, sld, success,

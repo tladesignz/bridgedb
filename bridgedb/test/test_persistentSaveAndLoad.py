@@ -18,19 +18,19 @@ are all functioning as expected.
 This module should not import :mod:`sure`.
 """
 
+import io
 import os
 
 from copy import deepcopy
-from io    import StringIO
 
 from twisted.trial import unittest
 
 from bridgedb import persistent
 
 
-TEST_CONFIG_FILE = StringIO(unicode("""\
+TEST_CONFIG_FILE = io.StringIO("""\
 BRIDGE_FILES = ['bridge-descriptors', 'bridge-descriptors.new']
-LOGFILE = 'bridgedb.log'"""))
+LOGFILE = 'bridgedb.log'""")
 
 
 class StateSaveAndLoadTests(unittest.TestCase):
@@ -42,7 +42,7 @@ class StateSaveAndLoadTests(unittest.TestCase):
         configuration = {}
         TEST_CONFIG_FILE.seek(0)
         compiled = compile(TEST_CONFIG_FILE.read(), '<string>', 'exec')
-        exec compiled in configuration
+        exec(compiled, configuration)
         config = persistent.Conf(**configuration)
 
         self.config = config
@@ -57,10 +57,9 @@ class StateSaveAndLoadTests(unittest.TestCase):
         self.assertIsInstance(loadedState, persistent.State)
         self.assertNotIdentical(self.state, loadedState)
         self.assertNotEqual(self.state, loadedState)
-        # For some reason, twisted.trial.unittest.TestCase in Python2.6
-        # doesn't have an 'assertItemsEqual' attribute...
-        self.assertEqual(self.state.__dict__.keys().sort(),
-                         loadedState.__dict__.keys().sort())
+
+        self.assertEqual(list(self.state.__dict__.keys()).sort(),
+                         list(loadedState.__dict__.keys()).sort())
 
     def savedStateAssertions(self, savedStatefile=None):
         self.assertTrue(os.path.isfile(str(self.state.statefile)))
@@ -85,12 +84,12 @@ class StateSaveAndLoadTests(unittest.TestCase):
 
     def test_get_statefile(self):
         statefile = self.state._get_statefile()
-        self.assertIsInstance(statefile, basestring)
+        self.assertIsInstance(statefile, str)
 
     def test_set_statefile(self):
         self.state._set_statefile('bar.state')
         statefile = self.state._get_statefile()
-        self.assertIsInstance(statefile, basestring)
+        self.assertIsInstance(statefile, str)
 
     def test_set_statefile_new_dir(self):
         config = self.config
@@ -149,7 +148,7 @@ class StateSaveAndLoadTests(unittest.TestCase):
                           self.state.load, 'quux.state')
 
     def test_load_with_statefile_opened(self):
-        fh = open('quux.state', 'w+')
+        fh = open('quux.state', 'wb+')
         self.assertRaises(persistent.MissingState, self.state.load, fh)
         fh.close()
 

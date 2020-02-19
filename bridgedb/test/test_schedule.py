@@ -168,7 +168,7 @@ class ScheduledIntervalTests(unittest.TestCase):
         ts = sched.getInterval(now)
         self.assertIsInstance(ts, str)
         secs = [int(x) for x in ts.replace('-', ' ').replace(':', ' ').split()]
-        [secs.append(0) for _ in xrange(6-len(secs))]
+        [secs.append(0) for _ in range(6-len(secs))]
         secs = schedule.calendar.timegm(secs)
         self.assertApproximates(now, secs, variance)
 

@@ -15,7 +15,7 @@ These tests are meant to ensure that the :mod:`bridgedb.metrics` module is
 functioning as expected.
 """
 
-import StringIO
+import io
 import json
 import os
 
@@ -104,7 +104,7 @@ class StateTest(unittest.TestCase):
         self.metrix.inc(self.key)
 
         self.metrix.coldMetrics = self.metrix.hotMetrics
-        pseudo_fh = StringIO.StringIO()
+        pseudo_fh = io.StringIO()
         metrics.export(pseudo_fh, 0)
 
         self.assertTrue(len(pseudo_fh.getvalue()) > 0)

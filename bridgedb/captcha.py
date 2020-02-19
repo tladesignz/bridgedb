@@ -63,11 +63,10 @@ import logging
 import random
 import os
 import time
-import urllib2
+import urllib.request
 
-from BeautifulSoup import BeautifulSoup
-
-from zope.interface import Interface, Attribute, implements
+from bs4 import BeautifulSoup
+from zope.interface import Interface, Attribute, implementer
 
 from bridgedb import crypto
 from bridgedb import schedule
@@ -101,6 +100,7 @@ class ICaptcha(Interface):
         """Retrieve a new CAPTCHA image."""
 
 
+@implementer(ICaptcha)
 class Captcha(object):
     """A generic CAPTCHA base class.
 
@@ -117,7 +117,6 @@ class Captcha(object):
     :ivar secretKey: A private key used for decrypting challenge strings during
         CAPTCHA solution verification.
     """
-    implements(ICaptcha)
 
     def __init__(self, publicKey=None, secretKey=None):
         """Obtain a new CAPTCHA for a client."""
@@ -185,14 +184,14 @@ class ReCaptcha(Captcha):
         form = "/noscript?k=%s" % self.publicKey
 
         # Extract and store image from recaptcha
-        html = urllib2.urlopen(urlbase + form).read()
+        html = urllib.request.urlopen(urlbase + form).read()
         # FIXME: The remaining lines currently cannot be reliably unit tested:
         soup = BeautifulSoup(html)                           # pragma: no cover
         imgurl = urlbase + "/" +  soup.find('img')['src']    # pragma: no cover
         cField = soup.find(                                  # pragma: no cover
             'input', {'name': 'recaptcha_challenge_field'})  # pragma: no cover
         self.challenge = str(cField['value'])                # pragma: no cover
-        self.image = urllib2.urlopen(imgurl).read()          # pragma: no cover
+        self.image = urllib.request.urlopen(imgurl).read()   # pragma: no cover
 
 
 class GimpCaptcha(Captcha):
@@ -271,6 +270,10 @@ class GimpCaptcha(Captcha):
         :returns: ``True`` if the CAPTCHA solution was correct and not
             stale. ``False`` otherwise.
         """
+
+        if isinstance(solution, bytes):
+            solution = solution.decode('utf-8')
+
         hmacIsValid = False
 
         if not solution:
@@ -290,12 +293,12 @@ class GimpCaptcha(Captcha):
             if hmacIsValid:
                 try:
                     answerBlob = secretKey.decrypt(encBlob)
-                    timestamp = answerBlob[:12].lstrip('0')
+                    timestamp = answerBlob[:12].lstrip(b'0')
                     then = cls.sched.nextIntervalStarts(int(timestamp))
                     now = int(time.time())
-                    answer = answerBlob[12:]
+                    answer = answerBlob[12:].decode('utf-8')
                 except Exception as error:
-                    logging.warn(error.message)
+                    logging.warn(str(error))
                 else:
                     # If the beginning of the 'next' interval (the interval
                     # after the one when the CAPTCHA timestamp was created)
@@ -367,10 +370,10 @@ class GimpCaptcha(Captcha):
         """
         timestamp = str(int(time.time())).zfill(12)
         blob = timestamp + answer
-        encBlob = self.publicKey.encrypt(blob)
+        encBlob = self.publicKey.encrypt(blob.encode('utf-8'))
         hmac = crypto.getHMAC(self.hmacKey, encBlob)
         challenge = urlsafe_b64encode(hmac + encBlob)
-        return challenge
+        return challenge.decode("utf-8")
 
     def get(self):
         """Get a random CAPTCHA from the cache directory.
@@ -388,7 +391,7 @@ class GimpCaptcha(Captcha):
         try:
             imageFilename = random.choice(os.listdir(self.cacheDir))
             imagePath = os.path.join(self.cacheDir, imageFilename)
-            with open(imagePath) as imageFile:
+            with open(imagePath, 'rb') as imageFile:
                 self.image = imageFile.read()
         except IndexError:
             raise GimpCaptchaError("CAPTCHA cache dir appears empty: %r"
