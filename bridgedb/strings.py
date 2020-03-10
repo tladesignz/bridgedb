@@ -126,6 +126,47 @@ BRIDGES = {
     1: _("Get Bridges!"),
 }
 
+BRIDGEDB_INFO = {
+    0: _("Bridge distribution mechanisms"),
+    # TRANSLATORS: Please DO NOT translate "BridgeDB", "HTTPS", and "Moat".
+    1: _("""\
+BridgeDB implements four mechanisms to distribute bridges: "HTTPS", "Moat",
+"Email", and "Reserved".  Bridges that are not distributed over BridgeDB use
+the pseudo-mechanism "None".  The following list briefly explains how these
+mechanisms work and our %sBridgeDB metrics%s visualize how popular each of the
+mechanisms is."""),
+    2: _("""\
+The "HTTPS" distribution mechanism hands out bridges over this website.  To get
+bridges, go to %sbridges.torproject.org%s, select your preferred options, and
+solve the subsequent CAPTCHA."""),
+    3: _("""\
+The "Moat" distribution mechanism is part of Tor Browser, allowing users to
+request bridges from inside their Tor Browser settings.  To get bridges, go to
+your Tor Browser's %sTor settings%s, click on "request a new bridge", solve the
+subsequent CAPTCHA, and Tor Browser will automatically add your new
+bridges."""),
+    4: _("""\
+Users can request bridges from the "Email" distribution mechanism by sending an
+email to %sbridges@torproject.org%s and writing "get transport obfs4" in the
+email body."""),
+    5: _("Reserved"),
+    6: _("""\
+BridgeDB maintains a small number of bridges that are not distributed
+automatically.  Instead, we reserve these bridges for manual distribution and
+hand them out to NGOs and other organizations and individuals that need
+bridges.  Bridges that are distributed over the "Reserved" mechanism may not
+see users for a long time.  Note that the "Reserved" distribution mechanism is
+called "Unallocated" in %sbridge pool assignment%s files."""),
+    7: _("None"),
+    8: _("""\
+Bridges whose distribution mechanism is "None" are not distributed by BridgeDB.
+It is the bridge operator's responsibility to distribute their bridges to
+users.  Note that on Relay Search, a freshly set up bridge's distribution
+mechanism says "None" for up to approximately one day.  Be a bit patient, and
+it will then change to the bridge's actual distribution mechanism.
+"""),
+}
+
 OPTIONS = {
     0: _("Please select options for bridge type:"),
     1: _("Do you need IPv6 addresses?"),
