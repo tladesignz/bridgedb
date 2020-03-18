@@ -406,14 +406,14 @@ The client SHOULD direct all requests via the Meek reflector at ``MEEK_REFECTOR`
 Requesting Bridges
 """"""""""""""""""
 
-The client MUST send a ``POST /meek/moat/fetch`` containing the following JSON::
+The client MUST send a ``POST /moat/fetch`` containing the following JSON::
 
     {
-      "data": {
+      "data": [{
         "version": "0.1.0",
         "type": "client-transports",
         "supported": [ "TRANSPORT", "TRANSPORT", ... ],
-      }
+      }]
     }
 
 where:
@@ -437,14 +437,14 @@ the "best" transport from the list of supported transports, and respond with the
 following JSON containing a CAPTCHA challenge::
 
     {
-      "data": {
+      "data": [{
         "id": "1",
         "type": "moat-challenge",
         "version": "0.1.0",
         "transport": "TRANSPORT",
         "image": "CAPTCHA",
         "challenge": "CHALLENGE",
-      }
+      }]
     }
 
 where:
@@ -463,14 +463,14 @@ If there is no overlap with the transports which BridgeDB supports, the moat
 server will respond with the list of transports which is *does* support::
 
     {
-      "data": {
+      "data": [{
         "id": "1",
         "type": "moat-challenge",
         "version": "0.1.0",
         "transport": [ "TRANSPORT", "TRANSPORT", ... ],
         "image": "CAPTCHA",
         "challenge": "CHALLENGE",
-      }
+      }]
     }
 
 
@@ -478,10 +478,10 @@ Responding to a CAPTCHA challenge
 """""""""""""""""""""""""""""""""
 
 To propose a solution to a CAPTCHA, the client MUST send a request for ``POST
-/meek/moat/check``, where the body of the request contains the following JSON::
+/moat/check``, where the body of the request contains the following JSON::
 
     {
-      "data": {
+      "data": [{
         "id": "2",
         "type": "moat-solution",
         "version": "0.1.0",
@@ -489,7 +489,7 @@ To propose a solution to a CAPTCHA, the client MUST send a request for ``POST
         "challenge": "CHALLENGE",
         "solution": "SOLUTION",
         "qrcode": "BOOLEAN",
-      }
+      }]
     }
 
 
@@ -515,13 +515,13 @@ If the ``SOLUTION`` was successful for the supplied ``CHALLENGE``, the
 server responds ``200 OK`` with the following JSON::
 
     {
-      "data": {
+      "data": [{
         "id": "3",
         "type": "moat-bridges",
         "version": "0.1.0",
         "bridges": [ "BRIDGE_LINE", ... ],
         "qrcode": "QRCODE",
-      }
+      }]
     }
 
 where:
@@ -557,8 +557,8 @@ where:
 Other Responses
 """""""""""""""
 
-If the client requested some page other than ``/meek/moat/fetch``, or
-``/meek/moat/check``, the server MUST respond with ``501 Not Implemented``.
+If the client requested some page other than ``/moat/fetch``, or
+``/moat/check``, the server MUST respond with ``501 Not Implemented``.
 
 If the client attempts any other HTTP method, other than ``POST``, the server
 MUST respond ``403 FORBIDDEN``.
