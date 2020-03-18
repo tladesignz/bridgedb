@@ -1,0 +1,40 @@
+## -*- coding: utf-8 -*-
+
+<%inherit file="base.html"/>
+<%page args="strings, langs, rtl=False, lang='en', langOverride=False, **kwargs"/>
+
+<div class="container-fluid container-fluid-outer-96">
+  <div class="container-fluid container-fluid-inner">
+    <p>
+      <h3>${_(strings.BRIDGEDB_INFO[0])}</h3>
+      <p>${_(strings.BRIDGEDB_INFO[1]) % \
+         ("""<a href="https://metrics.torproject.org/bridgedb-distributor.html">""",
+          """</a>""")}</p>
+
+      <div class="row-fluid marketing">
+        <h4><a name="https">HTTPS</a></h4>
+        <p>${_(strings.BRIDGEDB_INFO[2]) % \
+           ("""<a href="https://bridges.torproject.org/options">""",
+            """</a>""")}</p>
+
+        <h4><a name="moat">Moat</a></h4>
+        <p>${_(strings.BRIDGEDB_INFO[3]) % \
+           ("""<a href="about:preferences#tor">""",
+            """</a>""")}</p>
+
+        <h4><a name="email">Email</a></h4>
+        <p>${_(strings.BRIDGEDB_INFO[4]) % \
+           ("""<a href="mailto:bridges@torproject.org">""",
+            """</a>""")}</p>
+
+        <h4><a name="reserved">${_(strings.BRIDGEDB_INFO[5])}</a></h4>
+        <p>${_(strings.BRIDGEDB_INFO[6]) % \
+           ("""<a href="https://collector.torproject.org/archive/bridge-pool-assignments/">""",
+            """</a>""")}</p>
+
+        <h4><a name="none">${_(strings.BRIDGEDB_INFO[7])}</a></h4>
+        <p>${_(strings.BRIDGEDB_INFO[8])}</p>
+      </div>
+    </p>
+  </div>
+</div>

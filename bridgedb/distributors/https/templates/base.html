@@ -1,7 +1,7 @@
 ## -*- coding: utf-8 -*-
 
 <%namespace name="base" file="base.html" inheritable="True"/>
-<%page args="strings, langs, rtl=False, lang='en', langOverride=False, **kwargs"/>
+<%page args="strings, langs, rtl=False, lang='en', langOverride=False, showFaq=True, **kwargs"/>
 
 <!DOCTYPE html>
 <html lang="${lang}">
@@ -59,6 +59,7 @@
 
 ${next.body(strings, langs, rtl=rtl, lang=lang, langOverride=langOverride, **kwargs)}
 
+        % if showFaq:
         <div class="faq">
           <div class="row-fluid marketing">
 
@@ -84,6 +85,7 @@ ${next.body(strings, langs, rtl=rtl, lang=lang, langOverride=langOverride, **kwa
             </p>
           </div>
         </div> <!-- end faq -->
+        % endif
 
         <div class="footer footer-small">
         <hr>

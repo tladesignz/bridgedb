@@ -1,3 +1,8 @@
+        * FIXES https://bugs.torproject.org/33008
+        Add an info page, available at bridges.torproject.org/info.  Relay
+        Search links to this info page to explain to bridge operators what their
+        bridge distribution mechanism means.
+
 Changes in version 0.9.4 - 2020-02-19
 
         * FIXES https://bugs.torproject.org/30946

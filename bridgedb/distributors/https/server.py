@@ -389,13 +389,14 @@ class TranslatedTemplateResource(CustomErrorHandlingResource, CSPResource):
     """
     isLeaf = True
 
-    def __init__(self, template=None):
+    def __init__(self, template=None, showFaq=True):
         """Create a new :api:`Resource <twisted.web.resource.Resource>` for a
         Mako-templated webpage.
         """
         gettext.install("bridgedb")
         CSPResource.__init__(self)
         self.template = template
+        self.showFaq = showFaq
 
     def render_GET(self, request):
         self.setCSPHeader(request)
@@ -409,7 +410,8 @@ class TranslatedTemplateResource(CustomErrorHandlingResource, CSPResource):
                                        getSortedLangList(),
                                        rtl=rtl,
                                        lang=langs[0],
-                                       langOverride=translations.isLangOverridden(request))
+                                       langOverride=translations.isLangOverridden(request),
+                                       showFaq=self.showFaq)
         except Exception as err:  # pragma: no cover
             rendered = replaceErrorPage(request, err)
         request.setHeader("Content-Type", "text/html; charset=utf-8")
@@ -433,6 +435,11 @@ class OptionsResource(TranslatedTemplateResource):
     def __init__(self):
         """Create a :api:`twisted.web.resource.Resource` for the options page."""
         TranslatedTemplateResource.__init__(self, 'options.html')
+
+
+class InfoResource(TranslatedTemplateResource):
+    def __init__(self):
+        TranslatedTemplateResource.__init__(self, 'info.html', showFaq=False)
 
 
 class HowtoResource(TranslatedTemplateResource):
@@ -1133,6 +1140,7 @@ def addWebServer(config, distributor):
     index   = IndexResource()
     options = OptionsResource()
     howto   = HowtoResource()
+    info    = InfoResource()
     robots  = static.File(os.path.join(TEMPLATE_DIR, 'robots.txt'))
     assets  = static.File(os.path.join(TEMPLATE_DIR, 'assets/'))
     keys    = static.Data(strings.BRIDGEDB_OPENPGP_KEY.encode('utf-8'), 'text/plain')
@@ -1148,6 +1156,7 @@ def addWebServer(config, distributor):
     root.putChild(b'assets', assets)
     root.putChild(b'options', options)
     root.putChild(b'howto', howto)
+    root.putChild(b'info', info)
     root.putChild(b'maintenance', maintenance)
     root.putChild(b'error', resource500)
     root.putChild(CSPResource.reportURI, csp)
